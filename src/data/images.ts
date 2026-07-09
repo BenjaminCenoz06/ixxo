@@ -118,5 +118,4 @@ export function editorialWide(seed: string, w = 1600, h = 900): string {
   // Fallback con keywords coherentes
   return `https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&q=80&w=${w}&h=${h}`;
 }
-}
 
