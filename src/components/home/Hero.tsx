@@ -4,17 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
-import { editorialWide } from "@/data/images";
-
-const slides = [
-  { src: editorialWide("hero-1", 2000, 1200), eyebrow: "Colección Invierno 26" },
-  { src: editorialWide("hero-2", 2000, 1200), eyebrow: "Sastrería contemporánea" },
-  { src: editorialWide("hero-3", 2000, 1200), eyebrow: "Essentials" },
-];
+import { useSiteContent } from "@/lib/site-content-context";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
+  const { hero } = useSiteContent();
+  const slides = hero.slides;
   const [index, setIndex] = useState(0);
   const ref = useRef<HTMLElement>(null);
 
@@ -46,7 +42,7 @@ export default function Hero() {
           >
             <div className="absolute inset-0 animate-kenburns">
               <Image
-                src={slides[index].src}
+                src={slides[index].image}
                 alt=""
                 fill
                 priority={index === 0}
@@ -86,9 +82,9 @@ export default function Hero() {
           transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}
           className="max-w-4xl font-display text-[clamp(2.75rem,8vw,6.5rem)] font-light leading-[0.95] tracking-[-0.02em]"
         >
-          Diseño que
+          {hero.titleTop}
           <br />
-          <span className="italic font-extralight">perdura.</span>
+          <span className="italic font-extralight">{hero.titleBottom}</span>
         </motion.h1>
 
         <motion.div
@@ -98,16 +94,16 @@ export default function Hero() {
           className="mt-10 flex flex-wrap items-center gap-4"
         >
           <Link
-            href="/novedades"
+            href={hero.ctaPrimaryHref}
             className="group inline-flex items-center bg-paper px-9 py-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-ink transition-all duration-300 hover:bg-paper/90"
           >
-            Comprar ahora
+            {hero.ctaPrimaryLabel}
           </Link>
           <Link
-            href="/colecciones"
+            href={hero.ctaSecondaryHref}
             className="inline-flex items-center border border-paper/40 px-9 py-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-paper backdrop-blur-sm transition-all duration-300 hover:bg-paper hover:text-ink"
           >
-            Ver colección
+            {hero.ctaSecondaryLabel}
           </Link>
         </motion.div>
 

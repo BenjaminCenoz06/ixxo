@@ -148,6 +148,12 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["orders"]["Insert"]>;
         Relationships: [];
       };
+      site_content: {
+        Row: { id: string; content: Json; updated_at: string };
+        Insert: { id: string; content: Json; updated_at?: string };
+        Update: { id?: string; content?: Json; updated_at?: string };
+        Relationships: [];
+      };
       order_items: {
         Row: {
           id: string;

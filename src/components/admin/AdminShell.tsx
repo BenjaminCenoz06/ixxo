@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
+  LayoutTemplate,
   Package,
   ShoppingBag,
   Layers,
@@ -25,6 +26,7 @@ import { cn } from "@/lib/utils";
 
 const nav = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/contenido", label: "Contenido", icon: LayoutTemplate },
   { href: "/admin/productos", label: "Productos", icon: Package },
   { href: "/admin/pedidos", label: "Pedidos", icon: ShoppingBag },
   { href: "/admin/categorias", label: "Categorías", icon: Layers },

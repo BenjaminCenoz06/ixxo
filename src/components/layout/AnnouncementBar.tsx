@@ -1,15 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-
-const messages = [
-  "Envío gratis en compras superiores a $90.000",
-  "Hasta 6 cuotas sin interés",
-  "15% OFF pagando por transferencia",
-  "Cambios y devoluciones sin cargo",
-];
+import { useSiteContent } from "@/lib/site-content-context";
 
 export default function AnnouncementBar() {
+  const { announcement } = useSiteContent();
+  const messages = announcement.length ? announcement : [""];
   // Duplicamos el set de mensajes varias veces para asegurar un flujo constante y fluido
   const loop = [...messages, ...messages, ...messages, ...messages];
 

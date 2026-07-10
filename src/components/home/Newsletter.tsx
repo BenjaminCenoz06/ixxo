@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Check } from "lucide-react";
+import { useSiteContent } from "@/lib/site-content-context";
 
 export default function Newsletter() {
+  const { newsletter: c } = useSiteContent();
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
 
@@ -24,7 +26,7 @@ export default function Newsletter() {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="eyebrow mb-4"
         >
-          Newsletter
+          {c.eyebrow}
         </motion.p>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -33,11 +35,9 @@ export default function Newsletter() {
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
           className="font-display text-3xl font-light leading-tight tracking-tight md:text-5xl"
         >
-          Sumate al círculo IXXO
+          {c.title}
         </motion.h2>
-        <p className="mt-5 max-w-md text-[15px] leading-relaxed text-ash">
-          Acceso anticipado a colecciones, ediciones limitadas y 10% en tu primera compra.
-        </p>
+        <p className="mt-5 max-w-md text-[15px] leading-relaxed text-ash">{c.subtitle}</p>
 
         <form onSubmit={submit} className="mt-10 w-full max-w-md">
           <div className="relative flex items-center border-b border-ink pb-3">

@@ -7,6 +7,8 @@ import { CartProvider } from "@/lib/cart-context";
 import { AuthProvider } from "@/lib/auth-context";
 import { FavoritesProvider } from "@/lib/favorites-context";
 import { QueryProvider } from "@/lib/query-provider";
+import { SiteContentProvider } from "@/lib/site-content-context";
+import { getSiteContent } from "@/lib/repository/content";
 import { SITE_URL } from "@/lib/supabase/config";
 
 const inter = Inter({
@@ -38,9 +40,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const content = await getSiteContent();
   return (
     <html lang="es" className={`${inter.variable} ${manrope.variable}`}>
       <body>
@@ -56,7 +59,9 @@ export default function RootLayout({
           <AuthProvider>
             <FavoritesProvider>
               <CartProvider>
-                <AppFrame>{children}</AppFrame>
+                <SiteContentProvider content={content}>
+                  <AppFrame>{children}</AppFrame>
+                </SiteContentProvider>
               </CartProvider>
             </FavoritesProvider>
           </AuthProvider>
