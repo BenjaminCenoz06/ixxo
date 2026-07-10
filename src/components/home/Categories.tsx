@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { featuredCategories } from "@/data/categories";
+import { getFeaturedCategories } from "@/lib/repository/catalog-meta";
 
-export default function Categories() {
+export default async function Categories() {
+  const featuredCategories = await getFeaturedCategories();
   return (
     <section className="container-ixxo py-20 md:py-28">
       <SectionHeading
@@ -19,14 +20,16 @@ export default function Categories() {
             href={`/categoria/${cat.slug}`}
             className="group relative block aspect-[4/5] overflow-hidden bg-smoke md:aspect-[3/4]"
           >
-            <Image
-              src={cat.image}
-              alt={cat.name}
-              fill
-              sizes="(max-width:768px) 50vw, 33vw"
-              className="object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
-              priority={i < 2}
-            />
+            {cat.image && (
+              <Image
+                src={cat.image}
+                alt={cat.name}
+                fill
+                sizes="(max-width:768px) 50vw, 33vw"
+                className="object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+                priority={i < 2}
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-transparent to-transparent transition-opacity duration-500 group-hover:from-ink/70" />
             <div className="absolute inset-x-5 bottom-5 flex items-end justify-between text-paper">
               <div>
