@@ -13,7 +13,7 @@ const COLLECTION_NAME: Record<string, string> = {
   "winter-26": "Winter 26",
 };
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
   return collections.map((c) => ({ slug: c.slug }));

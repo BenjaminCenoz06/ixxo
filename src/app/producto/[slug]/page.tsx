@@ -18,7 +18,7 @@ import { formatPrice } from "@/lib/format";
 
 type Params = { params: Promise<{ slug: string }> };
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
   return allProductSlugs().map((slug) => ({ slug }));

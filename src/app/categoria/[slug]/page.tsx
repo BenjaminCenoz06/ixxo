@@ -41,7 +41,7 @@ async function resolveList(slug: string) {
   return getProductsByCategory(slug);
 }
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
   return categories.map((c) => ({ slug: c.slug }));

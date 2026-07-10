@@ -9,6 +9,9 @@ import InstagramFeed from "@/components/home/InstagramFeed";
 import Reviews from "@/components/home/Reviews";
 import Newsletter from "@/components/home/Newsletter";
 
+// Render dinámico para reflejar al instante los cambios del admin en la base.
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   return (
     <>
