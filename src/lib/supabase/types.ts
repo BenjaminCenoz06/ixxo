@@ -31,14 +31,14 @@ export interface Database {
       };
       categories: {
         Row: { id: string; slug: string; name: string; image: string | null; sort: number };
-        Insert: { slug: string; name: string; image?: string | null; sort?: number };
-        Update: { slug?: string; name?: string; image?: string | null; sort?: number };
+        Insert: { id?: string; slug: string; name: string; image?: string | null; sort?: number };
+        Update: { id?: string; slug?: string; name?: string; image?: string | null; sort?: number };
         Relationships: [];
       };
       collections: {
         Row: { id: string; slug: string; title: string; subtitle: string | null; image: string | null };
-        Insert: { slug: string; title: string; subtitle?: string | null; image?: string | null };
-        Update: { slug?: string; title?: string; subtitle?: string | null; image?: string | null };
+        Insert: { id?: string; slug: string; title: string; subtitle?: string | null; image?: string | null };
+        Update: { id?: string; slug?: string; title?: string; subtitle?: string | null; image?: string | null };
         Relationships: [];
       };
       products: {
