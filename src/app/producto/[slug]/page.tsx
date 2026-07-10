@@ -6,6 +6,7 @@ import Accordion from "@/components/product/Accordion";
 import ProductReviews from "@/components/product/ProductReviews";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { ProductJsonLd } from "@/components/seo/JsonLd";
 import {
   getProductBySlug,
   getRelated,
@@ -16,6 +17,8 @@ import { editorial } from "@/data/images";
 import { formatPrice } from "@/lib/format";
 
 type Params = { params: Promise<{ slug: string }> };
+
+export const revalidate = 3600;
 
 export function generateStaticParams() {
   return allProductSlugs().map((slug) => ({ slug }));
@@ -54,6 +57,7 @@ export default async function ProductPage({ params }: Params) {
 
   return (
     <>
+      <ProductJsonLd product={product} />
       <div className="container-ixxo pt-28 md:pt-36">
         <Breadcrumb
           items={[

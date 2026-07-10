@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: "El catálogo completo de IXXO.",
 };
 
+export const revalidate = 3600;
+
 export default async function PrendasPage() {
   const products = await getAllProducts();
   return (

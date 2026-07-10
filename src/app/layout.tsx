@@ -1,16 +1,13 @@
 import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
-import SmoothScroll from "@/components/ui/SmoothScroll";
-import Loader from "@/components/ui/Loader";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import AppFrame from "@/components/layout/AppFrame";
+import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/JsonLd";
 import { CartProvider } from "@/lib/cart-context";
 import { AuthProvider } from "@/lib/auth-context";
 import { FavoritesProvider } from "@/lib/favorites-context";
 import { QueryProvider } from "@/lib/query-provider";
-import CartDrawer from "@/components/cart/CartDrawer";
-import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import { SITE_URL } from "@/lib/supabase/config";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,7 +22,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ixxo.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "IXXO — Ropa masculina de diseño",
     template: "%s · IXXO",
@@ -47,18 +44,19 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${inter.variable} ${manrope.variable}`}>
       <body>
+        <OrganizationJsonLd />
+        <WebSiteJsonLd />
+        <a
+          href="#contenido"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:bg-ink focus:px-4 focus:py-2 focus:text-paper"
+        >
+          Saltar al contenido
+        </a>
         <QueryProvider>
           <AuthProvider>
             <FavoritesProvider>
               <CartProvider>
-                <Loader />
-                <SmoothScroll>
-                  <Header />
-                  <main>{children}</main>
-                  <Footer />
-                </SmoothScroll>
-                <CartDrawer />
-                <WhatsAppButton />
+                <AppFrame>{children}</AppFrame>
               </CartProvider>
             </FavoritesProvider>
           </AuthProvider>

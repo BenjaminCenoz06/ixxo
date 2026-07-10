@@ -76,6 +76,19 @@ El checkout crea una preferencia (`/api/checkout/mercadopago`) y redirige al pag
 pedido en Supabase. El costo de envío se estima por zona en `src/lib/shipping.ts` (reemplazable
 por la cotización real de Mercado Envíos).
 
+## Panel de administración (Fase 6)
+
+El panel vive en [`/admin`](http://localhost:3000/admin). Sin Supabase funciona en **modo demo**
+(datos de ejemplo, cambios en memoria). Para habilitarlo en vivo:
+
+1. Ejecutá `supabase/admin.sql` en el SQL Editor (agrega `role` y políticas de escritura).
+2. Marcá tu usuario como admin:
+   `update public.profiles set role='admin' where id=(select id from auth.users where email='tu@email.com');`
+3. En `.env.local` agregá tu email a `NEXT_PUBLIC_ADMIN_EMAILS`.
+
+Secciones: Dashboard, Productos (CRUD), Pedidos, Categorías, Colecciones, Cupones, Clientes,
+Newsletter, Configuración.
+
 ## Roadmap
 
 - [x] **Fase 1 — Storefront visual** (home completa, responsive, animaciones)
@@ -83,6 +96,6 @@ por la cotización real de Mercado Envíos).
 - [x] **Fase 3 — Carrito & Checkout**: drawer con estado global, cupones, checkout multi-paso (RHF + Zod)
 - [x] **Fase 4 — Backend**: Supabase (auth + Google, DB, favoritos, pedidos) con fallback a mock, repositorio de productos, Cloudinary, TanStack Query
 - [x] **Fase 5 — Pagos**: Mercado Pago (preferencia + webhook + retorno) y Mercado Envíos (cotización por zona), con fallback a confirmación simulada
-- [ ] **Fase 6 — Panel Admin**
-- [ ] **Fase 7 — Pulido**: SSR/ISR, SEO, Lighthouse >95, accesibilidad
+- [x] **Fase 6 — Panel Admin**: dashboard, CRUD de productos, pedidos, categorías, colecciones, cupones, clientes, newsletter, configuración (modo demo + RLS de admin)
+- [x] **Fase 7 — Pulido**: sitemap + robots, JSON-LD (Product/Organization), ISR, accesibilidad (skip link, focus-visible), páginas `/colecciones`, `/coleccion/[slug]`, `/lookbook`, 404 con marca
 ```

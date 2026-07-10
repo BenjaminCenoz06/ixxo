@@ -5,13 +5,10 @@
 import { writeFileSync, mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+// Usa las mismas imágenes que la app (Unsplash), vía type-stripping de Node 24.
+import { editorial, editorialWide } from "../src/data/images.ts";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-
-const editorial = (seed, w = 900, h = 1200) =>
-  `https://picsum.photos/seed/ixxo-${seed}/${w}/${h}?grayscale`;
-const editorialWide = (seed, w = 1600, h = 900) =>
-  `https://picsum.photos/seed/ixxo-${seed}/${w}/${h}?grayscale`;
 
 const slugify = (s) =>
   s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")

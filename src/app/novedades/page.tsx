@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: "Lo último de IXXO. Piezas nuevas cada semana.",
 };
 
+export const revalidate = 3600;
+
 export default async function NovedadesPage() {
   const products = await getNewArrivals();
   return (

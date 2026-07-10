@@ -1,0 +1,32 @@
+# ============================================================
+# IXXO — Configuración de despliegue en Netlify
+# ============================================================
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  # Next 16 necesita Node ≥ 20. Netlify soporta 20 y 22.
+  NODE_VERSION = "22"
+  # Evita fallar el build por warnings de dependencias.
+  NPM_FLAGS = "--no-audit --no-fund"
+
+# El runtime oficial de Next.js (SSR, ISR, API routes, middleware/proxy).
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Cache agresivo para los assets estáticos versionados de Next.
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Cabeceras de seguridad base.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"

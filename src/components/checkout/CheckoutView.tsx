@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Check, ShoppingBag, Package } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
-import { getSupabaseBrowser } from "@/lib/supabase/client";
 import { computeTotals } from "@/lib/checkout";
 import { quoteShipping } from "@/lib/shipping";
 import { formatPrice } from "@/lib/format";
@@ -39,13 +38,12 @@ export default function CheckoutView() {
     : `Llega en ${quote.minDays}–${quote.maxDays} días hábiles`;
 
   const persistOrder = async (number: string, totals: ReturnType<typeof computeTotals>) => {
-    const supabase = getSupabaseBrowser();
-    if (!supabase) return;
-    const { data, error } = await supabase
-      .from("orders")
-      .insert({
+    await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         number,
-        user_id: user?.id ?? null,
+        userId: user?.id ?? null,
         email: shipping?.email ?? "",
         status: "pending",
         subtotal: totals.subtotal,
@@ -53,23 +51,18 @@ export default function CheckoutView() {
         shipping: totals.shipping,
         total: totals.total,
         coupon: coupon?.code ?? null,
-        shipping_address: (shipping ?? {}) as Record<string, string>,
-      })
-      .select("id")
-      .single();
-    if (error || !data) return;
-    await supabase.from("order_items").insert(
-      items.map((it) => ({
-        order_id: data.id,
-        product_id: it.productId,
-        name: it.name,
-        image: it.image,
-        color: it.color,
-        size: it.size,
-        qty: it.qty,
-        price: it.price,
-      })),
-    );
+        shippingAddress: shipping ?? {},
+        items: items.map((it) => ({
+          productId: it.productId,
+          name: it.name,
+          image: it.image,
+          color: it.color,
+          size: it.size,
+          qty: it.qty,
+          price: it.price,
+        })),
+      }),
+    });
   };
 
   const simulateConfirmation = (number: string, total: number) => {

@@ -18,6 +18,10 @@ export function validateCoupon(code: string): Coupon | null {
   return COUPONS[code.trim().toUpperCase()] ?? null;
 }
 
+export function listCoupons(): Coupon[] {
+  return Object.values(COUPONS);
+}
+
 export function couponDiscount(coupon: Coupon | null, subtotal: number): number {
   if (!coupon || coupon.type === "fixed") return 0;
   return Math.round((subtotal * coupon.value) / 100);

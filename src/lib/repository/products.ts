@@ -1,7 +1,7 @@
 import "server-only";
 import type { Product } from "@/types";
 import type { Database } from "@/lib/supabase/types";
-import { getSupabaseServer } from "@/lib/supabase/server";
+import { getSupabasePublic } from "@/lib/supabase/server";
 import {
   products as mockProducts,
   getProduct as mockGetProduct,
@@ -42,7 +42,7 @@ function toProduct(row: Row): Product {
 }
 
 export async function getAllProducts(): Promise<Product[]> {
-  const supabase = await getSupabaseServer();
+  const supabase = await getSupabasePublic();
   if (!supabase) return mockProducts;
   const { data, error } = await supabase.from("products").select("*").order("created_at");
   if (error || !data?.length) return mockProducts;
@@ -50,7 +50,7 @@ export async function getAllProducts(): Promise<Product[]> {
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | undefined> {
-  const supabase = await getSupabaseServer();
+  const supabase = await getSupabasePublic();
   if (!supabase) return mockGetProduct(slug);
   const { data, error } = await supabase.from("products").select("*").eq("slug", slug).maybeSingle();
   if (error || !data) return mockGetProduct(slug);
@@ -58,7 +58,7 @@ export async function getProductBySlug(slug: string): Promise<Product | undefine
 }
 
 export async function getProductsByCategory(categorySlug: string): Promise<Product[]> {
-  const supabase = await getSupabaseServer();
+  const supabase = await getSupabasePublic();
   if (!supabase) return mockByCategory(categorySlug);
   const { data, error } = await supabase
     .from("products")
@@ -69,7 +69,7 @@ export async function getProductsByCategory(categorySlug: string): Promise<Produ
 }
 
 export async function getNewArrivals(): Promise<Product[]> {
-  const supabase = await getSupabaseServer();
+  const supabase = await getSupabasePublic();
   if (!supabase) return mockNew;
   const { data, error } = await supabase.from("products").select("*").eq("is_new", true);
   if (error || !data?.length) return mockNew;
@@ -87,7 +87,7 @@ export async function getFeatured(): Promise<Product[]> {
 }
 
 export async function getRelated(product: Product, count = 4): Promise<Product[]> {
-  const supabase = await getSupabaseServer();
+  const supabase = await getSupabasePublic();
   if (!supabase) return mockRelated(product, count);
   const all = await getAllProducts();
   const same = all.filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id);
