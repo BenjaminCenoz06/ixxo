@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { Check, Loader2, Plus, Trash2, Megaphone, Image as ImageIcon, Type } from "lucide-react";
 import { useAdminContent } from "@/lib/admin-content";
 import { PageHeader, Card, Btn } from "@/components/admin/ui";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 export default function AdminContenido() {
   const { content, patch, loading, saving, saved, save } = useAdminContent();
@@ -82,11 +82,10 @@ export default function AdminContenido() {
             </p>
             <div className="space-y-3">
               {hero.slides.map((slide, i) => (
-                <div key={i} className="flex items-start gap-3 border border-line p-3">
-                  <ImagePreview src={slide.image} />
-                  <div className="grid flex-1 gap-2">
-                    <Input
-                      placeholder="URL de la imagen"
+                <div key={i} className="space-y-2 border border-line p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <ImageUploader
+                      folder="hero"
                       value={slide.image}
                       onChange={(v) => {
                         const slides = [...hero.slides];
@@ -94,23 +93,23 @@ export default function AdminContenido() {
                         patch("hero", { ...hero, slides });
                       }}
                     />
-                    <Input
-                      placeholder="Texto pequeño (eyebrow)"
-                      value={slide.eyebrow}
-                      onChange={(v) => {
-                        const slides = [...hero.slides];
-                        slides[i] = { ...slides[i], eyebrow: v };
-                        patch("hero", { ...hero, slides });
-                      }}
-                    />
+                    <button
+                      onClick={() => patch("hero", { ...hero, slides: hero.slides.filter((_, j) => j !== i) })}
+                      className="p-1.5 text-stone hover:text-accent"
+                      aria-label="Eliminar slide"
+                    >
+                      <Trash2 size={15} />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => patch("hero", { ...hero, slides: hero.slides.filter((_, j) => j !== i) })}
-                    className="p-1.5 text-stone hover:text-accent"
-                    aria-label="Eliminar slide"
-                  >
-                    <Trash2 size={15} />
-                  </button>
+                  <Input
+                    placeholder="Texto pequeño (eyebrow)"
+                    value={slide.eyebrow}
+                    onChange={(v) => {
+                      const slides = [...hero.slides];
+                      slides[i] = { ...slides[i], eyebrow: v };
+                      patch("hero", { ...hero, slides });
+                    }}
+                  />
                 </div>
               ))}
               <Btn
@@ -148,6 +147,7 @@ export default function AdminContenido() {
           </div>
           <ImageFieldRow
             label="Imagen"
+            folder="colecciones"
             value={content.newCollection.image}
             onChange={(v) => patch("newCollection", { ...content.newCollection, image: v })}
           />
@@ -166,6 +166,7 @@ export default function AdminContenido() {
           </Field>
           <ImageFieldRow
             label="Imagen de fondo"
+            folder="editorial"
             value={content.editorial.image}
             onChange={(v) => patch("editorial", { ...content.editorial, image: v })}
           />
@@ -184,6 +185,24 @@ export default function AdminContenido() {
           <Field label="Subtítulo" className="mt-4">
             <TextArea rows={2} value={content.newsletter.subtitle} onChange={(v) => patch("newsletter", { ...content.newsletter, subtitle: v })} />
           </Field>
+        </Card>
+
+        {/* Footer / redes */}
+        <Card title="Footer y redes sociales">
+          <Field label="Descripción de la marca">
+            <TextArea rows={2} value={content.footer.description} onChange={(v) => patch("footer", { ...content.footer, description: v })} />
+          </Field>
+          <div className="mt-4 grid gap-4 sm:grid-cols-3">
+            <Field label="Instagram (URL)">
+              <Input value={content.footer.instagram} onChange={(v) => patch("footer", { ...content.footer, instagram: v })} />
+            </Field>
+            <Field label="TikTok (URL)">
+              <Input value={content.footer.tiktok} onChange={(v) => patch("footer", { ...content.footer, tiktok: v })} />
+            </Field>
+            <Field label="YouTube (URL)">
+              <Input value={content.footer.youtube} onChange={(v) => patch("footer", { ...content.footer, youtube: v })} />
+            </Field>
+          </div>
         </Card>
 
         <div className="flex justify-end pb-8">
@@ -257,33 +276,23 @@ function Field({
   );
 }
 
-function ImagePreview({ src }: { src: string }) {
-  if (!src) return <div className="h-16 w-14 shrink-0 border border-dashed border-line bg-smoke" />;
-  return (
-    <div className="relative h-16 w-14 shrink-0 overflow-hidden border border-line bg-smoke">
-      <Image src={src} alt="" fill sizes="56px" className="object-cover" unoptimized />
-    </div>
-  );
-}
-
 function ImageFieldRow({
   label,
   value,
   onChange,
+  folder,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
+  folder?: string;
 }) {
   return (
     <div className="mt-4">
       <span className="mb-1.5 flex items-center gap-1.5 text-[12px] font-medium text-ink-soft">
-        <ImageIcon size={12} /> {label} (URL)
+        <ImageIcon size={12} /> {label}
       </span>
-      <div className="flex items-start gap-3">
-        <ImagePreview src={value} />
-        <Input value={value} onChange={onChange} placeholder="https://…" />
-      </div>
+      <ImageUploader value={value} onChange={onChange} folder={folder} />
     </div>
   );
 }

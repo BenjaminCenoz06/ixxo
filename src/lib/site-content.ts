@@ -31,6 +31,12 @@ export interface SiteContent {
     title: string;
     subtitle: string;
   };
+  footer: {
+    description: string;
+    instagram: string;
+    tiktok: string;
+    youtube: string;
+  };
 }
 
 export const DEFAULT_CONTENT: SiteContent = {
@@ -75,6 +81,13 @@ export const DEFAULT_CONTENT: SiteContent = {
     title: "Sumate al círculo IXXO",
     subtitle: "Acceso anticipado a colecciones, ediciones limitadas y 10% en tu primera compra.",
   },
+  footer: {
+    description:
+      "Ropa masculina de diseño. Prendas atemporales, materiales nobles y una experiencia pensada al detalle.",
+    instagram: "https://instagram.com",
+    tiktok: "https://tiktok.com",
+    youtube: "https://youtube.com",
+  },
 };
 
 /** Combina el contenido guardado con los defaults (por si faltan campos). */
@@ -86,5 +99,6 @@ export function mergeContent(saved: Partial<SiteContent> | null | undefined): Si
     newCollection: { ...DEFAULT_CONTENT.newCollection, ...saved.newCollection },
     editorial: { ...DEFAULT_CONTENT.editorial, ...saved.editorial },
     newsletter: { ...DEFAULT_CONTENT.newsletter, ...saved.newsletter },
+    footer: { ...DEFAULT_CONTENT.footer, ...saved.footer },
   };
 }

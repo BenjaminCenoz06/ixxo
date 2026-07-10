@@ -8,6 +8,7 @@ import { categories } from "@/data/categories";
 import { COLORS, colorHex } from "@/data/colors";
 import { newProductId } from "@/lib/admin-data";
 import { Btn } from "./ui";
+import ImageUploader from "./ImageUploader";
 import { cn } from "@/lib/utils";
 
 function slugify(s: string) {
@@ -160,12 +161,12 @@ export default function ProductForm({
             <input value={sizes} onChange={(e) => setSizes(e.target.value)} placeholder="S, M, L, XL" className={input} />
           </Field>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Field label="Imagen frontal (URL)">
-              <input value={img1} onChange={(e) => setImg1(e.target.value)} className={input} />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Imagen principal">
+              <ImageUploader value={img1} onChange={setImg1} folder="productos" />
             </Field>
-            <Field label="Imagen hover (URL)">
-              <input value={img2} onChange={(e) => setImg2(e.target.value)} className={input} />
+            <Field label="Imagen secundaria (hover)">
+              <ImageUploader value={img2} onChange={setImg2} folder="productos" />
             </Field>
           </div>
 

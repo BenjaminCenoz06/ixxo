@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { InstagramIcon, TiktokIcon, YoutubeIcon } from "@/components/ui/SocialIcons";
+import { useSiteContent } from "@/lib/site-content-context";
 
 const columns = [
   {
@@ -19,21 +22,25 @@ const columns = [
 const payments = ["Visa", "Mastercard", "Amex", "Mercado Pago", "Transferencia"];
 
 export default function Footer() {
+  const { footer } = useSiteContent();
+  const socials = [
+    { Icon: InstagramIcon, href: footer.instagram },
+    { Icon: TiktokIcon, href: footer.tiktok },
+    { Icon: YoutubeIcon, href: footer.youtube },
+  ];
   return (
     <footer className="border-t border-line bg-paper">
       <div className="container-ixxo py-16 md:py-20">
         <div className="grid gap-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
             <span className="font-display text-2xl font-medium tracking-[0.3em]">IXXO</span>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-ash">
-              Ropa masculina de diseño. Prendas atemporales, materiales nobles y una experiencia
-              pensada al detalle.
-            </p>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-ash">{footer.description}</p>
             <div className="mt-6 flex items-center gap-4">
-              {[InstagramIcon, TiktokIcon, YoutubeIcon].map((Icon, i) => (
+              {socials.map(({ Icon, href }, i) => (
                 <Link
                   key={i}
-                  href="#"
+                  href={href || "#"}
+                  target="_blank"
                   aria-label="Red social"
                   className="flex h-10 w-10 items-center justify-center rounded-full border border-line text-ink-soft transition-colors hover:border-ink hover:bg-ink hover:text-paper"
                 >
