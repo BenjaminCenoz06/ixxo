@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Check, ShoppingBag, Package } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
+import { useSiteContent } from "@/lib/site-content-context";
 import { computeTotals } from "@/lib/checkout";
 import { quoteShipping } from "@/lib/shipping";
 import { formatPrice } from "@/lib/format";
@@ -27,12 +28,13 @@ interface Order {
 export default function CheckoutView() {
   const { items, subtotal, coupon, clear } = useCart();
   const { user } = useAuth();
+  const { general } = useSiteContent();
   const [step, setStep] = useState(0);
   const [shipping, setShipping] = useState<Partial<ShippingForm>>();
   const [processing, setProcessing] = useState(false);
   const [order, setOrder] = useState<Order | null>(null);
 
-  const quote = quoteShipping(shipping?.province, subtotal, coupon);
+  const quote = quoteShipping(shipping?.province, subtotal, coupon, general.freeShippingThreshold || undefined);
   const eta = quote.free
     ? "Envío gratis"
     : `Llega en ${quote.minDays}–${quote.maxDays} días hábiles`;

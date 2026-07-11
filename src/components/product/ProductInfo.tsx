@@ -11,6 +11,7 @@ import { colorHex } from "@/data/colors";
 import { formatPrice, transferPrice, installment, discountPercent } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
 import { useFavorites } from "@/lib/favorites-context";
+import { useSiteContent } from "@/lib/site-content-context";
 import { cn } from "@/lib/utils";
 
 const TRUST = [
@@ -24,6 +25,8 @@ export default function ProductInfo({ product }: { product: Product }) {
   const router = useRouter();
   const { addItem } = useCart();
   const { isFavorite, toggle } = useFavorites();
+  const { general } = useSiteContent();
+  const transferRate = (general.transferDiscount ?? 15) / 100;
   const fav = isFavorite(product.id);
   const [color, setColor] = useState(product.colors[0]);
   const [size, setSize] = useState<string | null>(null);
@@ -96,7 +99,7 @@ export default function ProductInfo({ product }: { product: Product }) {
         )}
       </div>
       <p className="mt-2 text-[13px] text-ash">
-        <span className="font-medium text-ink-soft">{formatPrice(transferPrice(product.price))}</span>{" "}
+        <span className="font-medium text-ink-soft">{formatPrice(transferPrice(product.price, transferRate))}</span>{" "}
         por transferencia · 6 cuotas sin interés de {installment(product.price)}
       </p>
 

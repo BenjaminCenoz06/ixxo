@@ -1,10 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useSiteContent } from "@/lib/site-content-context";
 
 export default function WhatsAppButton() {
-  const phoneNumber = "5493514247726"; // 03514247726 con código de Argentina
-  const whatsappUrl = `https://wa.me/${phoneNumber}`;
+  const { general } = useSiteContent();
+  const phoneNumber = general.whatsapp || "5493514247726";
+  const whatsappUrl = `https://wa.me/${phoneNumber.replace(/\D/g, "")}`;
+
+  if (!general.whatsapp) return null;
 
   return (
     <motion.a

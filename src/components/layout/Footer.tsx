@@ -22,7 +22,8 @@ const columns = [
 const payments = ["Visa", "Mastercard", "Amex", "Mercado Pago", "Transferencia"];
 
 export default function Footer() {
-  const { footer } = useSiteContent();
+  const { footer, general } = useSiteContent();
+  const storeName = general.storeName || "IXXO";
   const socials = [
     { Icon: InstagramIcon, href: footer.instagram },
     { Icon: TiktokIcon, href: footer.tiktok },
@@ -33,7 +34,7 @@ export default function Footer() {
       <div className="container-ixxo py-16 md:py-20">
         <div className="grid gap-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
-            <span className="font-display text-2xl font-medium tracking-[0.3em]">IXXO</span>
+            <span className="font-display text-2xl font-medium tracking-[0.3em]">{storeName}</span>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-ash">{footer.description}</p>
             <div className="mt-6 flex items-center gap-4">
               {socials.map(({ Icon, href }, i) => (
@@ -71,7 +72,7 @@ export default function Footer() {
 
         <div className="mt-16 flex flex-col gap-6 border-t border-line pt-8 md:flex-row md:items-center md:justify-between">
           <p className="text-xs tracking-wide text-ash">
-            © {new Date().getFullYear()} IXXO — Todos los derechos reservados.
+            © {new Date().getFullYear()} {storeName} — Todos los derechos reservados.
           </p>
           <div className="flex flex-wrap items-center gap-2">
             {payments.map((p) => (

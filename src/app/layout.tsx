@@ -3,6 +3,7 @@ import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import AppFrame from "@/components/layout/AppFrame";
 import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/JsonLd";
+import { ThemeStyle } from "@/components/ThemeStyle";
 import { CartProvider } from "@/lib/cart-context";
 import { AuthProvider } from "@/lib/auth-context";
 import { FavoritesProvider } from "@/lib/favorites-context";
@@ -47,6 +48,7 @@ export default async function RootLayout({
   return (
     <html lang="es" className={`${inter.variable} ${manrope.variable}`}>
       <body>
+        <ThemeStyle theme={content.theme} />
         <OrganizationJsonLd />
         <WebSiteJsonLd />
         <a

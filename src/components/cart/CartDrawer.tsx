@@ -6,7 +6,8 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, Plus, Minus, Trash2, Tag, ShoppingBag, ArrowRight, Check } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
-import { computeTotals, FREE_SHIPPING_THRESHOLD } from "@/lib/checkout";
+import { useSiteContent } from "@/lib/site-content-context";
+import { computeTotals, shippingCost, FREE_SHIPPING_THRESHOLD } from "@/lib/checkout";
 import { formatPrice } from "@/lib/format";
 import { colorHex } from "@/data/colors";
 import Portal from "@/components/ui/Portal";
@@ -26,11 +27,13 @@ export default function CartDrawer() {
     removeCoupon,
   } = useCart();
 
+  const { general } = useSiteContent();
+  const threshold = general.freeShippingThreshold || FREE_SHIPPING_THRESHOLD;
   const [code, setCode] = useState("");
   const [error, setError] = useState(false);
-  const totals = computeTotals(subtotal, coupon);
-  const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
-  const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
+  const totals = computeTotals(subtotal, coupon, shippingCost(subtotal, coupon, threshold));
+  const remaining = Math.max(0, threshold - subtotal);
+  const progress = Math.min(100, (subtotal / threshold) * 100);
 
   const submitCoupon = (e: React.FormEvent) => {
     e.preventDefault();

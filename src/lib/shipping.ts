@@ -55,10 +55,11 @@ export function quoteShipping(
   province: string | undefined,
   subtotal: number,
   coupon: Coupon | null,
+  threshold = FREE_SHIPPING_THRESHOLD,
 ): ShippingQuote {
   const zone = (province && ZONE_BY_PROVINCE[province]) || CENTRO;
   const free =
-    coupon?.code === "ENVIOGRATIS" || (subtotal > 0 && subtotal >= FREE_SHIPPING_THRESHOLD);
+    coupon?.code === "ENVIOGRATIS" || (subtotal > 0 && subtotal >= threshold);
   return {
     cost: free ? 0 : zone.cost,
     minDays: zone.minDays,

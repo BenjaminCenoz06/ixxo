@@ -48,6 +48,37 @@ export default function AdminContenido() {
       )}
 
       <div className="space-y-6">
+        {/* Colores del sitio */}
+        <Card title="Colores del sitio">
+          <p className="mb-4 text-[12px] text-ash">
+            Cambian toda la tienda al instante. El <strong className="text-ink">acento</strong> es el
+            color de promos y ofertas.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <ColorField label="Acento (promos)" value={content.theme.accent} onChange={(v) => patch("theme", { ...content.theme, accent: v })} />
+            <ColorField label="Principal (textos/negro)" value={content.theme.ink} onChange={(v) => patch("theme", { ...content.theme, ink: v })} />
+            <ColorField label="Fondo (blanco)" value={content.theme.paper} onChange={(v) => patch("theme", { ...content.theme, paper: v })} />
+          </div>
+        </Card>
+
+        {/* Ajustes generales */}
+        <Card title="Ajustes generales">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Nombre de la tienda">
+              <Input value={content.general.storeName} onChange={(v) => patch("general", { ...content.general, storeName: v })} />
+            </Field>
+            <Field label="WhatsApp (con código país)">
+              <Input value={content.general.whatsapp} onChange={(v) => patch("general", { ...content.general, whatsapp: v })} />
+            </Field>
+            <Field label="Envío gratis desde ($)">
+              <input type="number" value={content.general.freeShippingThreshold} onChange={(e) => patch("general", { ...content.general, freeShippingThreshold: +e.target.value })} className={inputCls} />
+            </Field>
+            <Field label="Descuento transferencia (%)">
+              <input type="number" value={content.general.transferDiscount} onChange={(e) => patch("general", { ...content.general, transferDiscount: +e.target.value })} className={inputCls} />
+            </Field>
+          </div>
+        </Card>
+
         {/* Barra de anuncios */}
         <Card title="Barra de anuncios">
           <p className="mb-3 flex items-center gap-2 text-[12px] text-ash">
@@ -443,6 +474,35 @@ function Field({
         <Type size={11} /> {label}
       </span>
       {children}
+    </label>
+  );
+}
+
+function ColorField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-[12px] font-medium text-ink-soft">{label}</span>
+      <div className="flex items-center gap-2">
+        <input
+          type="color"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-10 w-12 shrink-0 cursor-pointer rounded border border-line bg-paper"
+        />
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full border border-line px-3 py-2.5 text-[14px] outline-none focus:border-ink"
+        />
+      </div>
     </label>
   );
 }

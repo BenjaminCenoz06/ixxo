@@ -27,9 +27,13 @@ export function couponDiscount(coupon: Coupon | null, subtotal: number): number 
   return Math.round((subtotal * coupon.value) / 100);
 }
 
-export function shippingCost(subtotal: number, coupon: Coupon | null): number {
+export function shippingCost(
+  subtotal: number,
+  coupon: Coupon | null,
+  threshold = FREE_SHIPPING_THRESHOLD,
+): number {
   if (coupon?.code === "ENVIOGRATIS") return 0;
-  if (subtotal >= FREE_SHIPPING_THRESHOLD) return 0;
+  if (subtotal >= threshold) return 0;
   if (subtotal === 0) return 0;
   return SHIPPING_COST;
 }

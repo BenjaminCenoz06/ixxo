@@ -11,6 +11,7 @@ import SearchOverlay from "@/components/search/SearchOverlay";
 import Portal from "@/components/ui/Portal";
 import { useCart } from "@/lib/cart-context";
 import { useFavorites } from "@/lib/favorites-context";
+import { useSiteContent } from "@/lib/site-content-context";
 import { cn } from "@/lib/utils";
 
 export default function Header() {
@@ -20,6 +21,8 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const { count, openCart } = useCart();
   const { count: favCount } = useFavorites();
+  const { general } = useSiteContent();
+  const storeName = general.storeName || "IXXO";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -79,7 +82,7 @@ export default function Header() {
           className="select-none px-2 font-display text-xl font-medium tracking-[0.32em] md:text-2xl"
           onMouseEnter={() => setActive(null)}
         >
-          IXXO
+          {storeName}
         </Link>
 
         {/* Derecha: cuenta / favoritos / carrito */}

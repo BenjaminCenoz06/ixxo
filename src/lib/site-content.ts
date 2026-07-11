@@ -59,6 +59,17 @@ export interface SiteContent {
     count: number;
     items: { author: string; rating: number; title: string; body: string; product: string; avatar: string }[];
   };
+  theme: {
+    accent: string;
+    ink: string;
+    paper: string;
+  };
+  general: {
+    storeName: string;
+    whatsapp: string;
+    freeShippingThreshold: number;
+    transferDiscount: number;
+  };
 }
 
 export const DEFAULT_CONTENT: SiteContent = {
@@ -142,6 +153,17 @@ export const DEFAULT_CONTENT: SiteContent = {
       avatar: r.avatar,
     })),
   },
+  theme: {
+    accent: "#b91c1c",
+    ink: "#0a0a0a",
+    paper: "#ffffff",
+  },
+  general: {
+    storeName: "IXXO",
+    whatsapp: "5493514247726",
+    freeShippingThreshold: 90000,
+    transferDiscount: 15,
+  },
 };
 
 /** Combina el contenido guardado con los defaults (por si faltan campos). */
@@ -172,5 +194,7 @@ export function mergeContent(saved: Partial<SiteContent> | null | undefined): Si
       count: saved.reviews?.count ?? DEFAULT_CONTENT.reviews.count,
       items: saved.reviews?.items?.length ? saved.reviews.items : DEFAULT_CONTENT.reviews.items,
     },
+    theme: { ...DEFAULT_CONTENT.theme, ...saved.theme },
+    general: { ...DEFAULT_CONTENT.general, ...saved.general },
   };
 }
