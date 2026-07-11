@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CatalogView from "@/components/catalog/CatalogView";
 import { getAllProducts } from "@/lib/repository/products";
-import { collections } from "@/data/collections";
+import { getCollectionBySlug } from "@/lib/repository/catalog-meta";
+import { collections as mockCollections } from "@/data/collections";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -16,22 +17,22 @@ const COLLECTION_NAME: Record<string, string> = {
 export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
-  return collections.map((c) => ({ slug: c.slug }));
+  return mockCollections.map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
-  const col = collections.find((c) => c.slug === slug);
+  const col = await getCollectionBySlug(slug);
   if (!col) return { title: "Colección" };
   return { title: col.title, description: col.subtitle ?? undefined };
 }
 
 export default async function CollectionPage({ params }: Params) {
   const { slug } = await params;
-  const col = collections.find((c) => c.slug === slug);
+  const col = await getCollectionBySlug(slug);
   if (!col) notFound();
 
-  const name = COLLECTION_NAME[slug];
+  const name = COLLECTION_NAME[slug] ?? col.title;
   const all = await getAllProducts();
   const products = all.filter((p) => p.collection === name);
 

@@ -6,7 +6,8 @@ import {
   getNewArrivals,
   getOnSale,
 } from "@/lib/repository/products";
-import { categories } from "@/data/categories";
+import { getCategories } from "@/lib/repository/catalog-meta";
+import { categories as mockCategories } from "@/data/categories";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -23,10 +24,11 @@ const EXTRA: Record<string, { name: string; eyebrow: string; description: string
   },
 };
 
-function resolveInfo(slug: string) {
+async function resolveInfo(slug: string) {
   if (slug === "novedades") return EXTRA.novedades;
   if (slug === "ofertas") return EXTRA.ofertas;
-  const cat = categories.find((c) => c.slug === slug);
+  const cats = await getCategories();
+  const cat = cats.find((c) => c.slug === slug);
   if (!cat) return null;
   return {
     name: cat.name,
@@ -44,19 +46,19 @@ async function resolveList(slug: string) {
 export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
-  return categories.map((c) => ({ slug: c.slug }));
+  return mockCategories.map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
-  const info = resolveInfo(slug);
+  const info = await resolveInfo(slug);
   if (!info) return { title: "Categoría" };
   return { title: info.name, description: info.description };
 }
 
 export default async function CategoryPage({ params }: Params) {
   const { slug } = await params;
-  const info = resolveInfo(slug);
+  const info = await resolveInfo(slug);
   if (!info) notFound();
 
   const list = await resolveList(slug);

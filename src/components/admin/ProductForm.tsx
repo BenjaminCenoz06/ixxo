@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import type { Product } from "@/types";
-import { categories } from "@/data/categories";
+import { useAdminCategories } from "@/lib/admin-catalog-meta";
 import { COLORS, colorHex } from "@/data/colors";
 import { newProductId } from "@/lib/admin-data";
 import { Btn } from "./ui";
@@ -30,8 +30,9 @@ export default function ProductForm({
   onClose: () => void;
 }) {
   const isNew = !product;
+  const { items: categoryList } = useAdminCategories();
   const [name, setName] = useState(product?.name ?? "");
-  const [categorySlug, setCategorySlug] = useState(product?.categorySlug ?? categories[0].slug);
+  const [categorySlug, setCategorySlug] = useState(product?.categorySlug ?? categoryList[0]?.slug ?? "remeras");
   const [price, setPrice] = useState(product?.price ?? 0);
   const [compareAt, setCompareAt] = useState(product?.compareAtPrice ?? 0);
   const [stock, setStock] = useState(product?.stock ?? 0);
@@ -52,7 +53,7 @@ export default function ProductForm({
       setError("Completá al menos nombre y precio.");
       return;
     }
-    const cat = categories.find((c) => c.slug === categorySlug)!;
+    const cat = categoryList.find((c) => c.slug === categorySlug);
     const sizeList = sizes.split(",").map((s) => s.trim()).filter(Boolean);
     const images: Product["images"] = [
       img1 || "https://picsum.photos/seed/ixxo-new/900/1200?grayscale",
@@ -62,7 +63,7 @@ export default function ProductForm({
       id: product?.id ?? newProductId(),
       slug: product?.slug ?? slugify(name),
       name: name.trim(),
-      category: cat.name,
+      category: cat?.name ?? categorySlug,
       categorySlug,
       price,
       compareAtPrice: compareAt > 0 ? compareAt : undefined,
@@ -115,7 +116,7 @@ export default function ProductForm({
                 onChange={(e) => setCategorySlug(e.target.value)}
                 className={cn(input, "bg-paper")}
               >
-                {categories.map((c) => (
+                {categoryList.map((c) => (
                   <option key={c.slug} value={c.slug}>
                     {c.name}
                   </option>
