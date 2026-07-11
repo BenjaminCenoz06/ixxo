@@ -243,6 +243,79 @@ export default function AdminContenido() {
           </div>
         </Card>
 
+        {/* Footer: columnas de enlaces + medios de pago */}
+        <Card title="Footer — enlaces y medios de pago">
+          <div className="grid gap-5 md:grid-cols-3">
+            {content.footerColumns.map((col, ci) => (
+              <div key={ci} className="border border-line p-3">
+                <Input
+                  value={col.title}
+                  onChange={(v) => {
+                    const cols = [...content.footerColumns];
+                    cols[ci] = { ...cols[ci], title: v };
+                    patch("footerColumns", cols);
+                  }}
+                />
+                <div className="mt-3 space-y-2">
+                  {col.links.map((l, li) => (
+                    <div key={li} className="flex items-center gap-1.5">
+                      <input
+                        value={l.label}
+                        placeholder="Texto"
+                        onChange={(e) => {
+                          const cols = structuredClone(content.footerColumns);
+                          cols[ci].links[li].label = e.target.value;
+                          patch("footerColumns", cols);
+                        }}
+                        className={inputCls}
+                      />
+                      <input
+                        value={l.href}
+                        placeholder="/link"
+                        onChange={(e) => {
+                          const cols = structuredClone(content.footerColumns);
+                          cols[ci].links[li].href = e.target.value;
+                          patch("footerColumns", cols);
+                        }}
+                        className={`${inputCls} w-20 shrink-0`}
+                      />
+                      <button
+                        onClick={() => {
+                          const cols = structuredClone(content.footerColumns);
+                          cols[ci].links.splice(li, 1);
+                          patch("footerColumns", cols);
+                        }}
+                        className="shrink-0 p-1 text-stone hover:text-accent"
+                        aria-label="Eliminar enlace"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => {
+                      const cols = structuredClone(content.footerColumns);
+                      cols[ci].links.push({ label: "Nuevo", href: "#" });
+                      patch("footerColumns", cols);
+                    }}
+                    className="text-[12px] text-ash hover:text-ink"
+                  >
+                    + enlace
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-5">
+            <p className="mb-1.5 text-[12px] font-medium text-ink-soft">Medios de pago (uno por línea)</p>
+            <TextArea
+              rows={3}
+              value={content.payments.join("\n")}
+              onChange={(v) => patch("payments", v.split("\n").map((s) => s.trim()).filter(Boolean))}
+            />
+          </div>
+        </Card>
+
         {/* Títulos de secciones */}
         <Card title="Títulos de las secciones">
           <div className="space-y-4">

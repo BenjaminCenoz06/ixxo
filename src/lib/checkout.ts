@@ -14,8 +14,10 @@ const COUPONS: Record<string, Coupon> = {
   ENVIOGRATIS: { code: "ENVIOGRATIS", label: "Envío gratis", type: "fixed", value: 0 },
 };
 
-export function validateCoupon(code: string): Coupon | null {
-  return COUPONS[code.trim().toUpperCase()] ?? null;
+export function validateCoupon(code: string, coupons?: Coupon[]): Coupon | null {
+  const c = code.trim().toUpperCase();
+  if (coupons?.length) return coupons.find((x) => x.code.toUpperCase() === c) ?? null;
+  return COUPONS[c] ?? null;
 }
 
 export function listCoupons(): Coupon[] {

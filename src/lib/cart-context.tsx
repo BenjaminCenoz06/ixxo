@@ -96,7 +96,7 @@ interface CartContextValue {
   setQty: (lineId: string, qty: number) => void;
   clear: () => void;
   coupon: Coupon | null;
-  applyCoupon: (code: string) => boolean;
+  applyCoupon: (code: string, coupons?: Coupon[]) => boolean;
   removeCoupon: () => void;
 }
 
@@ -159,8 +159,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCoupon(null);
   }, []);
 
-  const applyCoupon = useCallback((code: string) => {
-    const found = validateCoupon(code);
+  const applyCoupon = useCallback((code: string, coupons?: Coupon[]) => {
+    const found = validateCoupon(code, coupons);
     setCoupon(found);
     return !!found;
   }, []);

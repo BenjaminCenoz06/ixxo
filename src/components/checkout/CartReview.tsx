@@ -5,17 +5,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { Plus, Minus, Trash2, Tag, X, ArrowRight } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
+import { useSiteContent } from "@/lib/site-content-context";
 import { formatPrice } from "@/lib/format";
 import { colorHex } from "@/data/colors";
 
 export default function CartReview({ onContinue }: { onContinue: () => void }) {
   const { items, setQty, removeItem, coupon, applyCoupon, removeCoupon } = useCart();
+  const { coupons } = useSiteContent();
   const [code, setCode] = useState("");
   const [error, setError] = useState(false);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const ok = applyCoupon(code);
+    const ok = applyCoupon(code, coupons);
     setError(!ok);
     if (ok) setCode("");
   };

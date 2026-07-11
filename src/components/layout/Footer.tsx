@@ -4,25 +4,8 @@ import Link from "next/link";
 import { InstagramIcon, TiktokIcon, YoutubeIcon } from "@/components/ui/SocialIcons";
 import { useSiteContent } from "@/lib/site-content-context";
 
-const columns = [
-  {
-    title: "Ayuda",
-    links: ["Contacto", "Cambios y devoluciones", "Envíos", "Guía de talles", "Preguntas frecuentes"],
-  },
-  {
-    title: "Compañía",
-    links: ["Sobre IXXO", "Sucursales", "Trabajá con nosotros", "Sustentabilidad", "Prensa"],
-  },
-  {
-    title: "Legales",
-    links: ["Términos y condiciones", "Política de privacidad", "Botón de arrepentimiento", "Defensa al consumidor"],
-  },
-];
-
-const payments = ["Visa", "Mastercard", "Amex", "Mercado Pago", "Transferencia"];
-
 export default function Footer() {
-  const { footer, general } = useSiteContent();
+  const { footer, general, footerColumns: columns, payments } = useSiteContent();
   const storeName = general.storeName || "IXXO";
   const socials = [
     { Icon: InstagramIcon, href: footer.instagram },
@@ -56,12 +39,12 @@ export default function Footer() {
               <p className="eyebrow mb-5">{col.title}</p>
               <ul className="space-y-3">
                 {col.links.map((l) => (
-                  <li key={l}>
+                  <li key={l.label}>
                     <Link
-                      href="#"
+                      href={l.href || "#"}
                       className="text-sm text-ink-soft transition-colors hover:text-ink"
                     >
-                      {l}
+                      {l.label}
                     </Link>
                   </li>
                 ))}

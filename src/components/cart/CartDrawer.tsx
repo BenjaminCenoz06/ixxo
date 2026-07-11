@@ -27,7 +27,7 @@ export default function CartDrawer() {
     removeCoupon,
   } = useCart();
 
-  const { general } = useSiteContent();
+  const { general, coupons } = useSiteContent();
   const threshold = general.freeShippingThreshold || FREE_SHIPPING_THRESHOLD;
   const [code, setCode] = useState("");
   const [error, setError] = useState(false);
@@ -37,7 +37,7 @@ export default function CartDrawer() {
 
   const submitCoupon = (e: React.FormEvent) => {
     e.preventDefault();
-    const ok = applyCoupon(code);
+    const ok = applyCoupon(code, coupons);
     setError(!ok);
     if (ok) setCode("");
   };

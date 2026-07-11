@@ -70,6 +70,9 @@ export interface SiteContent {
     freeShippingThreshold: number;
     transferDiscount: number;
   };
+  coupons: { code: string; label: string; type: "percent" | "fixed"; value: number }[];
+  footerColumns: { title: string; links: { label: string; href: string }[] }[];
+  payments: string[];
 }
 
 export const DEFAULT_CONTENT: SiteContent = {
@@ -164,6 +167,17 @@ export const DEFAULT_CONTENT: SiteContent = {
     freeShippingThreshold: 90000,
     transferDiscount: 15,
   },
+  coupons: [
+    { code: "IXXO10", label: "10% de descuento", type: "percent", value: 10 },
+    { code: "BIENVENIDO", label: "15% primera compra", type: "percent", value: 15 },
+    { code: "ENVIOGRATIS", label: "Envío gratis", type: "fixed", value: 0 },
+  ],
+  footerColumns: [
+    { title: "Ayuda", links: ["Contacto", "Cambios y devoluciones", "Envíos", "Guía de talles", "Preguntas frecuentes"].map((l) => ({ label: l, href: "#" })) },
+    { title: "Compañía", links: ["Sobre IXXO", "Sucursales", "Trabajá con nosotros", "Sustentabilidad", "Prensa"].map((l) => ({ label: l, href: "#" })) },
+    { title: "Legales", links: ["Términos y condiciones", "Política de privacidad", "Botón de arrepentimiento", "Defensa al consumidor"].map((l) => ({ label: l, href: "#" })) },
+  ],
+  payments: ["Visa", "Mastercard", "Amex", "Mercado Pago", "Transferencia"],
 };
 
 /** Combina el contenido guardado con los defaults (por si faltan campos). */
@@ -196,5 +210,8 @@ export function mergeContent(saved: Partial<SiteContent> | null | undefined): Si
     },
     theme: { ...DEFAULT_CONTENT.theme, ...saved.theme },
     general: { ...DEFAULT_CONTENT.general, ...saved.general },
+    coupons: saved.coupons?.length ? saved.coupons : DEFAULT_CONTENT.coupons,
+    footerColumns: saved.footerColumns?.length ? saved.footerColumns : DEFAULT_CONTENT.footerColumns,
+    payments: saved.payments?.length ? saved.payments : DEFAULT_CONTENT.payments,
   };
 }
