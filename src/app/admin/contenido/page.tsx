@@ -2,6 +2,7 @@
 
 import { Check, Loader2, Plus, Trash2, Megaphone, Image as ImageIcon, Type } from "lucide-react";
 import { useAdminContent } from "@/lib/admin-content";
+import type { SiteContent } from "@/lib/site-content";
 import { PageHeader, Card, Btn } from "@/components/admin/ui";
 import ImageUploader from "@/components/admin/ImageUploader";
 
@@ -211,6 +212,170 @@ export default function AdminContenido() {
           </div>
         </Card>
 
+        {/* Títulos de secciones */}
+        <Card title="Títulos de las secciones">
+          <div className="space-y-4">
+            <SectionHeadingFields
+              label="Categorías"
+              value={content.sections.categories}
+              cta
+              onChange={(v) => patch("sections", { ...content.sections, categories: v } as SiteContent["sections"])}
+            />
+            <SectionHeadingFields
+              label="Productos destacados"
+              value={content.sections.featured}
+              cta
+              onChange={(v) => patch("sections", { ...content.sections, featured: v } as SiteContent["sections"])}
+            />
+            <SectionHeadingFields
+              label="Colecciones"
+              value={content.sections.collections}
+              onChange={(v) => patch("sections", { ...content.sections, collections: { eyebrow: v.eyebrow, title: v.title } } as SiteContent["sections"])}
+            />
+            <SectionHeadingFields
+              label="Lookbook"
+              value={content.sections.lookbook}
+              cta
+              onChange={(v) => patch("sections", { ...content.sections, lookbook: v } as SiteContent["sections"])}
+            />
+            <SectionHeadingFields
+              label="Opiniones"
+              value={content.sections.reviews}
+              onChange={(v) => patch("sections", { ...content.sections, reviews: { eyebrow: v.eyebrow, title: v.title } } as SiteContent["sections"])}
+            />
+          </div>
+        </Card>
+
+        {/* Lookbook */}
+        <Card title="Lookbook (looks del home)">
+          <div className="space-y-3">
+            {content.lookbook.looks.map((look, i) => (
+              <div key={i} className="space-y-2 border border-line p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <ImageUploader
+                    folder="lookbook"
+                    value={look.image}
+                    onChange={(v) => {
+                      const looks = [...content.lookbook.looks];
+                      looks[i] = { ...looks[i], image: v };
+                      patch("lookbook", { looks });
+                    }}
+                  />
+                  <button
+                    onClick={() => patch("lookbook", { looks: content.lookbook.looks.filter((_, j) => j !== i) })}
+                    className="p-1.5 text-stone hover:text-accent"
+                    aria-label="Eliminar look"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </div>
+                <div className="grid grid-cols-[2fr_1fr] gap-2">
+                  <Input
+                    placeholder="Título del look"
+                    value={look.title}
+                    onChange={(v) => {
+                      const looks = [...content.lookbook.looks];
+                      looks[i] = { ...looks[i], title: v };
+                      patch("lookbook", { looks });
+                    }}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Prendas"
+                    value={look.items}
+                    onChange={(e) => {
+                      const looks = [...content.lookbook.looks];
+                      looks[i] = { ...looks[i], items: +e.target.value };
+                      patch("lookbook", { looks });
+                    }}
+                    className={inputCls}
+                  />
+                </div>
+              </div>
+            ))}
+            <Btn variant="outline" onClick={() => patch("lookbook", { looks: [...content.lookbook.looks, { image: "", title: "", items: 0 }] })}>
+              <Plus size={14} /> Agregar look
+            </Btn>
+          </div>
+        </Card>
+
+        {/* Instagram */}
+        <Card title="Instagram">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Field label="Eyebrow">
+              <Input value={content.instagram.eyebrow} onChange={(v) => patch("instagram", { ...content.instagram, eyebrow: v })} />
+            </Field>
+            <Field label="Usuario (@)">
+              <Input value={content.instagram.handle} onChange={(v) => patch("instagram", { ...content.instagram, handle: v })} />
+            </Field>
+            <Field label="Link del perfil">
+              <Input value={content.instagram.url} onChange={(v) => patch("instagram", { ...content.instagram, url: v })} />
+            </Field>
+          </div>
+          <p className="mb-2 mt-5 text-[12px] font-medium text-ink-soft">Fotos del feed</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {content.instagram.images.map((img, i) => (
+              <div key={i} className="flex items-start gap-2 border border-line p-2">
+                <ImageUploader
+                  folder="instagram"
+                  value={img}
+                  onChange={(v) => {
+                    const images = [...content.instagram.images];
+                    images[i] = v;
+                    patch("instagram", { ...content.instagram, images });
+                  }}
+                />
+                <button
+                  onClick={() => patch("instagram", { ...content.instagram, images: content.instagram.images.filter((_, j) => j !== i) })}
+                  className="p-1.5 text-stone hover:text-accent"
+                  aria-label="Eliminar foto"
+                >
+                  <Trash2 size={15} />
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3">
+            <Btn variant="outline" onClick={() => patch("instagram", { ...content.instagram, images: [...content.instagram.images, ""] })}>
+              <Plus size={14} /> Agregar foto
+            </Btn>
+          </div>
+        </Card>
+
+        {/* Opiniones */}
+        <Card title="Opiniones (reseñas del home)">
+          <div className="grid max-w-xs gap-4 sm:grid-cols-2">
+            <Field label="Promedio (0-5)">
+              <input type="number" step="0.1" max={5} min={0} value={content.reviews.average} onChange={(e) => patch("reviews", { ...content.reviews, average: +e.target.value })} className={inputCls} />
+            </Field>
+            <Field label="Cantidad total">
+              <input type="number" value={content.reviews.count} onChange={(e) => patch("reviews", { ...content.reviews, count: +e.target.value })} className={inputCls} />
+            </Field>
+          </div>
+          <div className="mt-5 space-y-3">
+            {content.reviews.items.map((r, i) => (
+              <div key={i} className="space-y-2 border border-line p-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] font-medium text-ash">Reseña {i + 1}</span>
+                  <button onClick={() => patch("reviews", { ...content.reviews, items: content.reviews.items.filter((_, j) => j !== i) })} className="p-1 text-stone hover:text-accent" aria-label="Eliminar">
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+                <div className="grid grid-cols-[2fr_2fr_1fr] gap-2">
+                  <Input placeholder="Nombre" value={r.author} onChange={(v) => { const items = [...content.reviews.items]; items[i] = { ...items[i], author: v }; patch("reviews", { ...content.reviews, items }); }} />
+                  <Input placeholder="Producto" value={r.product} onChange={(v) => { const items = [...content.reviews.items]; items[i] = { ...items[i], product: v }; patch("reviews", { ...content.reviews, items }); }} />
+                  <input type="number" step="1" max={5} min={1} placeholder="★" value={r.rating} onChange={(e) => { const items = [...content.reviews.items]; items[i] = { ...items[i], rating: +e.target.value }; patch("reviews", { ...content.reviews, items }); }} className={inputCls} />
+                </div>
+                <Input placeholder="Título" value={r.title} onChange={(v) => { const items = [...content.reviews.items]; items[i] = { ...items[i], title: v }; patch("reviews", { ...content.reviews, items }); }} />
+                <TextArea rows={2} value={r.body} onChange={(v) => { const items = [...content.reviews.items]; items[i] = { ...items[i], body: v }; patch("reviews", { ...content.reviews, items }); }} />
+              </div>
+            ))}
+            <Btn variant="outline" onClick={() => patch("reviews", { ...content.reviews, items: [...content.reviews.items, { author: "", rating: 5, title: "", body: "", product: "", avatar: "" }] })}>
+              <Plus size={14} /> Agregar reseña
+            </Btn>
+          </div>
+        </Card>
+
         <div className="flex justify-end pb-8">
           <Btn onClick={save}>
             {saving ? "Guardando…" : saved ? "Guardado ✓" : "Guardar todos los cambios"}
@@ -279,6 +444,42 @@ function Field({
       </span>
       {children}
     </label>
+  );
+}
+
+function SectionHeadingFields({
+  label,
+  value,
+  cta,
+  onChange,
+}: {
+  label: string;
+  value: { eyebrow: string; title: string; ctaLabel?: string; ctaHref?: string };
+  cta?: boolean;
+  onChange: (v: { eyebrow: string; title: string; ctaLabel?: string; ctaHref?: string }) => void;
+}) {
+  return (
+    <div className="border border-line p-4">
+      <p className="mb-3 text-[12px] font-semibold uppercase tracking-wide text-ash">{label}</p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Field label="Eyebrow">
+          <Input value={value.eyebrow} onChange={(v) => onChange({ ...value, eyebrow: v })} />
+        </Field>
+        <Field label="Título">
+          <Input value={value.title} onChange={(v) => onChange({ ...value, title: v })} />
+        </Field>
+        {cta && (
+          <>
+            <Field label="Botón — texto">
+              <Input value={value.ctaLabel ?? ""} onChange={(v) => onChange({ ...value, ctaLabel: v })} />
+            </Field>
+            <Field label="Botón — link">
+              <Input value={value.ctaHref ?? ""} onChange={(v) => onChange({ ...value, ctaHref: v })} />
+            </Field>
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 

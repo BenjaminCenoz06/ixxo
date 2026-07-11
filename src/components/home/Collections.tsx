@@ -5,15 +5,19 @@ import { Reveal } from "@/components/ui/Reveal";
 import { getCollections } from "@/lib/repository/catalog-meta";
 import { cn } from "@/lib/utils";
 
-export default async function Collections() {
+export default async function Collections({
+  heading,
+}: {
+  heading: { eyebrow: string; title: string };
+}) {
   const collections = await getCollections();
   return (
     <section className="bg-smoke py-20 md:py-28">
       <div className="container-ixxo">
         <Reveal className="mb-14 max-w-xl">
-          <p className="eyebrow mb-3">Colecciones</p>
+          <p className="eyebrow mb-3">{heading.eyebrow}</p>
           <h2 className="font-display text-3xl font-light leading-[1.05] tracking-tight md:text-[2.75rem]">
-            Cada colección, un universo propio
+            {heading.title}
           </h2>
         </Reveal>
 

@@ -1,4 +1,5 @@
-import { editorialWide } from "@/data/images";
+import { editorial, editorialWide } from "@/data/images";
+import { reviews as defaultReviews, reviewStats } from "@/data/reviews";
 
 /** Contenido editable del sitio (CMS). Todo esto se puede cambiar desde /admin/contenido. */
 export interface SiteContent {
@@ -36,6 +37,27 @@ export interface SiteContent {
     instagram: string;
     tiktok: string;
     youtube: string;
+  };
+  sections: {
+    categories: { eyebrow: string; title: string; ctaLabel: string; ctaHref: string };
+    featured: { eyebrow: string; title: string; ctaLabel: string; ctaHref: string };
+    collections: { eyebrow: string; title: string };
+    lookbook: { eyebrow: string; title: string; ctaLabel: string; ctaHref: string };
+    reviews: { eyebrow: string; title: string };
+  };
+  lookbook: {
+    looks: { image: string; title: string; items: number }[];
+  };
+  instagram: {
+    eyebrow: string;
+    handle: string;
+    url: string;
+    images: string[];
+  };
+  reviews: {
+    average: number;
+    count: number;
+    items: { author: string; rating: number; title: string; body: string; product: string; avatar: string }[];
   };
 }
 
@@ -88,6 +110,38 @@ export const DEFAULT_CONTENT: SiteContent = {
     tiktok: "https://tiktok.com",
     youtube: "https://youtube.com",
   },
+  sections: {
+    categories: { eyebrow: "Explorá", title: "Comprar por categoría", ctaLabel: "Ver todas", ctaHref: "/categorias" },
+    featured: { eyebrow: "Selección", title: "Productos destacados", ctaLabel: "Ver todo", ctaHref: "/novedades" },
+    collections: { eyebrow: "Colecciones", title: "Cada colección, un universo propio" },
+    lookbook: { eyebrow: "Lookbook", title: "Comprá el look completo", ctaLabel: "Ver lookbook", ctaHref: "/lookbook" },
+    reviews: { eyebrow: "Opiniones", title: "Lo que dicen nuestros clientes" },
+  },
+  lookbook: {
+    looks: [
+      { image: editorial("look-1", 1200, 1500), title: "Look 01 · Urban Tailoring", items: 4 },
+      { image: editorial("look-2", 1200, 1500), title: "Look 02 · Off Duty", items: 3 },
+      { image: editorial("look-3", 1200, 1500), title: "Look 03 · Layered", items: 5 },
+    ],
+  },
+  instagram: {
+    eyebrow: "Comunidad",
+    handle: "@tiendasixxo_oficial",
+    url: "https://www.instagram.com/tiendasixxo_oficial/",
+    images: Array.from({ length: 6 }).map((_, i) => editorial(`instagram-${i}`, 600, 600)),
+  },
+  reviews: {
+    average: reviewStats.average,
+    count: reviewStats.count,
+    items: defaultReviews.map((r) => ({
+      author: r.author,
+      rating: r.rating,
+      title: r.title,
+      body: r.body,
+      product: r.product,
+      avatar: r.avatar,
+    })),
+  },
 };
 
 /** Combina el contenido guardado con los defaults (por si faltan campos). */
@@ -100,5 +154,23 @@ export function mergeContent(saved: Partial<SiteContent> | null | undefined): Si
     editorial: { ...DEFAULT_CONTENT.editorial, ...saved.editorial },
     newsletter: { ...DEFAULT_CONTENT.newsletter, ...saved.newsletter },
     footer: { ...DEFAULT_CONTENT.footer, ...saved.footer },
+    sections: {
+      categories: { ...DEFAULT_CONTENT.sections.categories, ...saved.sections?.categories },
+      featured: { ...DEFAULT_CONTENT.sections.featured, ...saved.sections?.featured },
+      collections: { ...DEFAULT_CONTENT.sections.collections, ...saved.sections?.collections },
+      lookbook: { ...DEFAULT_CONTENT.sections.lookbook, ...saved.sections?.lookbook },
+      reviews: { ...DEFAULT_CONTENT.sections.reviews, ...saved.sections?.reviews },
+    },
+    lookbook: { looks: saved.lookbook?.looks?.length ? saved.lookbook.looks : DEFAULT_CONTENT.lookbook.looks },
+    instagram: {
+      ...DEFAULT_CONTENT.instagram,
+      ...saved.instagram,
+      images: saved.instagram?.images?.length ? saved.instagram.images : DEFAULT_CONTENT.instagram.images,
+    },
+    reviews: {
+      average: saved.reviews?.average ?? DEFAULT_CONTENT.reviews.average,
+      count: saved.reviews?.count ?? DEFAULT_CONTENT.reviews.count,
+      items: saved.reviews?.items?.length ? saved.reviews.items : DEFAULT_CONTENT.reviews.items,
+    },
   };
 }

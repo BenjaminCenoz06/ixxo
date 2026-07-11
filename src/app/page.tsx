@@ -8,18 +8,20 @@ import Lookbook from "@/components/home/Lookbook";
 import InstagramFeed from "@/components/home/InstagramFeed";
 import Reviews from "@/components/home/Reviews";
 import Newsletter from "@/components/home/Newsletter";
+import { getSiteContent } from "@/lib/repository/content";
 
 // Render dinámico para reflejar al instante los cambios del admin en la base.
 export const dynamic = "force-dynamic";
 
-export default function Home() {
+export default async function Home() {
+  const { sections } = await getSiteContent();
   return (
     <>
       <Hero />
       <NewCollection />
-      <Categories />
-      <FeaturedProducts />
-      <Collections />
+      <Categories heading={sections.categories} />
+      <FeaturedProducts heading={sections.featured} />
+      <Collections heading={sections.collections} />
       <Editorial />
       <Lookbook />
       <InstagramFeed />

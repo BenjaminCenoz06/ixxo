@@ -3,15 +3,19 @@ import Link from "next/link";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getFeaturedCategories } from "@/lib/repository/catalog-meta";
 
-export default async function Categories() {
+export default async function Categories({
+  heading,
+}: {
+  heading: { eyebrow: string; title: string; ctaLabel: string; ctaHref: string };
+}) {
   const featuredCategories = await getFeaturedCategories();
   return (
     <section className="container-ixxo py-20 md:py-28">
       <SectionHeading
-        eyebrow="Explorá"
-        title="Comprar por categoría"
-        cta="Ver todas"
-        ctaHref="/categorias"
+        eyebrow={heading.eyebrow}
+        title={heading.title}
+        cta={heading.ctaLabel}
+        ctaHref={heading.ctaHref}
       />
       <div className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
         {featuredCategories.map((cat, i) => (
