@@ -6,7 +6,7 @@ import { PageHeader, Card, Btn } from "@/components/admin/ui";
 import ImageUploader from "@/components/admin/ImageUploader";
 
 export default function AdminContenido() {
-  const { content, patch, loading, saving, saved, save } = useAdminContent();
+  const { content, patch, loading, saving, saved, error, save } = useAdminContent();
 
   if (loading) {
     return (
@@ -39,6 +39,12 @@ export default function AdminContenido() {
           </Btn>
         }
       />
+
+      {error && (
+        <div className="mb-6 border border-accent bg-accent/5 px-4 py-3 text-[13px] text-accent">
+          {error}
+        </div>
+      )}
 
       <div className="space-y-6">
         {/* Barra de anuncios */}

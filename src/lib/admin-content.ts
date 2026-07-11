@@ -1,37 +1,36 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSupabaseBrowser } from "./supabase/client";
-import type { Json } from "./supabase/types";
+import { SUPABASE_URL, isSupabaseConfigured } from "./supabase/config";
 import { DEFAULT_CONTENT, mergeContent, type SiteContent } from "./site-content";
+
+const CONTENT_URL = `${SUPABASE_URL}/storage/v1/object/public/media/config/home.json`;
 
 /**
  * Estado editable del contenido del sitio para el admin.
- * Lee/escribe la fila única `site_content` (id='home').
+ * Persiste como JSON en Supabase Storage (bucket `media`, config/home.json).
  */
 export function useAdminContent() {
   const [content, setContent] = useState<SiteContent>(DEFAULT_CONTENT);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const sb = getSupabaseBrowser();
-    if (!sb) {
+    if (!isSupabaseConfigured) {
       setLoading(false);
       return;
     }
-    sb.from("site_content")
-      .select("content")
-      .eq("id", "home")
-      .maybeSingle()
-      .then(({ data }) => {
-        if (data?.content) setContent(mergeContent(data.content as Partial<SiteContent>));
-        setLoading(false);
-      });
+    fetch(`${CONTENT_URL}?t=${Date.now()}`, { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data) setContent(mergeContent(data as Partial<SiteContent>));
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
-  /** Actualiza una sección del contenido (merge superficial por clave). */
   function patch<K extends keyof SiteContent>(key: K, value: SiteContent[K]) {
     setContent((prev) => ({ ...prev, [key]: value }));
     setSaved(false);
@@ -39,18 +38,25 @@ export function useAdminContent() {
 
   async function save() {
     setSaving(true);
-    const sb = getSupabaseBrowser();
-    if (sb) {
-      await sb.from("site_content").upsert({
-        id: "home",
-        content: content as unknown as Json,
-        updated_at: new Date().toISOString(),
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(content),
       });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "No se pudo guardar");
+      }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Error al guardar");
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
   }
 
-  return { content, setContent, patch, loading, saving, saved, save };
+  return { content, setContent, patch, loading, saving, saved, error, save };
 }
