@@ -446,6 +446,70 @@ export default function AdminContenido() {
           </div>
         </Card>
 
+        {/* Colecciones del home */}
+        <Card title='Colecciones del home ("Cada colección, un universo propio")'>
+          <p className="mb-3 text-[12px] text-ash">
+            Cada tarjeta es una imagen grande con título, subtítulo y link. Se muestran una debajo de otra.
+          </p>
+          <div className="space-y-3">
+            {content.homeCollections.map((col, i) => (
+              <div key={i} className="space-y-2 border border-line p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <ImageUploader
+                    folder="colecciones"
+                    value={col.image}
+                    onChange={(v) => {
+                      const list = [...content.homeCollections];
+                      list[i] = { ...list[i], image: v };
+                      patch("homeCollections", list);
+                    }}
+                  />
+                  <button
+                    onClick={() => patch("homeCollections", content.homeCollections.filter((_, j) => j !== i))}
+                    className="p-1.5 text-stone hover:text-accent"
+                    aria-label="Eliminar colección"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </div>
+                <Input
+                  placeholder="Título (ej. Urbano)"
+                  value={col.title}
+                  onChange={(v) => {
+                    const list = [...content.homeCollections];
+                    list[i] = { ...list[i], title: v };
+                    patch("homeCollections", list);
+                  }}
+                />
+                <Input
+                  placeholder="Subtítulo"
+                  value={col.subtitle}
+                  onChange={(v) => {
+                    const list = [...content.homeCollections];
+                    list[i] = { ...list[i], subtitle: v };
+                    patch("homeCollections", list);
+                  }}
+                />
+                <Input
+                  placeholder="Link (ej. /novedades o /coleccion/urbano)"
+                  value={col.href}
+                  onChange={(v) => {
+                    const list = [...content.homeCollections];
+                    list[i] = { ...list[i], href: v };
+                    patch("homeCollections", list);
+                  }}
+                />
+              </div>
+            ))}
+            <Btn
+              variant="outline"
+              onClick={() => patch("homeCollections", [...content.homeCollections, { image: "", title: "", subtitle: "", href: "/novedades" }])}
+            >
+              <Plus size={14} /> Agregar colección
+            </Btn>
+          </div>
+        </Card>
+
         {/* Instagram */}
         <Card title="Instagram">
           <div className="grid gap-4 sm:grid-cols-3">

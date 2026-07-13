@@ -21,7 +21,9 @@ const offset: Record<Direction, { x?: number; y?: number }> = {
  * se conserva la animación (fade + movimiento) sin generar scroll horizontal.
  */
 function useResponsiveDirection(direction: Direction): Direction {
-  const [isWide, setIsWide] = useState(true);
+  // Mobile-first: arranca en false para que el render inicial (y el móvil)
+  // nunca use desplazamiento horizontal; en escritorio se activa al montar.
+  const [isWide, setIsWide] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)");
     const update = () => setIsWide(mq.matches);

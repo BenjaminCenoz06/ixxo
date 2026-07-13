@@ -56,6 +56,7 @@ export interface SiteContent {
   lookbook: {
     looks: { image: string; title: string; items: number }[];
   };
+  homeCollections: { image: string; title: string; subtitle: string; href: string }[];
   instagram: {
     eyebrow: string;
     handle: string;
@@ -147,6 +148,11 @@ export const DEFAULT_CONTENT: SiteContent = {
       { image: editorial("look-3", 1200, 1500), title: "Look 03 · Layered", items: 5 },
     ],
   },
+  homeCollections: [
+    { image: editorialWide("col-1"), title: "Urbano", subtitle: "Prendas de todos los días con impronta de calle.", href: "/novedades" },
+    { image: editorialWide("col-2"), title: "Oversize", subtitle: "Siluetas amplias y cómodas para tu estilo.", href: "/novedades" },
+    { image: editorialWide("col-3"), title: "Accesorios", subtitle: "El detalle que completa el look.", href: "/novedades" },
+  ],
   instagram: {
     eyebrow: "Comunidad",
     handle: "@customwear.cba",
@@ -217,6 +223,7 @@ export function mergeContent(saved: Partial<SiteContent> | null | undefined): Si
       reviews: { ...DEFAULT_CONTENT.sections.reviews, ...saved.sections?.reviews },
     },
     lookbook: { looks: saved.lookbook?.looks?.length ? saved.lookbook.looks : DEFAULT_CONTENT.lookbook.looks },
+    homeCollections: saved.homeCollections?.length ? saved.homeCollections : DEFAULT_CONTENT.homeCollections,
     instagram: {
       ...DEFAULT_CONTENT.instagram,
       ...saved.instagram,

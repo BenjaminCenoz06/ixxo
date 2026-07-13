@@ -1,16 +1,15 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
-import { getCollections } from "@/lib/repository/catalog-meta";
+import { useSiteContent } from "@/lib/site-content-context";
 import { cn } from "@/lib/utils";
 
-export default async function Collections({
-  heading,
-}: {
-  heading: { eyebrow: string; title: string };
-}) {
-  const collections = await getCollections();
+export default function Collections() {
+  const { sections, homeCollections } = useSiteContent();
+  const heading = sections.collections;
   return (
     <section className="bg-smoke py-20 md:py-28">
       <div className="container-ixxo">
@@ -22,10 +21,10 @@ export default async function Collections({
         </Reveal>
 
         <div className="flex flex-col gap-4 md:gap-6">
-          {collections.map((col) => (
-            <Reveal key={col.slug} blur={false}>
+          {homeCollections.map((col, i) => (
+            <Reveal key={i} blur={false}>
               <Link
-                href={`/coleccion/${col.slug}`}
+                href={col.href || "#"}
                 className="group relative flex aspect-[16/10] items-end overflow-hidden bg-ink md:aspect-[21/9]"
               >
                 {col.image && (
@@ -35,19 +34,20 @@ export default async function Collections({
                     fill
                     sizes="100vw"
                     className="object-cover opacity-90 transition-transform duration-[1000ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+                    unoptimized
                   />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/10 to-transparent" />
                 <div
                   className={cn(
                     "relative w-full p-7 text-paper md:p-12",
-                    col.align === "right" && "text-right",
+                    i % 2 === 1 && "text-right",
                   )}
                 >
                   <div
                     className={cn(
                       "flex flex-col gap-3",
-                      col.align === "right" && "items-end",
+                      i % 2 === 1 && "items-end",
                     )}
                   >
                     <h3 className="font-display text-3xl font-light tracking-tight md:text-5xl">

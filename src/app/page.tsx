@@ -21,7 +21,7 @@ export default async function Home() {
       <NewCollection />
       <Categories heading={sections.categories} />
       <FeaturedProducts heading={sections.featured} />
-      <Collections heading={sections.collections} />
+      <Collections />
       <Editorial />
       <Lookbook />
       <InstagramFeed />
