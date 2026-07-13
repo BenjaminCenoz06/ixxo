@@ -123,15 +123,48 @@ export default function AdminContenido() {
               {hero.slides.map((slide, i) => (
                 <div key={i} className="space-y-2 border border-line p-3">
                   <div className="flex items-start justify-between gap-3">
-                    <ImageUploader
-                      folder="hero"
-                      value={slide.image}
-                      onChange={(v) => {
-                        const slides = [...hero.slides];
-                        slides[i] = { ...slides[i], image: v };
-                        patch("hero", { ...hero, slides });
-                      }}
-                    />
+                    <div className="grid flex-1 gap-3 sm:grid-cols-2">
+                      <div className="space-y-1.5">
+                        <p className="text-[11px] uppercase tracking-wide text-ash">Imagen escritorio</p>
+                        <ImageUploader
+                          folder="hero"
+                          value={slide.image}
+                          onChange={(v) => {
+                            const slides = [...hero.slides];
+                            slides[i] = { ...slides[i], image: v };
+                            patch("hero", { ...hero, slides });
+                          }}
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <p className="text-[11px] uppercase tracking-wide text-ash">
+                          Imagen móvil <span className="normal-case text-stone">(opcional)</span>
+                        </p>
+                        <ImageUploader
+                          folder="hero"
+                          value={slide.imageMobile ?? ""}
+                          onChange={(v) => {
+                            const slides = [...hero.slides];
+                            slides[i] = { ...slides[i], imageMobile: v };
+                            patch("hero", { ...hero, slides });
+                          }}
+                        />
+                        {slide.imageMobile ? (
+                          <button
+                            onClick={() => {
+                              const slides = [...hero.slides];
+                              slides[i] = { ...slides[i], imageMobile: "" };
+                              patch("hero", { ...hero, slides });
+                            }}
+                            className="text-[11px] text-accent hover:underline"
+                          >
+                            Quitar imagen móvil
+                          </button>
+                        ) : (
+                          <p className="text-[11px] text-stone">Si la dejás vacía, en móvil se usa la de escritorio.</p>
+                        )}
+                      </div>
+                    </div>
                     <button
                       onClick={() => patch("hero", { ...hero, slides: hero.slides.filter((_, j) => j !== i) })}
                       className="p-1.5 text-stone hover:text-accent"

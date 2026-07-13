@@ -19,7 +19,7 @@ export interface SiteContent {
     ctaPrimaryHref: string;
     ctaSecondaryLabel: string;
     ctaSecondaryHref: string;
-    slides: { image: string; eyebrow: string }[];
+    slides: { image: string; imageMobile?: string; eyebrow: string }[];
   };
   newCollection: {
     eyebrow: string;

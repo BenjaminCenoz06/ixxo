@@ -41,14 +41,37 @@ export default function Hero() {
             className="absolute inset-0"
           >
             <div className="absolute inset-0 animate-kenburns">
-              <Image
-                src={slides[index].image}
-                alt=""
-                fill
-                priority={index === 0}
-                sizes="100vw"
-                className="object-cover"
-              />
+              {slides[index].imageMobile ? (
+                <>
+                  {/* Móvil: imagen con encuadre vertical */}
+                  <Image
+                    src={slides[index].imageMobile as string}
+                    alt=""
+                    fill
+                    priority={index === 0}
+                    sizes="100vw"
+                    className="object-cover md:hidden"
+                  />
+                  {/* Tablet / escritorio */}
+                  <Image
+                    src={slides[index].image}
+                    alt=""
+                    fill
+                    priority={index === 0}
+                    sizes="100vw"
+                    className="hidden object-cover md:block"
+                  />
+                </>
+              ) : (
+                <Image
+                  src={slides[index].image}
+                  alt=""
+                  fill
+                  priority={index === 0}
+                  sizes="100vw"
+                  className="object-cover"
+                />
+              )}
             </div>
           </motion.div>
         </AnimatePresence>
