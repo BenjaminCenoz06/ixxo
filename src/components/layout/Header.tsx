@@ -80,10 +80,11 @@ export default function Header() {
         {/* Centro: logo */}
         <Link
           href="/"
-          className="select-none px-2 font-display text-xl font-medium tracking-[0.32em] md:text-2xl"
+          aria-label={storeName}
+          className="flex select-none justify-center px-2 font-display text-xl font-medium tracking-[0.32em] md:text-2xl"
           onMouseEnter={() => setActive(null)}
         >
-          {storeName}
+          <BrandTypewriter text={storeName} animate={!scrolled} />
         </Link>
 
         {/* Derecha: cuenta / favoritos / carrito */}
@@ -136,6 +137,85 @@ export default function Header() {
       {/* Búsqueda */}
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
+  );
+}
+
+/** Palabras temáticas que se escriben/borran en el logo (además de la marca). */
+const BRAND_WORDS = ["URBANO.", "STREETWEAR.", "ACTITUD.", "ESTILO."];
+
+/**
+ * Marca del header con efecto máquina de escribir: escribe y borra palabras
+ * relacionadas y vuelve a "CUSTOM WEAR." (que se muestra más tiempo).
+ * Solo anima mientras `animate` es true (arriba de todo); al hacer scroll se
+ * detiene y queda fija la marca. No afecta el layout: el centro del grid es
+ * `auto` y los laterales quedan anclados a los bordes.
+ */
+function BrandTypewriter({ text, animate }: { text: string; animate: boolean }) {
+  const [display, setDisplay] = useState(text);
+
+  useEffect(() => {
+    if (!animate) {
+      setDisplay(text);
+      return;
+    }
+    const words = [text, ...BRAND_WORDS];
+    let timer: ReturnType<typeof setTimeout>;
+    let wi = 0; // índice de palabra
+    let ci = text.length; // índice de carácter (arranca con la marca completa)
+    let phase: "hold" | "delete" | "pause" | "type" = "hold";
+    setDisplay(text);
+
+    const run = () => {
+      const word = words[wi];
+      if (phase === "hold") {
+        phase = "delete";
+        timer = setTimeout(run, wi === 0 ? 2600 : 950); // marca dura más
+        return;
+      }
+      if (phase === "delete") {
+        ci -= 1;
+        setDisplay(word.slice(0, Math.max(0, ci)));
+        if (ci <= 0) {
+          phase = "pause";
+          wi = (wi + 1) % words.length;
+          timer = setTimeout(run, 260);
+        } else {
+          timer = setTimeout(run, 45);
+        }
+        return;
+      }
+      if (phase === "pause") {
+        phase = "type";
+        ci = 0;
+        timer = setTimeout(run, 60);
+        return;
+      }
+      // type
+      ci += 1;
+      setDisplay(words[wi].slice(0, ci));
+      if (ci >= words[wi].length) {
+        phase = "hold";
+        timer = setTimeout(run, 30);
+      } else {
+        timer = setTimeout(run, 80);
+      }
+    };
+
+    timer = setTimeout(run, 2600); // primera espera mostrando la marca
+    return () => clearTimeout(timer);
+  }, [animate, text]);
+
+  return (
+    <span aria-hidden className="inline-flex items-center whitespace-nowrap">
+      {display}
+      {animate && (
+        <motion.span
+          className="ml-[0.06em] inline-block h-[0.8em] w-[2px] bg-accent"
+          animate={{ opacity: [1, 1, 0, 0] }}
+          transition={{ duration: 0.9, repeat: Infinity, ease: "linear", times: [0, 0.5, 0.5, 1] }}
+        />
+      )}
+    </span>
   );
 }
 
