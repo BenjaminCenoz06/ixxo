@@ -1,40 +1,79 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useSiteContent } from "@/lib/site-content-context";
 
-/** Loader de intro minimalista: wordmark + barra de progreso, se desvanece al montar. */
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+/**
+ * Intro de carga: escribe el nombre de la marca letra por letra y deja el
+ * punto final parpadeando como un cursor ("por escribir más") antes de entrar
+ * a la página. Usa el nombre real del CMS (general.storeName).
+ */
 export default function Loader() {
+  const { general } = useSiteContent();
   const [done, setDone] = useState(false);
 
+  // Separa el nombre del punto final: "CUSTOM WEAR." -> base "CUSTOM WEAR" + "."
+  const { base, dot } = useMemo(() => {
+    const name = (general.storeName || "IXXO").trim();
+    return name.endsWith(".")
+      ? { base: name.slice(0, -1).trimEnd(), dot: "." }
+      : { base: name, dot: "." };
+  }, [general.storeName]);
+
+  const letters = useMemo(() => [...base], [base]);
+
+  // Tiempos: escritura de las letras + parpadeo del cursor
+  const writeDelay = 0.25;
+  const perLetter = 0.055;
+  const dotStart = writeDelay + letters.length * perLetter + 0.15;
+
   useEffect(() => {
-    const t = setTimeout(() => setDone(true), 1400);
+    const totalMs = (dotStart + 1.15) * 1000;
+    const t = setTimeout(() => setDone(true), totalMs);
     return () => clearTimeout(t);
-  }, []);
+  }, [dotStart]);
 
   return (
     <AnimatePresence>
       {!done && (
         <motion.div
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-paper"
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-paper px-6"
+          exit={{ opacity: 0, filter: "blur(6px)" }}
+          transition={{ duration: 0.7, ease: EASE }}
         >
-          <motion.span
-            initial={{ opacity: 0, letterSpacing: "0.6em" }}
-            animate={{ opacity: 1, letterSpacing: "0.35em" }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display text-2xl font-medium tracking-[0.35em] text-ink"
-          >
-            IXXO
-          </motion.span>
-          <div className="mt-6 h-px w-40 overflow-hidden bg-mist">
-            <motion.div
-              className="h-full bg-ink"
-              initial={{ x: "-100%" }}
-              animate={{ x: "0%" }}
-              transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
-            />
+          <div className="flex items-baseline font-display text-[clamp(1.5rem,6vw,2.75rem)] font-medium tracking-[0.3em] text-ink">
+            <span className="flex" aria-label={base}>
+              {letters.map((ch, i) => (
+                <motion.span
+                  key={i}
+                  aria-hidden
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: writeDelay + i * perLetter, duration: 0.35, ease: EASE }}
+                  className={ch === " " ? "inline-block w-[0.35em]" : ""}
+                >
+                  {ch === " " ? " " : ch}
+                </motion.span>
+              ))}
+            </span>
+            {/* El punto hace de cursor: parpadea como si fuera a seguir escribiendo */}
+            <motion.span
+              aria-hidden
+              className="text-accent"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 1, 0, 1, 0, 1] }}
+              transition={{
+                delay: dotStart,
+                duration: 1.1,
+                ease: "linear",
+                times: [0, 0.16, 0.36, 0.56, 0.76, 1],
+              }}
+            >
+              {dot}
+            </motion.span>
           </div>
         </motion.div>
       )}
