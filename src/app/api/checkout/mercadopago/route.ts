@@ -47,7 +47,7 @@ export async function POST(request: Request) {
         items,
         payer: { email: body.email, name: body.name },
         external_reference: body.orderNumber,
-        statement_descriptor: "IXXO",
+        statement_descriptor: "CUSTOMWEAR",
         back_urls: {
           success: `${SITE_URL}/checkout/resultado?status=approved&order=${body.orderNumber}`,
           pending: `${SITE_URL}/checkout/resultado?status=pending&order=${body.orderNumber}`,

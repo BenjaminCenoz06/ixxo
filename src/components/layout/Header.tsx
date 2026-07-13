@@ -23,7 +23,7 @@ export default function Header() {
   const { count: favCount } = useFavorites();
   const { general, nav } = useSiteContent();
   const navItems = nav as NavItem[];
-  const storeName = general.storeName || "IXXO";
+  const storeName = general.storeName || "CUSTOM WEAR.";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -269,7 +269,7 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="flex items-center justify-between border-b border-line px-6 py-5">
-              <span className="font-display text-lg tracking-[0.3em]">{general.storeName || "IXXO"}</span>
+              <span className="font-display text-lg tracking-[0.3em]">{general.storeName || "CUSTOM WEAR."}</span>
               <button aria-label="Cerrar" onClick={onClose}>
                 <X size={22} strokeWidth={1.5} />
               </button>

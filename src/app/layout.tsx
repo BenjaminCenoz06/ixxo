@@ -27,15 +27,15 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "IXXO — Ropa masculina de diseño",
-    template: "%s · IXXO",
+    default: "Custom Wear — Indumentaria urbana en Córdoba",
+    template: "%s · Custom Wear",
   },
   description:
-    "IXXO. Ropa masculina de diseño: prendas atemporales, materiales nobles y una experiencia de compra pensada al detalle. Envíos a todo el país.",
-  keywords: ["ropa masculina", "moda hombre", "indumentaria premium", "IXXO"],
+    "Custom Wear. Indumentaria urbana en Córdoba, Argentina: streetwear con actitud, precios mayoristas y minoristas, y envíos a todo el país.",
+  keywords: ["indumentaria urbana", "streetwear", "ropa Córdoba", "mayorista indumentaria", "Custom Wear"],
   openGraph: {
-    title: "IXXO — Ropa masculina de diseño",
-    description: "Prendas atemporales, materiales nobles, experiencia premium.",
+    title: "Custom Wear — Indumentaria urbana en Córdoba",
+    description: "Streetwear con actitud. Mayorista y minorista, envíos a todo el país.",
     type: "website",
     locale: "es_AR",
   },

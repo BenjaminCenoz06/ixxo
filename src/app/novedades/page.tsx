@@ -4,7 +4,7 @@ import { getNewArrivals } from "@/lib/repository/products";
 
 export const metadata: Metadata = {
   title: "Novedades",
-  description: "Lo último de IXXO. Piezas nuevas cada semana.",
+  description: "Lo último de Custom Wear. Ingresos nuevos cada semana.",
 };
 
 export const dynamic = "force-dynamic";

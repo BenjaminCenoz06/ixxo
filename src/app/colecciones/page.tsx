@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Colecciones",
-  description: "Explorá las colecciones de IXXO: Essentials, Tailoring e Invierno 26.",
+  description: "Explorá las colecciones de indumentaria urbana de Custom Wear.",
 };
 
 export const dynamic = "force-dynamic";

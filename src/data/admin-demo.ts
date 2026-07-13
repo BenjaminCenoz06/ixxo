@@ -11,13 +11,13 @@ export interface DemoOrder {
 }
 
 export const demoOrders: DemoOrder[] = [
-  { number: "IXXO-482913", customer: "Martín López", email: "martin@example.com", date: "2026-07-08", status: "paid", items: 2, total: 91800 },
-  { number: "IXXO-482755", customer: "Federico Ruiz", email: "fede@example.com", date: "2026-07-08", status: "pending", items: 1, total: 58900 },
-  { number: "IXXO-482612", customer: "Nicolás Díaz", email: "nico@example.com", date: "2026-07-07", status: "shipped", items: 3, total: 214700 },
-  { number: "IXXO-482488", customer: "Tomás García", email: "tomas@example.com", date: "2026-07-07", status: "paid", items: 1, total: 74900 },
-  { number: "IXXO-482301", customer: "Joaquín Pérez", email: "joaco@example.com", date: "2026-07-06", status: "delivered", items: 2, total: 132800 },
-  { number: "IXXO-482190", customer: "Lucas Molina", email: "lucas@example.com", date: "2026-07-06", status: "cancelled", items: 1, total: 119900 },
-  { number: "IXXO-482044", customer: "Ramiro Sosa", email: "rama@example.com", date: "2026-07-05", status: "paid", items: 4, total: 289600 },
+  { number: "CW-482913", customer: "Martín López", email: "martin@example.com", date: "2026-07-08", status: "paid", items: 2, total: 91800 },
+  { number: "CW-482755", customer: "Federico Ruiz", email: "fede@example.com", date: "2026-07-08", status: "pending", items: 1, total: 58900 },
+  { number: "CW-482612", customer: "Nicolás Díaz", email: "nico@example.com", date: "2026-07-07", status: "shipped", items: 3, total: 214700 },
+  { number: "CW-482488", customer: "Tomás García", email: "tomas@example.com", date: "2026-07-07", status: "paid", items: 1, total: 74900 },
+  { number: "CW-482301", customer: "Joaquín Pérez", email: "joaco@example.com", date: "2026-07-06", status: "delivered", items: 2, total: 132800 },
+  { number: "CW-482190", customer: "Lucas Molina", email: "lucas@example.com", date: "2026-07-06", status: "cancelled", items: 1, total: 119900 },
+  { number: "CW-482044", customer: "Ramiro Sosa", email: "rama@example.com", date: "2026-07-05", status: "paid", items: 4, total: 289600 },
 ];
 
 export interface DemoCustomer {

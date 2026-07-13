@@ -73,7 +73,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       >
         <div className="flex items-center justify-between px-6 py-6">
           <Link href="/admin" className="font-display text-xl tracking-[0.3em]">
-            IXXO
+            CUSTOM WEAR.
           </Link>
           <span className="text-[10px] uppercase tracking-[0.2em] text-paper/50">Admin</span>
         </div>

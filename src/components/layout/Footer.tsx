@@ -6,7 +6,7 @@ import { useSiteContent } from "@/lib/site-content-context";
 
 export default function Footer() {
   const { footer, general, footerColumns: columns, payments } = useSiteContent();
-  const storeName = general.storeName || "IXXO";
+  const storeName = general.storeName || "CUSTOM WEAR.";
   const socials = [
     { Icon: InstagramIcon, href: footer.instagram },
     { Icon: TiktokIcon, href: footer.tiktok },

@@ -86,52 +86,52 @@ export interface SiteContent {
 
 export const DEFAULT_CONTENT: SiteContent = {
   announcement: [
-    "Envío gratis en compras superiores a $90.000",
+    "Envío a todo el país",
+    "Precios mayoristas y minoristas",
     "Hasta 6 cuotas sin interés",
     "15% OFF pagando por transferencia",
-    "Cambios y devoluciones sin cargo",
   ],
   hero: {
-    titleTop: "Diseño que",
-    titleBottom: "perdura.",
-    ctaPrimaryLabel: "Comprar ahora",
+    titleTop: "Estilo",
+    titleBottom: "urbano.",
+    ctaPrimaryLabel: "Ver catálogo",
     ctaPrimaryHref: "/novedades",
-    ctaSecondaryLabel: "Ver colección",
+    ctaSecondaryLabel: "Colecciones",
     ctaSecondaryHref: "/colecciones",
     slides: [
-      { image: editorialWide("hero-1", 2000, 1200), eyebrow: "Colección Invierno 26" },
-      { image: editorialWide("hero-2", 2000, 1200), eyebrow: "Sastrería contemporánea" },
-      { image: editorialWide("hero-3", 2000, 1200), eyebrow: "Essentials" },
+      { image: editorialWide("hero-1", 2000, 1200), eyebrow: "Nueva temporada 2026" },
+      { image: editorialWide("hero-2", 2000, 1200), eyebrow: "Indumentaria urbana" },
+      { image: editorialWide("hero-3", 2000, 1200), eyebrow: "Mayorista y minorista" },
     ],
   },
   newCollection: {
-    eyebrow: "Nueva colección",
-    title: "Invierno 26",
+    eyebrow: "Nueva temporada",
+    title: "Colección 2026",
     description:
-      "Una temporada construida sobre el abrigo estructurado y la paleta esencial. Prendas pensadas para durar, con tejidos técnicos y naturales seleccionados uno a uno.",
+      "Las últimas tendencias en indumentaria urbana. Prendas cómodas, versátiles y con impronta propia, pensadas para tu día a día en la ciudad.",
     image: editorialWide("newcol", 1200, 1400),
-    ctaLabel: "Descubrir la colección",
-    ctaHref: "/coleccion/winter-26",
+    ctaLabel: "Ver la colección",
+    ctaHref: "/novedades",
   },
   editorial: {
-    eyebrow: "Filosofía IXXO",
+    eyebrow: "Filosofía Custom Wear",
     quote:
-      "No seguimos tendencias. Diseñamos prendas que no pasan de moda, con la calidad de lo que se hace bien.",
+      "Vestí tu identidad. Streetwear con actitud, hecho para moverse con vos por las calles de Córdoba.",
     subtext:
-      "Materiales seleccionados, confección responsable y un compromiso con el detalle que se siente en cada puntada.",
+      "Diseño urbano, calidad en cada prenda y atención cercana. Mayorista y minorista, con envíos a todo el país.",
     image: editorialWide("editorial-bg", 2000, 1200),
   },
   newsletter: {
     eyebrow: "Newsletter",
-    title: "Sumate al círculo IXXO",
-    subtitle: "Acceso anticipado a colecciones, ediciones limitadas y 10% en tu primera compra.",
+    title: "Sumate a la comunidad Custom Wear",
+    subtitle: "Enterate primero de los nuevos ingresos, promos y un 10% en tu primera compra.",
   },
   footer: {
     description:
-      "Ropa masculina de diseño. Prendas atemporales, materiales nobles y una experiencia pensada al detalle.",
-    instagram: "https://instagram.com",
-    tiktok: "https://tiktok.com",
-    youtube: "https://youtube.com",
+      "Indumentaria urbana en Córdoba, Argentina. Mayorista y minorista, con envíos a todo el país. Escribinos por WhatsApp o a customwear.cba@gmail.com.",
+    instagram: "https://www.instagram.com/customwear.cba/",
+    tiktok: "https://www.instagram.com/customwear.cba/",
+    youtube: "https://www.instagram.com/customwear.cba/",
   },
   sections: {
     categories: { eyebrow: "Explorá", title: "Comprar por categoría", ctaLabel: "Ver todas", ctaHref: "/categorias" },
@@ -149,8 +149,8 @@ export const DEFAULT_CONTENT: SiteContent = {
   },
   instagram: {
     eyebrow: "Comunidad",
-    handle: "@tiendasixxo_oficial",
-    url: "https://www.instagram.com/tiendasixxo_oficial/",
+    handle: "@customwear.cba",
+    url: "https://www.instagram.com/customwear.cba/",
     images: Array.from({ length: 6 }).map((_, i) => editorial(`instagram-${i}`, 600, 600)),
   },
   reviews: {
@@ -171,19 +171,28 @@ export const DEFAULT_CONTENT: SiteContent = {
     paper: "#ffffff",
   },
   general: {
-    storeName: "IXXO",
-    whatsapp: "5493514247726",
+    storeName: "CUSTOM WEAR.",
+    whatsapp: "5493518086096",
     freeShippingThreshold: 90000,
     transferDiscount: 15,
   },
   coupons: [
-    { code: "IXXO10", label: "10% de descuento", type: "percent", value: 10 },
+    { code: "CUSTOM10", label: "10% de descuento", type: "percent", value: 10 },
     { code: "BIENVENIDO", label: "15% primera compra", type: "percent", value: 15 },
     { code: "ENVIOGRATIS", label: "Envío gratis", type: "fixed", value: 0 },
   ],
   footerColumns: [
-    { title: "Ayuda", links: ["Contacto", "Cambios y devoluciones", "Envíos", "Guía de talles", "Preguntas frecuentes"].map((l) => ({ label: l, href: "#" })) },
-    { title: "Compañía", links: ["Sobre IXXO", "Sucursales", "Trabajá con nosotros", "Sustentabilidad", "Prensa"].map((l) => ({ label: l, href: "#" })) },
+    {
+      title: "Ayuda",
+      links: [
+        { label: "Contacto", href: "https://wa.me/5493518086096" },
+        { label: "Cómo llegar", href: "https://www.google.com/maps/place/Custom+Wear+Cba/@-31.4267849,-64.1878107,16z" },
+        { label: "Cambios y devoluciones", href: "#" },
+        { label: "Envíos", href: "#" },
+        { label: "Guía de talles", href: "#" },
+      ],
+    },
+    { title: "Empresa", links: ["Sobre Custom Wear", "Venta mayorista", "Trabajá con nosotros", "Novedades"].map((l) => ({ label: l, href: "#" })) },
     { title: "Legales", links: ["Términos y condiciones", "Política de privacidad", "Botón de arrepentimiento", "Defensa al consumidor"].map((l) => ({ label: l, href: "#" })) },
   ],
   payments: ["Visa", "Mastercard", "Amex", "Mercado Pago", "Transferencia"],

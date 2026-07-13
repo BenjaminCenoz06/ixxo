@@ -19,10 +19,10 @@ export function OrganizationJsonLd() {
       data={{
         "@context": "https://schema.org",
         "@type": "Organization",
-        name: "IXXO",
+        name: "Custom Wear",
         url: base,
         logo: `${base}/icon.png`,
-        sameAs: ["https://instagram.com/ixxo", "https://tiktok.com/@ixxo"],
+        sameAs: ["https://www.instagram.com/customwear.cba/"],
       }}
     />
   );
@@ -34,7 +34,7 @@ export function WebSiteJsonLd() {
       data={{
         "@context": "https://schema.org",
         "@type": "WebSite",
-        name: "IXXO",
+        name: "Custom Wear",
         url: base,
         potentialAction: {
           "@type": "SearchAction",
@@ -56,7 +56,7 @@ export function ProductJsonLd({ product }: { product: Product }) {
         image: product.images,
         description: product.description,
         category: product.category,
-        brand: { "@type": "Brand", name: "IXXO" },
+        brand: { "@type": "Brand", name: "Custom Wear" },
         aggregateRating:
           product.reviewCount > 0
             ? {

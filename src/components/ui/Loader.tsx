@@ -17,7 +17,7 @@ export default function Loader() {
 
   // Separa el nombre del punto final: "CUSTOM WEAR." -> base "CUSTOM WEAR" + "."
   const { base, dot } = useMemo(() => {
-    const name = (general.storeName || "IXXO").trim();
+    const name = (general.storeName || "CUSTOM WEAR.").trim();
     return name.endsWith(".")
       ? { base: name.slice(0, -1).trimEnd(), dot: "." }
       : { base: name, dot: "." };

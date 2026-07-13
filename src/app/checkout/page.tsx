@@ -3,7 +3,7 @@ import CheckoutView from "@/components/checkout/CheckoutView";
 
 export const metadata: Metadata = {
   title: "Checkout",
-  description: "Finalizá tu compra en IXXO de forma rápida y segura.",
+  description: "Finalizá tu compra en Custom Wear de forma rápida y segura.",
   robots: { index: false },
 };
 

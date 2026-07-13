@@ -79,7 +79,7 @@ export default function CheckoutView() {
   const placeOrder = async (method: Method) => {
     setProcessing(true);
     const totals = computeTotals(subtotal, coupon, quote.cost);
-    const number = `IXXO-${Math.floor(100000 + Math.random() * 900000)}`;
+    const number = `CW-${Math.floor(100000 + Math.random() * 900000)}`;
 
     // Registra el pedido (best-effort, no bloquea la confirmación).
     persistOrder(number, totals).catch(() => {});

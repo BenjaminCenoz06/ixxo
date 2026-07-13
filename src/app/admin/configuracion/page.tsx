@@ -37,13 +37,13 @@ export default function AdminConfiguracion() {
         <Card title="Datos de la tienda">
           <div className="space-y-4">
             <Field label="Nombre">
-              <input defaultValue="IXXO" className={inputCls} />
+              <input defaultValue="Custom Wear" className={inputCls} />
             </Field>
             <Field label="Email de contacto">
-              <input defaultValue="hola@ixxo.com" className={inputCls} />
+              <input defaultValue="customwear.cba@gmail.com" className={inputCls} />
             </Field>
             <Field label="Teléfono / WhatsApp">
-              <input defaultValue="+54 9 11 5555 5555" className={inputCls} />
+              <input defaultValue="+54 9 351 808 6096" className={inputCls} />
             </Field>
           </div>
         </Card>
@@ -65,10 +65,10 @@ export default function AdminConfiguracion() {
         <Card title="Redes sociales">
           <div className="space-y-4">
             <Field label="Instagram">
-              <input defaultValue="@ixxo" className={inputCls} />
+              <input defaultValue="@customwear.cba" className={inputCls} />
             </Field>
             <Field label="TikTok">
-              <input defaultValue="@ixxo" className={inputCls} />
+              <input defaultValue="@customwear.cba" className={inputCls} />
             </Field>
           </div>
         </Card>

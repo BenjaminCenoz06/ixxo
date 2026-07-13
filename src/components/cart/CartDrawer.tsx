@@ -76,7 +76,7 @@ export default function CartDrawer() {
                 <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
                   <ShoppingBag size={40} strokeWidth={1} className="text-stone" />
                   <p className="font-display text-xl font-light">Tu carrito está vacío</p>
-                  <p className="text-sm text-ash">Descubrí las últimas novedades de IXXO.</p>
+                  <p className="text-sm text-ash">Descubrí los últimos ingresos de Custom Wear.</p>
                   <button
                     onClick={closeCart}
                     className="mt-2 bg-ink px-8 py-3.5 text-[12px] font-semibold uppercase tracking-[0.18em] text-paper transition-colors hover:bg-ink-soft"

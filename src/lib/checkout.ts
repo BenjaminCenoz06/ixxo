@@ -9,7 +9,7 @@ export interface Coupon {
 }
 
 const COUPONS: Record<string, Coupon> = {
-  IXXO10: { code: "IXXO10", label: "10% de descuento", type: "percent", value: 10 },
+  CUSTOM10: { code: "CUSTOM10", label: "10% de descuento", type: "percent", value: 10 },
   BIENVENIDO: { code: "BIENVENIDO", label: "15% primera compra", type: "percent", value: 15 },
   ENVIOGRATIS: { code: "ENVIOGRATIS", label: "Envío gratis", type: "fixed", value: 0 },
 };

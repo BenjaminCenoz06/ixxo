@@ -41,7 +41,7 @@ export default function InstagramFeed() {
             {src && (
               <Image
                 src={src}
-                alt="Instagram IXXO"
+                alt="Instagram Custom Wear"
                 fill
                 sizes="(max-width:768px) 33vw, 16vw"
                 className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110"

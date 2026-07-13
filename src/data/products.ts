@@ -20,7 +20,7 @@ const CATEGORY_SLUG: Record<string, string> = {
 };
 
 const DEFAULT_DESC =
-  "Una prenda esencial de la línea IXXO. Corte cuidado, caída impecable y terminaciones pensadas para durar. Diseñada en tejidos nobles seleccionados para el uso diario.";
+  "Una prenda esencial de Custom Wear. Corte cómodo, estilo urbano y terminaciones pensadas para durar. Ideal para tu día a día en la ciudad.";
 
 function sizesFor(category: string): string[] {
   if (["Jeans", "Pantalones", "Bermudas", "Joggers"].includes(category)) return BOTTOMS;

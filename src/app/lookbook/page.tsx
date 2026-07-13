@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Lookbook",
-  description: "Outfits completos IXXO. Inspirate y comprá el look entero.",
+  description: "Outfits completos de Custom Wear. Inspirate y comprá el look entero.",
 };
 
 const looks = [

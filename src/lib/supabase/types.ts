@@ -1,5 +1,5 @@
 /**
- * Tipos de la base de datos IXXO.
+ * Tipos de la base de datos Custom Wear.
  * Equivalente a lo que genera `supabase gen types typescript`.
  * Mantener sincronizado con supabase/schema.sql.
  */
