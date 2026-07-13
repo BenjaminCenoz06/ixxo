@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search, User, Heart, ShoppingBag, Menu, X } from "lucide-react";
-import { navItems, type NavItem } from "@/data/nav";
+import { type NavItem } from "@/data/nav";
 import AnnouncementBar from "./AnnouncementBar";
 import SearchOverlay from "@/components/search/SearchOverlay";
 import Portal from "@/components/ui/Portal";
@@ -21,7 +21,8 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const { count, openCart } = useCart();
   const { count: favCount } = useFavorites();
-  const { general } = useSiteContent();
+  const { general, nav } = useSiteContent();
+  const navItems = nav as NavItem[];
   const storeName = general.storeName || "IXXO";
 
   useEffect(() => {
@@ -247,6 +248,7 @@ function MegaPanel({ item }: { item?: NavItem }) {
 }
 
 function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { nav: navItems, general } = useSiteContent();
   return (
     <Portal>
       <AnimatePresence>
@@ -267,7 +269,7 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="flex items-center justify-between border-b border-line px-6 py-5">
-              <span className="font-display text-lg tracking-[0.3em]">IXXO</span>
+              <span className="font-display text-lg tracking-[0.3em]">{general.storeName || "IXXO"}</span>
               <button aria-label="Cerrar" onClick={onClose}>
                 <X size={22} strokeWidth={1.5} />
               </button>

@@ -1,5 +1,13 @@
 import { editorial, editorialWide } from "@/data/images";
 import { reviews as defaultReviews, reviewStats } from "@/data/reviews";
+import { navItems as defaultNav } from "@/data/nav";
+
+export interface NavItemContent {
+  label: string;
+  href: string;
+  mega?: { heading: string; links: { label: string; href: string }[] }[];
+  featured?: { title: string; image: string; href: string };
+}
 
 /** Contenido editable del sitio (CMS). Todo esto se puede cambiar desde /admin/contenido. */
 export interface SiteContent {
@@ -73,6 +81,7 @@ export interface SiteContent {
   coupons: { code: string; label: string; type: "percent" | "fixed"; value: number }[];
   footerColumns: { title: string; links: { label: string; href: string }[] }[];
   payments: string[];
+  nav: NavItemContent[];
 }
 
 export const DEFAULT_CONTENT: SiteContent = {
@@ -178,6 +187,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     { title: "Legales", links: ["Términos y condiciones", "Política de privacidad", "Botón de arrepentimiento", "Defensa al consumidor"].map((l) => ({ label: l, href: "#" })) },
   ],
   payments: ["Visa", "Mastercard", "Amex", "Mercado Pago", "Transferencia"],
+  nav: defaultNav as NavItemContent[],
 };
 
 /** Combina el contenido guardado con los defaults (por si faltan campos). */
@@ -213,5 +223,6 @@ export function mergeContent(saved: Partial<SiteContent> | null | undefined): Si
     coupons: saved.coupons?.length ? saved.coupons : DEFAULT_CONTENT.coupons,
     footerColumns: saved.footerColumns?.length ? saved.footerColumns : DEFAULT_CONTENT.footerColumns,
     payments: saved.payments?.length ? saved.payments : DEFAULT_CONTENT.payments,
+    nav: saved.nav?.length ? saved.nav : DEFAULT_CONTENT.nav,
   };
 }

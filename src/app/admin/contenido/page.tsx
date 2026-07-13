@@ -5,6 +5,7 @@ import { useAdminContent } from "@/lib/admin-content";
 import type { SiteContent } from "@/lib/site-content";
 import { PageHeader, Card, Btn } from "@/components/admin/ui";
 import ImageUploader from "@/components/admin/ImageUploader";
+import NavEditor from "@/components/admin/NavEditor";
 
 export default function AdminContenido() {
   const { content, patch, loading, saving, saved, error, save } = useAdminContent();
@@ -241,6 +242,15 @@ export default function AdminContenido() {
               <Input value={content.footer.youtube} onChange={(v) => patch("footer", { ...content.footer, youtube: v })} />
             </Field>
           </div>
+        </Card>
+
+        {/* Menú del header */}
+        <Card title="Menú del header (navegación)">
+          <p className="mb-4 text-[12px] text-ash">
+            Ítems del menú superior. El que tenga <strong className="text-ink">mega-menú</strong> muestra
+            columnas de enlaces + una imagen destacada al pasar el mouse.
+          </p>
+          <NavEditor nav={content.nav} onChange={(v) => patch("nav", v)} />
         </Card>
 
         {/* Footer: columnas de enlaces + medios de pago */}
