@@ -20,7 +20,7 @@ export default function Lookbook() {
         cta={heading.ctaLabel}
         ctaHref={heading.ctaHref}
       />
-      <div className="mt-12 grid gap-4 md:gap-5 lg:grid-cols-2 lg:grid-rows-2">
+      <div className="mt-12 grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-2 lg:grid-rows-2">
         {looks.map((look, i) => (
           <Reveal
             key={i}

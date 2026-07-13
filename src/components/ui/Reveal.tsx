@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,25 @@ const offset: Record<Direction, { x?: number; y?: number }> = {
   right: { x: -32 },
   none: {},
 };
+
+/**
+ * En pantallas chicas el layout apila en una sola columna, así que un slide
+ * horizontal en un elemento pegado al borde asoma unos px fuera del viewport.
+ * Debajo de 1024px convertimos left/right en un desplazamiento vertical:
+ * se conserva la animación (fade + movimiento) sin generar scroll horizontal.
+ */
+function useResponsiveDirection(direction: Direction): Direction {
+  const [isWide, setIsWide] = useState(true);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsWide(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  if (isWide || (direction !== "left" && direction !== "right")) return direction;
+  return "up";
+}
 
 interface RevealProps {
   children: React.ReactNode;
@@ -31,11 +51,12 @@ export function Reveal({
   blur = true,
   as = "div",
 }: RevealProps) {
+  const effectiveDirection = useResponsiveDirection(direction);
   const variants: Variants = {
     hidden: {
       opacity: 0,
       filter: blur ? "blur(8px)" : "blur(0px)",
-      ...offset[direction],
+      ...offset[effectiveDirection],
     },
     visible: {
       opacity: 1,
