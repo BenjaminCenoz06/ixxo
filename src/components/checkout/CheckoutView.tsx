@@ -23,6 +23,7 @@ interface Order {
   number: string;
   email: string;
   total: number;
+  transfer?: boolean;
 }
 
 export default function CheckoutView() {
@@ -75,9 +76,9 @@ export default function CheckoutView() {
     });
   };
 
-  const simulateConfirmation = (number: string, total: number) => {
+  const simulateConfirmation = (number: string, total: number, transfer: boolean) => {
     setTimeout(() => {
-      setOrder({ number, email: shipping?.email ?? "", total });
+      setOrder({ number, email: shipping?.email ?? "", total, transfer });
       clear();
       setProcessing(false);
       window.scrollTo({ top: 0, behavior: "auto" });
@@ -118,7 +119,7 @@ export default function CheckoutView() {
       }
     }
 
-    simulateConfirmation(number, totals.total);
+    simulateConfirmation(number, totals.total, method === "transfer");
   };
 
   // Confirmación
@@ -211,16 +212,29 @@ function Confirmation({ order }: { order: Order }) {
           ¡Gracias por tu compra!
         </h1>
         <p className="mx-auto mt-4 max-w-md text-[15px] leading-relaxed text-ash">
-          Tu pedido <span className="font-medium text-ink">{order.number}</span> fue registrado por{" "}
-          <span className="font-medium text-ink">{formatPrice(order.total)}</span>. Te enviamos la
-          confirmación {order.email ? `a ${order.email}` : "por email"}.
+          Tu pedido <span className="font-medium text-ink">{order.number}</span> quedó registrado por{" "}
+          <span className="font-medium text-ink">{formatPrice(order.total)}</span>.
+          {order.transfer
+            ? " Está pendiente de pago: en cuanto verifiquemos tu transferencia, te confirmamos por email y preparamos tu pedido."
+            : ` Te enviamos la confirmación ${order.email ? `a ${order.email}` : "por email"}.`}
         </p>
 
         <div className="mx-auto mt-10 flex max-w-sm items-center gap-4 border border-line p-5 text-left">
           <Package size={26} strokeWidth={1.3} className="shrink-0 text-ink-soft" />
           <div>
-            <p className="text-[13px] font-medium">Preparando tu envío</p>
-            <p className="text-[12px] text-ash">Llega en 2 a 5 días hábiles. Te avisamos cuando despache.</p>
+            {order.transfer ? (
+              <>
+                <p className="text-[13px] font-medium">Esperando la confirmación del pago</p>
+                <p className="text-[12px] text-ash">
+                  Verificamos tu transferencia y te avisamos por email cuando confirmemos el pago.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-[13px] font-medium">Preparando tu envío</p>
+                <p className="text-[12px] text-ash">Llega en 2 a 5 días hábiles. Te avisamos cuando despache.</p>
+              </>
+            )}
           </div>
         </div>
 
