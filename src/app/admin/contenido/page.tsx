@@ -80,6 +80,62 @@ export default function AdminContenido() {
           </div>
         </Card>
 
+        {/* Contacto y local */}
+        <Card title="Contacto y local">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Email de contacto">
+              <Input value={content.general.email} onChange={(v) => patch("general", { ...content.general, email: v })} />
+            </Field>
+            <Field label="Horarios de atención">
+              <Input value={content.general.hours} onChange={(v) => patch("general", { ...content.general, hours: v })} />
+            </Field>
+            <Field label="Dirección / local">
+              <Input value={content.general.address} onChange={(v) => patch("general", { ...content.general, address: v })} />
+            </Field>
+            <Field label="Link de Google Maps">
+              <Input value={content.general.mapUrl} onChange={(v) => patch("general", { ...content.general, mapUrl: v })} />
+            </Field>
+            <Field label="Mensaje predefinido de WhatsApp" className="sm:col-span-2">
+              <Input value={content.general.whatsappMessage} onChange={(v) => patch("general", { ...content.general, whatsappMessage: v })} />
+            </Field>
+          </div>
+          <p className="mt-3 text-[12px] text-ash">La dirección, horarios y email se muestran en el footer. El mensaje de WhatsApp se abre precargado al tocar el botón flotante.</p>
+        </Card>
+
+        {/* SEO */}
+        <Card title="SEO (Google y compartir el link)">
+          <div className="space-y-4">
+            <Field label="Título (aparece en la pestaña y en Google)">
+              <Input value={content.seo.title} onChange={(v) => patch("seo", { ...content.seo, title: v })} />
+            </Field>
+            <Field label="Descripción (resumen en Google, ~155 caracteres)">
+              <TextArea rows={3} value={content.seo.description} onChange={(v) => patch("seo", { ...content.seo, description: v })} />
+            </Field>
+            <Field label="Palabras clave (separadas por coma)">
+              <Input value={content.seo.keywords} onChange={(v) => patch("seo", { ...content.seo, keywords: v })} />
+            </Field>
+          </div>
+        </Card>
+
+        {/* Costos de envío */}
+        <Card title="Costos de envío por zona ($)">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="AMBA (CABA y Buenos Aires)">
+              <input type="number" value={content.shipping.metro} onChange={(e) => patch("shipping", { ...content.shipping, metro: +e.target.value })} className={inputCls} />
+            </Field>
+            <Field label="Centro (Córdoba, Santa Fe, Entre Ríos, La Pampa)">
+              <input type="number" value={content.shipping.centro} onChange={(e) => patch("shipping", { ...content.shipping, centro: +e.target.value })} className={inputCls} />
+            </Field>
+            <Field label="Interior (resto del norte y Cuyo)">
+              <input type="number" value={content.shipping.interior} onChange={(e) => patch("shipping", { ...content.shipping, interior: +e.target.value })} className={inputCls} />
+            </Field>
+            <Field label="Patagonia">
+              <input type="number" value={content.shipping.patagonia} onChange={(e) => patch("shipping", { ...content.shipping, patagonia: +e.target.value })} className={inputCls} />
+            </Field>
+          </div>
+          <p className="mt-3 text-[12px] text-ash">Se aplica en el checkout según la provincia. Si el subtotal supera el umbral de envío gratis, el costo es $0.</p>
+        </Card>
+
         {/* Barra de anuncios */}
         <Card title="Barra de anuncios">
           <p className="mb-3 flex items-center gap-2 text-[12px] text-ash">

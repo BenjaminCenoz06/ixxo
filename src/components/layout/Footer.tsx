@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { MapPin, Clock, Mail } from "lucide-react";
 import { InstagramIcon, TiktokIcon, YoutubeIcon } from "@/components/ui/SocialIcons";
 import { useSiteContent } from "@/lib/site-content-context";
 
@@ -19,6 +20,38 @@ export default function Footer() {
           <div>
             <span className="font-display text-2xl font-medium tracking-[0.3em]">{storeName}</span>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-ash">{footer.description}</p>
+
+            {(general.address || general.hours || general.email) && (
+              <ul className="mt-6 space-y-2.5 text-sm text-ink-soft">
+                {general.address && (
+                  <li className="flex items-start gap-2.5">
+                    <MapPin size={16} strokeWidth={1.5} className="mt-0.5 shrink-0 text-ash" />
+                    {general.mapUrl ? (
+                      <Link href={general.mapUrl} target="_blank" className="transition-colors hover:text-ink">
+                        {general.address}
+                      </Link>
+                    ) : (
+                      <span>{general.address}</span>
+                    )}
+                  </li>
+                )}
+                {general.hours && (
+                  <li className="flex items-start gap-2.5">
+                    <Clock size={16} strokeWidth={1.5} className="mt-0.5 shrink-0 text-ash" />
+                    <span>{general.hours}</span>
+                  </li>
+                )}
+                {general.email && (
+                  <li className="flex items-start gap-2.5">
+                    <Mail size={16} strokeWidth={1.5} className="mt-0.5 shrink-0 text-ash" />
+                    <a href={`mailto:${general.email}`} className="transition-colors hover:text-ink">
+                      {general.email}
+                    </a>
+                  </li>
+                )}
+              </ul>
+            )}
+
             <div className="mt-6 flex items-center gap-4">
               {socials.map(({ Icon, href }, i) => (
                 <Link

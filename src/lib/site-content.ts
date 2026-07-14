@@ -76,8 +76,24 @@ export interface SiteContent {
   general: {
     storeName: string;
     whatsapp: string;
+    whatsappMessage: string;
+    email: string;
+    address: string;
+    hours: string;
+    mapUrl: string;
     freeShippingThreshold: number;
     transferDiscount: number;
+  };
+  seo: {
+    title: string;
+    description: string;
+    keywords: string;
+  };
+  shipping: {
+    metro: number;
+    centro: number;
+    interior: number;
+    patagonia: number;
   };
   coupons: { code: string; label: string; type: "percent" | "fixed"; value: number }[];
   footerColumns: { title: string; links: { label: string; href: string }[] }[];
@@ -179,8 +195,25 @@ export const DEFAULT_CONTENT: SiteContent = {
   general: {
     storeName: "CUSTOM WEAR.",
     whatsapp: "5493518086096",
+    whatsappMessage: "¡Hola Custom Wear! Quiero hacer una consulta.",
+    email: "customwear.cba@gmail.com",
+    address: "Nueva Córdoba, Córdoba, Argentina",
+    hours: "Lun a Sáb de 10 a 20 h",
+    mapUrl: "https://www.google.com/maps/place/Custom+Wear+Cba/@-31.4267849,-64.1878107,16z",
     freeShippingThreshold: 90000,
     transferDiscount: 15,
+  },
+  seo: {
+    title: "Custom Wear — Indumentaria urbana en Córdoba",
+    description:
+      "Custom Wear. Indumentaria urbana en Córdoba, Argentina: streetwear con actitud, precios mayoristas y minoristas, y envíos a todo el país.",
+    keywords: "indumentaria urbana, streetwear, ropa Córdoba, mayorista indumentaria, Custom Wear",
+  },
+  shipping: {
+    metro: 4900,
+    centro: 6900,
+    interior: 8900,
+    patagonia: 11900,
   },
   coupons: [
     { code: "CUSTOM10", label: "10% de descuento", type: "percent", value: 10 },
@@ -236,6 +269,8 @@ export function mergeContent(saved: Partial<SiteContent> | null | undefined): Si
     },
     theme: { ...DEFAULT_CONTENT.theme, ...saved.theme },
     general: { ...DEFAULT_CONTENT.general, ...saved.general },
+    seo: { ...DEFAULT_CONTENT.seo, ...saved.seo },
+    shipping: { ...DEFAULT_CONTENT.shipping, ...saved.shipping },
     coupons: saved.coupons?.length ? saved.coupons : DEFAULT_CONTENT.coupons,
     footerColumns: saved.footerColumns?.length ? saved.footerColumns : DEFAULT_CONTENT.footerColumns,
     payments: saved.payments?.length ? saved.payments : DEFAULT_CONTENT.payments,

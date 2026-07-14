@@ -28,13 +28,13 @@ interface Order {
 export default function CheckoutView() {
   const { items, subtotal, coupon, clear } = useCart();
   const { user } = useAuth();
-  const { general } = useSiteContent();
+  const { general, shipping: shippingRates } = useSiteContent();
   const [step, setStep] = useState(0);
   const [shipping, setShipping] = useState<Partial<ShippingForm>>();
   const [processing, setProcessing] = useState(false);
   const [order, setOrder] = useState<Order | null>(null);
 
-  const quote = quoteShipping(shipping?.province, subtotal, coupon, general.freeShippingThreshold || undefined);
+  const quote = quoteShipping(shipping?.province, subtotal, coupon, general.freeShippingThreshold || undefined, shippingRates);
   const eta = quote.free
     ? "Envío gratis"
     : `Llega en ${quote.minDays}–${quote.maxDays} días hábiles`;

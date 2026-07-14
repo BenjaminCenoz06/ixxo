@@ -24,22 +24,25 @@ const manrope = Manrope({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: "Custom Wear — Indumentaria urbana en Córdoba",
-    template: "%s · Custom Wear",
-  },
-  description:
-    "Custom Wear. Indumentaria urbana en Córdoba, Argentina: streetwear con actitud, precios mayoristas y minoristas, y envíos a todo el país.",
-  keywords: ["indumentaria urbana", "streetwear", "ropa Córdoba", "mayorista indumentaria", "Custom Wear"],
-  openGraph: {
-    title: "Custom Wear — Indumentaria urbana en Córdoba",
-    description: "Streetwear con actitud. Mayorista y minorista, envíos a todo el país.",
-    type: "website",
-    locale: "es_AR",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { seo, general } = await getSiteContent();
+  const brand = general.storeName?.replace(/\.$/, "") || "Custom Wear";
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: seo.title,
+      template: `%s · ${brand}`,
+    },
+    description: seo.description,
+    keywords: seo.keywords.split(",").map((k) => k.trim()).filter(Boolean),
+    openGraph: {
+      title: seo.title,
+      description: seo.description,
+      type: "website",
+      locale: "es_AR",
+    },
+  };
+}
 
 export default async function RootLayout({
   children,

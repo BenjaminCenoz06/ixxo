@@ -5,8 +5,9 @@ import { useSiteContent } from "@/lib/site-content-context";
 
 export default function WhatsAppButton() {
   const { general } = useSiteContent();
-  const phoneNumber = general.whatsapp || "5493514247726";
-  const whatsappUrl = `https://wa.me/${phoneNumber.replace(/\D/g, "")}`;
+  const phoneNumber = general.whatsapp || "5493518086096";
+  const text = general.whatsappMessage ? `?text=${encodeURIComponent(general.whatsappMessage)}` : "";
+  const whatsappUrl = `https://wa.me/${phoneNumber.replace(/\D/g, "")}${text}`;
 
   if (!general.whatsapp) return null;
 
