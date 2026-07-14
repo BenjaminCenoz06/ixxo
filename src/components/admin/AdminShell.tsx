@@ -19,6 +19,7 @@ import {
   X,
   Loader2,
   ShieldAlert,
+  LogOut,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { isAdminEmail, adminDemoMode } from "@/lib/admin";
@@ -38,27 +39,30 @@ const nav = [
 ];
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
-  const { user, loading, configured } = useAuth();
+  const { user, loading, configured, signOut } = useAuth();
   const [open, setOpen] = useState(false);
 
   // Guard (solo con Supabase activo).
   if (configured) {
     if (loading) return <Centered><Loader2 size={26} className="animate-spin text-ash" /></Centered>;
-    if (!user)
-      return (
-        <Gate
-          title="Acceso restringido"
-          text="Iniciá sesión con una cuenta de administrador para continuar."
-          cta={{ label: "Ir a mi cuenta", href: "/cuenta" }}
-        />
-      );
+    if (!user) return <AdminLogin />;
     if (!isAdminEmail(user.email))
       return (
-        <Gate
-          title="No tenés permisos"
-          text="Esta cuenta no está autorizada para el panel de administración."
-          cta={{ label: "Volver a la tienda", href: "/" }}
-        />
+        <Centered>
+          <div className="max-w-md px-6 text-center">
+            <ShieldAlert size={40} strokeWidth={1} className="mx-auto text-stone" />
+            <h1 className="mt-6 font-display text-2xl font-light">No tenés permisos</h1>
+            <p className="mt-2 text-sm text-ash">
+              Esta cuenta no está autorizada para el panel de administración.
+            </p>
+            <button
+              onClick={() => signOut()}
+              className="mt-8 inline-block bg-ink px-8 py-3.5 text-[12px] font-semibold uppercase tracking-[0.16em] text-paper transition-colors hover:bg-ink-soft"
+            >
+              Usar otra cuenta
+            </button>
+          </div>
+        </Centered>
       );
   }
 
@@ -106,7 +110,15 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 Modo demo
               </span>
             ) : (
-              <span className="text-ink">{user?.email}</span>
+              <>
+                <span className="hidden text-ink sm:inline">{user?.email}</span>
+                <button
+                  onClick={() => signOut()}
+                  className="flex items-center gap-1.5 rounded border border-line px-3 py-1.5 text-[12px] text-ink-soft transition-colors hover:border-ink hover:text-ink"
+                >
+                  <LogOut size={14} strokeWidth={1.5} /> Salir
+                </button>
+              </>
             )}
           </div>
         </header>
@@ -157,28 +169,76 @@ function Centered({ children }: { children: React.ReactNode }) {
   return <div className="flex min-h-screen items-center justify-center bg-smoke">{children}</div>;
 }
 
-function Gate({
-  title,
-  text,
-  cta,
-}: {
-  title: string;
-  text: string;
-  cta: { label: string; href: string };
-}) {
+/**
+ * Login propio del panel: independiente del login de cliente (/cuenta).
+ * Al ingresar con una cuenta de administrador, la sesión se actualiza y
+ * AdminShell renderiza el dashboard directamente (misma ruta /admin).
+ */
+function AdminLogin() {
+  const { signIn } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    const res = await signIn(email.trim(), password);
+    setBusy(false);
+    if (!res.ok) setError(res.error || "No se pudo iniciar sesión.");
+  };
+
+  const inputCls =
+    "w-full border border-line bg-paper px-4 py-3 text-sm outline-none transition-colors focus:border-ink";
+
   return (
     <Centered>
-      <div className="max-w-md px-6 text-center">
-        <ShieldAlert size={40} strokeWidth={1} className="mx-auto text-stone" />
-        <h1 className="mt-6 font-display text-2xl font-light">{title}</h1>
-        <p className="mt-2 text-sm text-ash">{text}</p>
-        <Link
-          href={cta.href}
-          className="mt-8 inline-block bg-ink px-8 py-3.5 text-[12px] font-semibold uppercase tracking-[0.16em] text-paper transition-colors hover:bg-ink-soft"
+      <form onSubmit={submit} className="w-full max-w-sm px-6">
+        <div className="text-center">
+          <span className="font-display text-2xl font-medium tracking-[0.3em]">CUSTOM WEAR.</span>
+          <p className="mt-2 text-[11px] uppercase tracking-[0.22em] text-ash">
+            Panel de administración
+          </p>
+        </div>
+
+        <div className="mt-8 space-y-3">
+          <input
+            type="email"
+            autoComplete="username"
+            required
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={inputCls}
+          />
+          <input
+            type="password"
+            autoComplete="current-password"
+            required
+            placeholder="Contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={inputCls}
+          />
+        </div>
+
+        {error && <p className="mt-3 text-[13px] text-accent">{error}</p>}
+
+        <button
+          type="submit"
+          disabled={busy}
+          className="mt-5 flex w-full items-center justify-center gap-2 bg-ink py-3.5 text-[12px] font-semibold uppercase tracking-[0.16em] text-paper transition-colors hover:bg-ink-soft disabled:opacity-60"
         >
-          {cta.label}
-        </Link>
-      </div>
+          {busy ? <Loader2 size={16} className="animate-spin" /> : null}
+          {busy ? "Ingresando…" : "Ingresar al panel"}
+        </button>
+
+        <p className="mt-4 text-center text-[12px] text-ash">
+          Acceso exclusivo para administradores.
+        </p>
+      </form>
     </Centered>
   );
 }
