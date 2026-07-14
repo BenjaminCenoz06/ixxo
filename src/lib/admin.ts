@@ -1,8 +1,13 @@
 import { isSupabaseConfigured } from "./supabase/config";
 
-/** Emails autorizados para el panel /admin. */
-const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? "")
-  .split(",")
+/** Cuenta admin dedicada (siempre habilitada, sin depender de env vars). */
+const BUILTIN_ADMIN_EMAILS = ["admin@customwearcba.com"];
+
+/** Emails autorizados para el panel /admin (dedicada + NEXT_PUBLIC_ADMIN_EMAILS). */
+const ADMIN_EMAILS = [
+  ...BUILTIN_ADMIN_EMAILS,
+  ...(process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? "").split(","),
+]
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean);
 
