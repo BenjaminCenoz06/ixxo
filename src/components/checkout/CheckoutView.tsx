@@ -34,12 +34,20 @@ export default function CheckoutView() {
   const [processing, setProcessing] = useState(false);
   const [order, setOrder] = useState<Order | null>(null);
 
+  const isPickup = shipping?.shippingType === "retiro";
   const quote = quoteShipping(shipping?.province, subtotal, coupon, general.freeShippingThreshold || undefined, shippingRates);
-  const eta = quote.free
-    ? "Envío gratis"
-    : `Llega en ${quote.minDays}–${quote.maxDays} días hábiles`;
+  const shipCost = isPickup ? 0 : quote.cost;
+  const eta = isPickup
+    ? "Retirás en el local"
+    : quote.free
+      ? "Envío gratis"
+      : `Llega en ${quote.minDays}–${quote.maxDays} días hábiles`;
 
-  const persistOrder = async (number: string, totals: ReturnType<typeof computeTotals>) => {
+  const persistOrder = async (
+    number: string,
+    totals: ReturnType<typeof computeTotals>,
+    method: Method,
+  ) => {
     await fetch("/api/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -53,7 +61,7 @@ export default function CheckoutView() {
         shipping: totals.shipping,
         total: totals.total,
         coupon: coupon?.code ?? null,
-        shippingAddress: shipping ?? {},
+        shippingAddress: { ...(shipping ?? {}), paymentMethod: method },
         items: items.map((it) => ({
           productId: it.productId,
           name: it.name,
@@ -78,11 +86,11 @@ export default function CheckoutView() {
 
   const placeOrder = async (method: Method) => {
     setProcessing(true);
-    const totals = computeTotals(subtotal, coupon, quote.cost);
+    const totals = computeTotals(subtotal, coupon, shipCost);
     const number = `CW-${Math.floor(100000 + Math.random() * 900000)}`;
 
     // Registra el pedido (best-effort, no bloquea la confirmación).
-    persistOrder(number, totals).catch(() => {});
+    persistOrder(number, totals, method).catch(() => {});
 
     // Transferencia → confirmación directa. Tarjeta / Mercado Pago → checkout de MP.
     if (method !== "transfer") {
@@ -175,7 +183,7 @@ export default function CheckoutView() {
 
         {/* Resumen fijo */}
         <aside className="lg:sticky lg:top-28 lg:self-start">
-          <OrderSummary shipping={quote.cost} eta={step >= 1 ? eta : undefined} />
+          <OrderSummary shipping={shipCost} eta={step >= 1 ? eta : undefined} />
         </aside>
       </div>
     </div>

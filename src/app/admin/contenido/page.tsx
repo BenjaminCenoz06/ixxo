@@ -136,6 +136,27 @@ export default function AdminContenido() {
           <p className="mt-3 text-[12px] text-ash">Se aplica en el checkout según la provincia. Si el subtotal supera el umbral de envío gratis, el costo es $0.</p>
         </Card>
 
+        {/* Datos bancarios */}
+        <Card title="Datos bancarios (pago por transferencia)">
+          <p className="mb-3 text-[12px] text-ash">
+            Se muestran en el checkout cuando el cliente elige “Transferencia”. El QR se genera solo con estos datos.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Banco">
+              <Input value={content.bank.banco} onChange={(v) => patch("bank", { ...content.bank, banco: v })} />
+            </Field>
+            <Field label="Titular">
+              <Input value={content.bank.titular} onChange={(v) => patch("bank", { ...content.bank, titular: v })} />
+            </Field>
+            <Field label="Alias">
+              <Input value={content.bank.alias} onChange={(v) => patch("bank", { ...content.bank, alias: v })} />
+            </Field>
+            <Field label="CBU / CVU">
+              <Input value={content.bank.cbu} onChange={(v) => patch("bank", { ...content.bank, cbu: v })} />
+            </Field>
+          </div>
+        </Card>
+
         {/* Barra de anuncios */}
         <Card title="Barra de anuncios">
           <p className="mb-3 flex items-center gap-2 text-[12px] text-ash">

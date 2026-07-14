@@ -28,6 +28,8 @@ export async function GET() {
     provider: string;
     createdAt: string;
     lastSignIn: string | null;
+    orders: number;
+    spent: number;
   }[] = [];
 
   for (let page = 1; page <= 25; page++) {
@@ -42,9 +44,31 @@ export async function GET() {
         provider: (u.app_metadata?.provider as string) || "email",
         createdAt: u.created_at,
         lastSignIn: u.last_sign_in_at ?? null,
+        orders: 0,
+        spent: 0,
       });
     }
     if (data.users.length < 200) break;
+  }
+
+  // Pedidos reales por cliente (cruzando por email): cantidad y total gastado.
+  const PAID = new Set(["paid", "shipped", "delivered"]);
+  const stats = new Map<string, { orders: number; spent: number }>();
+  const { data: orders } = await admin.from("orders").select("email,total,status");
+  for (const o of orders ?? []) {
+    const key = (o.email ?? "").toLowerCase();
+    if (!key) continue;
+    const s = stats.get(key) ?? { orders: 0, spent: 0 };
+    if (o.status !== "cancelled") s.orders += 1;
+    if (PAID.has(o.status)) s.spent += o.total ?? 0;
+    stats.set(key, s);
+  }
+  for (const c of customers) {
+    const s = stats.get(c.email.toLowerCase());
+    if (s) {
+      c.orders = s.orders;
+      c.spent = s.spent;
+    }
   }
 
   customers.sort((a, b) =>

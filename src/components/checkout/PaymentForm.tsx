@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, Lock, Check, CreditCard, Landmark, Wallet } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
+import { ArrowLeft, Lock, Check, CreditCard, Landmark, Wallet, Copy } from "lucide-react";
+import { useSiteContent } from "@/lib/site-content-context";
 import { cn } from "@/lib/utils";
 
 export type Method = "mercadopago" | "transfer" | "card";
@@ -23,6 +25,7 @@ export default function PaymentForm({
   processing: boolean;
 }) {
   const [method, setMethod] = useState<Method>("mercadopago");
+  const { bank } = useSiteContent();
 
   return (
     <div className="space-y-4">
@@ -76,11 +79,7 @@ export default function PaymentForm({
                     exit={{ height: 0, opacity: 0 }}
                     className="overflow-hidden"
                   >
-                    <p className="border border-t-0 border-line p-5 text-[13px] leading-relaxed text-ash">
-                      Te enviaremos los datos bancarios por email. Al confirmar el pago, tu pedido se
-                      prepara con un <span className="font-medium text-ink">15% de descuento</span>{" "}
-                      ya aplicado.
-                    </p>
+                    <TransferDetails bank={bank} />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -113,7 +112,8 @@ export default function PaymentForm({
             </>
           ) : (
             <>
-              <Check size={15} strokeWidth={2.5} /> Confirmar pedido
+              <Check size={15} strokeWidth={2.5} />{" "}
+              {method === "transfer" ? "Ya realicé la transferencia" : "Confirmar pedido"}
             </>
           )}
         </button>
@@ -124,3 +124,67 @@ export default function PaymentForm({
 
 const cardInput =
   "w-full border border-line px-4 py-3 text-[14px] outline-none transition-colors focus:border-ink";
+
+/** Datos bancarios + QR para pagar por transferencia (todo editable desde el admin). */
+function TransferDetails({ bank }: { bank: { banco: string; titular: string; alias: string; cbu: string } }) {
+  const [copied, setCopied] = useState<string | null>(null);
+  const rows = [
+    { k: "Titular", v: bank.titular },
+    { k: "Alias", v: bank.alias },
+    { k: "CBU", v: bank.cbu },
+    { k: "Banco", v: bank.banco },
+  ].filter((r) => r.v);
+
+  const qrText = rows.map((r) => `${r.k}: ${r.v}`).join("\n") || "Custom Wear";
+
+  const copy = (label: string, value: string) => {
+    navigator.clipboard?.writeText(value).then(() => {
+      setCopied(label);
+      setTimeout(() => setCopied(null), 1500);
+    });
+  };
+
+  return (
+    <div className="border border-t-0 border-line p-5">
+      <p className="mb-4 text-[13px] leading-relaxed text-ash">
+        Transferí el total a esta cuenta. Escaneá el QR con tu app o copiá los datos. Al terminar,
+        tocá <span className="font-medium text-ink">“Ya realicé la transferencia”</span> y tu pedido
+        queda registrado como <span className="font-medium text-ink">Pago pendiente</span>.
+      </p>
+
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+        {rows.length > 0 && (
+          <div className="flex shrink-0 justify-center">
+            <div className="border border-line bg-paper p-3">
+              <QRCodeSVG value={qrText} size={132} level="M" />
+            </div>
+          </div>
+        )}
+
+        <ul className="flex-1 space-y-2">
+          {rows.length === 0 && (
+            <li className="text-[13px] text-ash">
+              Los datos bancarios se cargan desde el panel de administración.
+            </li>
+          )}
+          {rows.map((r) => (
+            <li key={r.k} className="flex items-center justify-between gap-3 border-b border-line pb-2">
+              <span>
+                <span className="block text-[11px] uppercase tracking-wide text-ash">{r.k}</span>
+                <span className="text-[14px] font-medium">{r.v}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => copy(r.k, r.v)}
+                className="inline-flex items-center gap-1 text-[11px] text-ash transition-colors hover:text-ink"
+              >
+                {copied === r.k ? <Check size={13} /> : <Copy size={13} />}
+                {copied === r.k ? "Copiado" : "Copiar"}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}

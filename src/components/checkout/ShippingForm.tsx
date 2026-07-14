@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Store, Truck, PackageCheck } from "lucide-react";
 import {
   shippingSchema,
   PROVINCES,
@@ -17,17 +17,27 @@ interface Props {
   onBack: () => void;
 }
 
+const SHIP_OPTIONS = [
+  { id: "retiro", label: "Retiro en local", desc: "Retirás por nuestro local", icon: Store },
+  { id: "correo", label: "Correo", desc: "Envío a domicilio por correo", icon: PackageCheck },
+  { id: "transporte", label: "Transporte", desc: "Por la empresa que elijas", icon: Truck },
+] as const;
+
 export default function ShippingForm({ defaultValues, onSubmit, onBack }: Props) {
   const {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<ShippingData>({
     resolver: zodResolver(shippingSchema),
-    defaultValues,
+    defaultValues: { shippingType: "correo", needsInvoice: false, ...defaultValues },
     mode: "onTouched",
   });
+
+  const shippingType = watch("shippingType");
+  const needsInvoice = watch("needsInvoice");
 
   // Autocompletado por código postal.
   const onCP = (value: string) => {
@@ -40,6 +50,7 @@ export default function ShippingForm({ defaultValues, onSubmit, onBack }: Props)
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      {/* Datos del cliente */}
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Nombre" error={errors.firstName?.message}>
           <input {...register("firstName")} className={input(errors.firstName)} autoComplete="given-name" />
@@ -58,45 +69,122 @@ export default function ShippingForm({ defaultValues, onSubmit, onBack }: Props)
         </Field>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-[2fr_1fr]">
-        <Field label="Dirección" error={errors.address?.message}>
-          <input {...register("address")} className={input(errors.address)} autoComplete="street-address" placeholder="Calle y número" />
-        </Field>
-        <Field label="Depto / Piso (opcional)" error={errors.apartment?.message}>
-          <input {...register("apartment")} className={input(errors.apartment)} />
-        </Field>
+      {/* Tipo de envío */}
+      <div>
+        <span className="mb-2 block text-[12px] font-medium tracking-wide text-ink-soft">Tipo de envío</span>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {SHIP_OPTIONS.map((o) => {
+            const active = shippingType === o.id;
+            return (
+              <button
+                key={o.id}
+                type="button"
+                onClick={() => setValue("shippingType", o.id, { shouldValidate: true })}
+                className={cn(
+                  "flex flex-col items-start gap-1 border px-4 py-3 text-left transition-colors",
+                  active ? "border-ink" : "border-line hover:border-ash",
+                )}
+              >
+                <o.icon size={18} strokeWidth={1.4} className="text-ink-soft" />
+                <span className="text-[13px] font-medium">{o.label}</span>
+                <span className="text-[11px] text-ash">{o.desc}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-3">
-        <Field label="Código postal" error={errors.postalCode?.message}>
+      {shippingType === "transporte" && (
+        <Field label="¿Por qué empresa de transporte?" error={errors.shippingCompany?.message}>
           <input
-            {...register("postalCode", { onChange: (e) => onCP(e.target.value) })}
-            className={input(errors.postalCode)}
-            inputMode="numeric"
-            maxLength={4}
-            autoComplete="postal-code"
+            {...register("shippingCompany")}
+            className={input(errors.shippingCompany)}
+            placeholder="Ej: Andreani, OCA, Vía Cargo, Buspack, Expreso…"
           />
         </Field>
-        <Field label="Provincia" error={errors.province?.message}>
-          <select {...register("province")} className={cn(input(errors.province), "bg-paper")} defaultValue="">
-            <option value="" disabled>
-              Elegir…
-            </option>
-            {PROVINCES.map((p) => (
-              <option key={p} value={p}>
-                {p}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Field label="Ciudad" error={errors.city?.message}>
-          <input {...register("city")} className={input(errors.city)} autoComplete="address-level2" />
-        </Field>
-      </div>
+      )}
+
+      {/* Domicilio (no aplica para retiro en local) */}
+      {shippingType !== "retiro" && (
+        <>
+          <div className="grid gap-5 sm:grid-cols-[2fr_1fr]">
+            <Field label="Dirección" error={errors.address?.message}>
+              <input {...register("address")} className={input(errors.address)} autoComplete="street-address" placeholder="Calle y número" />
+            </Field>
+            <Field label="Depto / Piso (opcional)" error={errors.apartment?.message}>
+              <input {...register("apartment")} className={input(errors.apartment)} />
+            </Field>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-3">
+            <Field label="Código postal" error={errors.postalCode?.message}>
+              <input
+                {...register("postalCode", { onChange: (e) => onCP(e.target.value) })}
+                className={input(errors.postalCode)}
+                inputMode="numeric"
+                maxLength={4}
+                autoComplete="postal-code"
+              />
+            </Field>
+            <Field label="Provincia" error={errors.province?.message}>
+              <select {...register("province")} className={cn(input(errors.province), "bg-paper")} defaultValue="">
+                <option value="" disabled>
+                  Elegir…
+                </option>
+                {PROVINCES.map((p) => (
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Ciudad" error={errors.city?.message}>
+              <input {...register("city")} className={input(errors.city)} autoComplete="address-level2" />
+            </Field>
+          </div>
+        </>
+      )}
 
       <Field label="Notas para la entrega (opcional)" error={errors.notes?.message}>
         <textarea {...register("notes")} rows={2} className={cn(input(), "resize-none")} />
       </Field>
+
+      {/* Facturación */}
+      <div className="border-t border-line pt-5">
+        <span className="mb-2 block text-[12px] font-medium tracking-wide text-ink-soft">¿Necesitás factura?</span>
+        <div className="flex gap-3">
+          {[
+            { v: true, l: "Sí" },
+            { v: false, l: "No" },
+          ].map((o) => {
+            const active = !!needsInvoice === o.v;
+            return (
+              <button
+                key={o.l}
+                type="button"
+                onClick={() => setValue("needsInvoice", o.v, { shouldValidate: true })}
+                className={cn(
+                  "min-w-20 border px-5 py-2.5 text-[13px] font-medium transition-colors",
+                  active ? "border-ink bg-ink text-paper" : "border-line text-ink-soft hover:border-ash",
+                )}
+              >
+                {o.l}
+              </button>
+            );
+          })}
+        </div>
+
+        {needsInvoice && (
+          <div className="mt-4 grid gap-5 sm:grid-cols-2">
+            <Field label="Nombre o Razón Social" error={errors.invoiceName?.message}>
+              <input {...register("invoiceName")} className={input(errors.invoiceName)} />
+            </Field>
+            <Field label="CUIT" error={errors.invoiceCuit?.message}>
+              <input {...register("invoiceCuit")} className={input(errors.invoiceCuit)} inputMode="numeric" placeholder="20-12345678-9" />
+            </Field>
+          </div>
+        )}
+      </div>
 
       <div className="flex items-center justify-between pt-2">
         <button

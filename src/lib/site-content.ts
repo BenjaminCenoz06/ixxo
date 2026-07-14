@@ -95,6 +95,12 @@ export interface SiteContent {
     interior: number;
     patagonia: number;
   };
+  bank: {
+    banco: string;
+    titular: string;
+    alias: string;
+    cbu: string;
+  };
   coupons: { code: string; label: string; type: "percent" | "fixed"; value: number }[];
   footerColumns: { title: string; links: { label: string; href: string }[] }[];
   payments: string[];
@@ -215,6 +221,12 @@ export const DEFAULT_CONTENT: SiteContent = {
     interior: 8900,
     patagonia: 11900,
   },
+  bank: {
+    banco: "",
+    titular: "Custom Wear",
+    alias: "",
+    cbu: "",
+  },
   coupons: [
     { code: "CUSTOM10", label: "10% de descuento", type: "percent", value: 10 },
     { code: "BIENVENIDO", label: "15% primera compra", type: "percent", value: 15 },
@@ -271,6 +283,7 @@ export function mergeContent(saved: Partial<SiteContent> | null | undefined): Si
     general: { ...DEFAULT_CONTENT.general, ...saved.general },
     seo: { ...DEFAULT_CONTENT.seo, ...saved.seo },
     shipping: { ...DEFAULT_CONTENT.shipping, ...saved.shipping },
+    bank: { ...DEFAULT_CONTENT.bank, ...saved.bank },
     coupons: saved.coupons?.length ? saved.coupons : DEFAULT_CONTENT.coupons,
     footerColumns: saved.footerColumns?.length ? saved.footerColumns : DEFAULT_CONTENT.footerColumns,
     payments: saved.payments?.length ? saved.payments : DEFAULT_CONTENT.payments,
