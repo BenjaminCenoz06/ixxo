@@ -15,6 +15,7 @@ interface Order {
   status: string;
   total: number;
   items: number;
+  lineItems: { name: string; code: string; qty: number; price: number }[];
   createdAt: string;
   paymentMethod: string;
   shippingType: string;
@@ -114,13 +115,14 @@ export default function AdminPedidos() {
         </div>
       ) : (
         <div className="overflow-x-auto border border-line bg-paper">
-          <table className="w-full min-w-[820px] text-[13px]">
+          <table className="w-full min-w-[980px] text-[13px]">
             <thead>
               <tr className="border-b border-line text-left text-[11px] uppercase tracking-wide text-ash">
                 <th className="px-4 py-3 font-medium">Pedido</th>
                 <th className="px-4 py-3 font-medium">Cliente</th>
+                <th className="px-4 py-3 font-medium">Productos</th>
                 <th className="px-4 py-3 font-medium">Entrega / Pago</th>
-                <th className="px-4 py-3 font-medium">Fecha</th>
+                <th className="px-4 py-3 font-medium">Fecha y hora</th>
                 <th className="px-4 py-3 font-medium">Total</th>
                 <th className="px-4 py-3 font-medium">Estado</th>
               </tr>
@@ -142,6 +144,20 @@ export default function AdminPedidos() {
                       </p>
                     )}
                   </td>
+                  <td className="px-4 py-3 text-[12px]">
+                    {o.lineItems.length === 0 ? (
+                      <span className="text-stone">—</span>
+                    ) : (
+                      <ul className="space-y-1.5">
+                        {o.lineItems.map((li, i) => (
+                          <li key={i}>
+                            <span className="font-medium">{li.name}</span>
+                            <span className="block text-[11px] text-stone">Cód: {li.code} · Cant: {li.qty}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-[12px] text-ash">
                     <p>{SHIP_LABEL[o.shippingType] || o.shippingType || "—"}</p>
                     {o.shippingType === "transporte" && o.shippingCompany && (
@@ -153,7 +169,16 @@ export default function AdminPedidos() {
                     </p>
                   </td>
                   <td className="px-4 py-3 text-ash">
-                    {o.createdAt ? new Date(o.createdAt).toLocaleDateString("es-AR") : "—"}
+                    {o.createdAt ? (
+                      <>
+                        <p>{new Date(o.createdAt).toLocaleDateString("es-AR")}</p>
+                        <p className="text-[11px] text-stone">
+                          {new Date(o.createdAt).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false })}
+                        </p>
+                      </>
+                    ) : (
+                      "—"
+                    )}
                   </td>
                   <td className="px-4 py-3 font-medium">{formatPrice(o.total)}</td>
                   <td className="px-4 py-3">
@@ -176,7 +201,7 @@ export default function AdminPedidos() {
               ))}
               {visible.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center text-ash">
+                  <td colSpan={7} className="px-4 py-12 text-center text-ash">
                     No hay pedidos con este estado.
                   </td>
                 </tr>
