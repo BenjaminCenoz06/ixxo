@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, ShoppingBag, Package } from "lucide-react";
+import { Check, ShoppingBag, Package, Clock, ShieldCheck } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
 import { useSiteContent } from "@/lib/site-content-context";
@@ -28,7 +28,17 @@ interface Order {
   phone?: string;
   paymentMethod?: Method;
   placedAt?: string; // ISO
+  securityCode?: string;
   items?: { name: string; code: string; qty: number }[];
+}
+
+/** Código de seguridad aleatorio (6-8 alfanuméricos, sin caracteres ambiguos). */
+function genSecurityCode(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const len = 6 + Math.floor(Math.random() * 3); // 6, 7 u 8
+  let out = "";
+  for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random() * chars.length)];
+  return out;
 }
 
 export default function CheckoutView() {
@@ -53,6 +63,7 @@ export default function CheckoutView() {
     number: string,
     totals: ReturnType<typeof computeTotals>,
     method: Method,
+    securityCode: string,
   ) => {
     await fetch("/api/orders", {
       method: "POST",
@@ -67,7 +78,7 @@ export default function CheckoutView() {
         shipping: totals.shipping,
         total: totals.total,
         coupon: coupon?.code ?? null,
-        shippingAddress: { ...(shipping ?? {}), paymentMethod: method },
+        shippingAddress: { ...(shipping ?? {}), paymentMethod: method, securityCode },
         items: items.map((it) => ({
           productId: it.productId,
           name: it.name,
@@ -94,6 +105,7 @@ export default function CheckoutView() {
     setProcessing(true);
     const totals = computeTotals(subtotal, coupon, shipCost);
     const number = `CW-${Math.floor(100000 + Math.random() * 900000)}`;
+    const securityCode = genSecurityCode();
 
     // Snapshot del pedido para la pantalla de éxito (antes de vaciar el carrito).
     const finalOrder: Order = {
@@ -105,11 +117,12 @@ export default function CheckoutView() {
       phone: shipping?.phone ?? "",
       paymentMethod: method,
       placedAt: new Date().toISOString(),
+      securityCode,
       items: items.map((it) => ({ name: it.name, code: it.productId, qty: it.qty })),
     };
 
     // Registra el pedido (best-effort, no bloquea la confirmación).
-    persistOrder(number, totals, method).catch(() => {});
+    persistOrder(number, totals, method, securityCode).catch(() => {});
 
     // Transferencia → confirmación directa. Tarjeta / Mercado Pago → checkout de MP.
     if (method !== "transfer") {
@@ -215,6 +228,8 @@ const PAY_LABEL: Record<string, string> = {
   card: "Tarjeta",
 };
 
+const ESTADO_PENDIENTE = "Compra pendiente de verificación";
+
 function Confirmation({ order }: { order: Order }) {
   const { general } = useSiteContent();
   const waNumber = (general.whatsapp || "5493518086096").replace(/\D/g, "");
@@ -229,20 +244,22 @@ function Confirmation({ order }: { order: Order }) {
 
   const waMessage = [
     "Hola 👋",
-    "Acabo de realizar una compra en la tienda.",
+    "Realicé un pedido en la tienda.",
     "",
-    `🛒 Pedido: #${order.number}`,
-    order.customerName ? `👤 Cliente: ${order.customerName}` : null,
-    order.email ? `📧 Email: ${order.email}` : null,
-    order.phone ? `📱 Teléfono: ${order.phone}` : null,
-    `📅 Fecha: ${fecha}`,
-    `🕒 Hora: ${hora}`,
+    `Pedido: #${order.number}`,
+    order.securityCode ? `Código de seguridad: ${order.securityCode}` : null,
+    order.customerName ? `Cliente: ${order.customerName}` : null,
+    order.email ? `Email: ${order.email}` : null,
+    order.phone ? `Teléfono: ${order.phone}` : null,
+    `Fecha: ${fecha}`,
+    `Hora: ${hora}`,
     "",
     "Productos:",
     productos,
     "",
-    `💰 Total: ${formatPrice(order.total)}`,
+    `Total: ${formatPrice(order.total)}`,
     `Método de pago: ${payLabel}`,
+    `Estado: ${ESTADO_PENDIENTE}.`,
     "",
     "Muchas gracias.",
   ]
@@ -266,41 +283,47 @@ function Confirmation({ order }: { order: Order }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.7, ease: EASE }}
       >
-        <p className="eyebrow mt-8">Pedido confirmado</p>
+        <p className="eyebrow mt-8">Compra realizada correctamente</p>
         <h1 className="mt-3 font-display text-4xl font-light tracking-tight md:text-5xl">
           ¡Gracias por tu compra!
         </h1>
         <p className="mx-auto mt-4 max-w-md text-[15px] leading-relaxed text-ash">
-          Tu pedido <span className="font-medium text-ink">{order.number}</span> quedó registrado por{" "}
-          <span className="font-medium text-ink">{formatPrice(order.total)}</span>.
-          {order.transfer
-            ? " Está pendiente de pago: en cuanto verifiquemos tu transferencia, te confirmamos por email y preparamos tu pedido."
-            : ` Te enviamos la confirmación ${order.email ? `a ${order.email}` : "por email"}.`}
+          Tu pedido <span className="font-medium text-ink">{order.number}</span> quedó registrado
+          correctamente por <span className="font-medium text-ink">{formatPrice(order.total)}</span>.
         </p>
 
-        <div className="mx-auto mt-10 flex max-w-sm items-center gap-4 border border-line p-5 text-left">
-          <Package size={26} strokeWidth={1.3} className="shrink-0 text-ink-soft" />
-          <div>
-            {order.transfer ? (
-              <>
-                <p className="text-[13px] font-medium">Esperando la confirmación del pago</p>
-                <p className="text-[12px] text-ash">
-                  Verificamos tu transferencia y te avisamos por email cuando confirmemos el pago.
-                </p>
-              </>
-            ) : (
-              <>
-                <p className="text-[13px] font-medium">Preparando tu envío</p>
-                <p className="text-[12px] text-ash">Llega en 2 a 5 días hábiles. Te avisamos cuando despache.</p>
-              </>
-            )}
-          </div>
+        {/* Estado actual: pendiente de verificación */}
+        <div className="mt-8 flex justify-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-5 py-2.5 text-[13px] font-semibold text-amber-700">
+            <Clock size={16} strokeWidth={2} />
+            Compra pendiente de verificación
+          </span>
+        </div>
+
+        {/* Mensaje de seguridad */}
+        <div className="mx-auto mt-8 flex max-w-md items-start gap-4 border border-line bg-smoke/40 p-5 text-left">
+          <ShieldCheck size={26} strokeWidth={1.4} className="mt-0.5 shrink-0 text-ink-soft" />
+          <p className="text-[13px] leading-relaxed text-ink-soft">
+            Tu pedido fue recibido correctamente y ya quedó registrado en nuestro sistema. Por
+            motivos de seguridad, todos los pedidos son verificados manualmente antes de ser
+            aprobados. Nuestro equipo comprobará que el pago haya sido acreditado correctamente. Una
+            vez confirmado, comenzaremos a preparar tu pedido. Este procedimiento protege tanto a
+            nuestros clientes como a nuestra tienda frente a errores, pagos pendientes o intentos de
+            fraude. No es necesario realizar nuevamente la compra. Solo aguardá la confirmación.
+            Gracias por confiar en nosotros.
+          </p>
         </div>
 
         {/* Detalle del pedido */}
         <dl className="mx-auto mt-8 grid max-w-sm grid-cols-2 gap-x-6 gap-y-3 border border-line p-5 text-left text-[13px]">
           <dt className="text-ash">Pedido</dt>
           <dd className="text-right font-medium">{order.number}</dd>
+          {order.securityCode && (
+            <>
+              <dt className="text-ash">Código de seguridad</dt>
+              <dd className="text-right font-mono font-semibold tracking-wider">{order.securityCode}</dd>
+            </>
+          )}
           <dt className="text-ash">Total</dt>
           <dd className="text-right font-medium">{formatPrice(order.total)}</dd>
           <dt className="text-ash">Método de pago</dt>
@@ -309,6 +332,8 @@ function Confirmation({ order }: { order: Order }) {
           <dd className="text-right font-medium">{fecha}</dd>
           <dt className="text-ash">Hora</dt>
           <dd className="text-right font-medium">{hora}</dd>
+          <dt className="text-ash">Estado</dt>
+          <dd className="text-right font-medium text-amber-700">{ESTADO_PENDIENTE}</dd>
         </dl>
 
         {/* Botón de WhatsApp con el detalle del pedido precargado */}

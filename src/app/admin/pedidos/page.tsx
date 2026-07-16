@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Loader2, Package } from "lucide-react";
+import { Loader2, Package, Clock, CheckCircle2, Truck, Ban } from "lucide-react";
 import { PageHeader } from "@/components/admin/ui";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,7 @@ interface Order {
   email: string;
   name: string;
   phone: string;
+  securityCode: string;
   status: string;
   total: number;
   items: number;
@@ -28,13 +29,48 @@ interface Order {
 
 const STATUSES = ["pending", "paid", "preparing", "shipped", "delivered", "cancelled"];
 const LABEL: Record<string, string> = {
-  pending: "Pago pendiente",
+  pending: "Compra pendiente de verificación",
   paid: "Pago confirmado",
   preparing: "Preparando pedido",
-  shipped: "Pedido despachado",
+  shipped: "Pedido enviado",
+  delivered: "Pedido entregado",
+  cancelled: "Pedido cancelado",
+};
+const SHORT: Record<string, string> = {
+  pending: "Pendientes",
+  paid: "Confirmados",
+  preparing: "Preparando",
+  shipped: "Enviados",
+  delivered: "Entregados",
+  cancelled: "Cancelados",
+};
+const BADGE_LABEL: Record<string, string> = {
+  pending: "Pend. de verificación",
+  paid: "Pago confirmado",
+  preparing: "Preparando",
+  shipped: "Enviado",
   delivered: "Entregado",
   cancelled: "Cancelado",
 };
+const STATUS_STYLE: Record<string, { badge: string; Icon: typeof Clock }> = {
+  pending: { badge: "border-amber-300 bg-amber-50 text-amber-700", Icon: Clock },
+  paid: { badge: "border-green-300 bg-green-50 text-green-700", Icon: CheckCircle2 },
+  preparing: { badge: "border-blue-300 bg-blue-50 text-blue-700", Icon: Package },
+  shipped: { badge: "border-blue-300 bg-blue-50 text-blue-700", Icon: Truck },
+  delivered: { badge: "border-green-300 bg-green-50 text-green-700", Icon: CheckCircle2 },
+  cancelled: { badge: "border-red-300 bg-red-50 text-red-700", Icon: Ban },
+};
+
+function StatusBadge({ status }: { status: string }) {
+  const s = STATUS_STYLE[status] ?? STATUS_STYLE.pending;
+  const Icon = s.Icon;
+  return (
+    <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] font-medium", s.badge)}>
+      <Icon size={12} strokeWidth={2} />
+      {BADGE_LABEL[status] ?? status}
+    </span>
+  );
+}
 const PAY_LABEL: Record<string, string> = {
   transfer: "Transferencia",
   mercadopago: "Mercado Pago",
@@ -96,7 +132,7 @@ export default function AdminPedidos() {
                 filter === f ? "bg-ink text-paper" : "border border-line text-ink-soft hover:border-ink",
               )}
             >
-              {f === "Todos" ? "Todos" : LABEL[f] ?? f}
+              {f === "Todos" ? "Todos" : SHORT[f] || f}
             </button>
           ))}
         </div>
@@ -132,6 +168,11 @@ export default function AdminPedidos() {
                 <tr key={o.id} className="align-top hover:bg-smoke/50">
                   <td className="px-4 py-3">
                     <p className="font-medium">{o.number}</p>
+                    {o.securityCode && (
+                      <p className="mt-0.5 font-mono text-[11px] tracking-wider text-ink-soft">
+                        Cód: {o.securityCode}
+                      </p>
+                    )}
                     <p className="text-[11px] text-stone">{o.items} art.</p>
                   </td>
                   <td className="px-4 py-3">
@@ -182,19 +223,22 @@ export default function AdminPedidos() {
                   </td>
                   <td className="px-4 py-3 font-medium">{formatPrice(o.total)}</td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <select
-                        value={o.status}
-                        onChange={(e) => setStatus(o, e.target.value)}
-                        className="border border-line bg-paper px-2 py-1 text-[12px] outline-none focus:border-ink"
-                      >
-                        {STATUSES.map((s) => (
-                          <option key={s} value={s}>
-                            {LABEL[s]}
-                          </option>
-                        ))}
-                      </select>
-                      {savingId === o.number && <Loader2 size={13} className="animate-spin text-ash" />}
+                    <div className="space-y-2">
+                      <StatusBadge status={o.status} />
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={o.status}
+                          onChange={(e) => setStatus(o, e.target.value)}
+                          className="border border-line bg-paper px-2 py-1 text-[12px] outline-none focus:border-ink"
+                        >
+                          {STATUSES.map((s) => (
+                            <option key={s} value={s}>
+                              {LABEL[s]}
+                            </option>
+                          ))}
+                        </select>
+                        {savingId === o.number && <Loader2 size={13} className="animate-spin text-ash" />}
+                      </div>
                     </div>
                   </td>
                 </tr>

@@ -12,19 +12,19 @@ export const isEmailConfigured = RESEND_API_KEY.length > 0;
 
 /** Mensaje amable por estado del pedido. */
 export const STATUS_MESSAGE: Record<string, string> = {
-  pending: "Recibimos tu pedido y está pendiente de pago.",
-  paid: "¡Confirmamos tu pago! Ya estamos preparando tu pedido. Te avisamos cuando lo despachemos.",
+  pending: "Recibimos tu pedido. Está pendiente de verificación del pago.",
+  paid: "¡Confirmamos tu pago! Ya estamos preparando tu pedido. Te avisamos cuando lo enviemos.",
   preparing: "Estamos preparando tu pedido.",
-  shipped: "Tu pedido fue despachado. ¡Ya está en camino!",
+  shipped: "Tu pedido fue enviado. ¡Ya está en camino!",
   delivered: "Tu pedido fue entregado. ¡Gracias por tu compra!",
   cancelled: "Tu pedido fue cancelado. Ante cualquier duda, escribinos.",
 };
 
 export const STATUS_TITLE: Record<string, string> = {
-  pending: "Pago pendiente",
+  pending: "Compra pendiente de verificación",
   paid: "Pago confirmado",
   preparing: "Preparando tu pedido",
-  shipped: "Pedido despachado",
+  shipped: "Pedido enviado",
   delivered: "Pedido entregado",
   cancelled: "Pedido cancelado",
 };

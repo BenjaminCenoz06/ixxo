@@ -46,6 +46,7 @@ export async function GET() {
       email: o.email,
       name: name || (o.email as string),
       phone: (sa.phone as string) ?? "",
+      securityCode: (sa.securityCode as string) ?? "",
       status: o.status,
       total: o.total,
       items: lineItems.length,
