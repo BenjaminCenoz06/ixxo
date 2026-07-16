@@ -100,6 +100,8 @@ export interface SiteContent {
     titular: string;
     alias: string;
     cbu: string;
+    mpTitular: string;
+    mpAlias: string;
   };
   coupons: { code: string; label: string; type: "percent" | "fixed"; value: number }[];
   footerColumns: { title: string; links: { label: string; href: string }[] }[];
@@ -226,6 +228,8 @@ export const DEFAULT_CONTENT: SiteContent = {
     titular: "Custom Wear",
     alias: "",
     cbu: "",
+    mpTitular: "Benjamin Cenoz",
+    mpAlias: "",
   },
   coupons: [
     { code: "CUSTOM10", label: "10% de descuento", type: "percent", value: 10 },

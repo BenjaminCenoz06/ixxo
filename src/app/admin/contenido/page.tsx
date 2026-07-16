@@ -155,6 +155,17 @@ export default function AdminContenido() {
               <Input value={content.bank.cbu} onChange={(v) => patch("bank", { ...content.bank, cbu: v })} />
             </Field>
           </div>
+          <p className="mb-3 mt-6 text-[12px] text-ash">
+            Mercado Pago (transferencia al alias). Se muestra cuando el cliente elige “Mercado Pago”.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Titular (Mercado Pago)">
+              <Input value={content.bank.mpTitular} onChange={(v) => patch("bank", { ...content.bank, mpTitular: v })} />
+            </Field>
+            <Field label="Alias de Mercado Pago">
+              <Input value={content.bank.mpAlias} onChange={(v) => patch("bank", { ...content.bank, mpAlias: v })} />
+            </Field>
+          </div>
         </Card>
 
         {/* Barra de anuncios */}

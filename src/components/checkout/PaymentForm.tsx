@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 export type Method = "mercadopago" | "transfer" | "card";
 
 const methods: { id: Method; label: string; desc: string; icon: typeof Wallet }[] = [
-  { id: "mercadopago", label: "Mercado Pago", desc: "Pagá con tu cuenta o como invitado", icon: Wallet },
+  { id: "mercadopago", label: "Mercado Pago", desc: "Transferí a nuestro alias de Mercado Pago", icon: Wallet },
   { id: "transfer", label: "Transferencia", desc: "15% OFF pagando por transferencia", icon: Landmark },
   { id: "card", label: "Tarjeta de crédito / débito", desc: "Hasta 6 cuotas sin interés", icon: CreditCard },
 ];
@@ -82,6 +82,16 @@ export default function PaymentForm({
                     <TransferDetails bank={bank} />
                   </motion.div>
                 )}
+                {active && m.id === "mercadopago" && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <MpDetails titular={bank.mpTitular} alias={bank.mpAlias} />
+                  </motion.div>
+                )}
               </AnimatePresence>
             </li>
           );
@@ -113,7 +123,11 @@ export default function PaymentForm({
           ) : (
             <>
               <Check size={15} strokeWidth={2.5} />{" "}
-              {method === "transfer" ? "Ya realicé la transferencia" : "Confirmar pedido"}
+              {method === "transfer"
+                ? "Ya realicé la transferencia"
+                : method === "mercadopago"
+                  ? "Ya realicé el pago"
+                  : "Confirmar pedido"}
             </>
           )}
         </button>
@@ -180,6 +194,66 @@ function TransferDetails({ bank }: { bank: { banco: string; titular: string; ali
               >
                 {copied === r.k ? <Check size={13} /> : <Copy size={13} />}
                 {copied === r.k ? "Copiado" : "Copiar"}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+/** Datos para pagar por Mercado Pago (transferencia al alias). Editable desde el admin. */
+function MpDetails({ titular, alias }: { titular: string; alias: string }) {
+  const [copied, setCopied] = useState(false);
+  const rows = [
+    { k: "Titular", v: titular },
+    { k: "Alias de Mercado Pago", v: alias },
+  ].filter((r) => r.v);
+  const qrText = rows.map((r) => `${r.k}: ${r.v}`).join("\n") || "Custom Wear";
+
+  return (
+    <div className="border border-t-0 border-line p-5">
+      <p className="mb-4 text-[13px] leading-relaxed text-ash">
+        Enviá el total a este alias desde <span className="font-medium text-ink">Mercado Pago</span>{" "}
+        (o tu banco). Escaneá el QR o copiá el alias. Al terminar, tocá{" "}
+        <span className="font-medium text-ink">“Ya realicé el pago”</span> y tu pedido queda
+        registrado como <span className="font-medium text-ink">pendiente de verificación</span>.
+      </p>
+
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+        {alias && (
+          <div className="flex shrink-0 justify-center">
+            <div className="border border-line bg-paper p-3">
+              <QRCodeSVG value={qrText} size={132} level="M" />
+            </div>
+          </div>
+        )}
+
+        <ul className="flex-1 space-y-2">
+          {rows.length === 0 && (
+            <li className="text-[13px] text-ash">
+              El alias de Mercado Pago se carga desde el panel de administración.
+            </li>
+          )}
+          {rows.map((r) => (
+            <li key={r.k} className="flex items-center justify-between gap-3 border-b border-line pb-2">
+              <span>
+                <span className="block text-[11px] uppercase tracking-wide text-ash">{r.k}</span>
+                <span className="text-[14px] font-medium">{r.v}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() =>
+                  navigator.clipboard?.writeText(r.v).then(() => {
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 1500);
+                  })
+                }
+                className="inline-flex items-center gap-1 text-[11px] text-ash transition-colors hover:text-ink"
+              >
+                {copied ? <Check size={13} /> : <Copy size={13} />}
+                {copied ? "Copiado" : "Copiar"}
               </button>
             </li>
           ))}

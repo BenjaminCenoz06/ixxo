@@ -124,8 +124,9 @@ export default function CheckoutView() {
     // Registra el pedido (best-effort, no bloquea la confirmación).
     persistOrder(number, totals, method, securityCode).catch(() => {});
 
-    // Transferencia → confirmación directa. Tarjeta / Mercado Pago → checkout de MP.
-    if (method !== "transfer") {
+    // Transferencia y Mercado Pago (alias) → confirmación directa (pago manual).
+    // Tarjeta → checkout de Mercado Pago si hay credenciales; si no, confirmación simulada.
+    if (method !== "transfer" && method !== "mercadopago") {
       try {
         const res = await fetch("/api/checkout/mercadopago", {
           method: "POST",
