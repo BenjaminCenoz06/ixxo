@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Loader2, Package, Clock, CheckCircle2, Truck, Ban } from "lucide-react";
+import { Loader2, Package, Clock, CheckCircle2, Truck, Ban, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/admin/ui";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -110,6 +110,16 @@ export default function AdminPedidos() {
     } finally {
       setSavingId(null);
     }
+  };
+
+  const deleteOrder = async (o: Order) => {
+    if (!confirm(`¿Borrar el pedido ${o.number}? Esta acción no se puede deshacer.`)) return;
+    setOrders((prev) => prev.filter((x) => x.number !== o.number));
+    await fetch("/api/admin/orders/delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ numbers: [o.number] }),
+    }).catch(() => {});
   };
 
   const visible = useMemo(
@@ -239,6 +249,12 @@ export default function AdminPedidos() {
                         </select>
                         {savingId === o.number && <Loader2 size={13} className="animate-spin text-ash" />}
                       </div>
+                      <button
+                        onClick={() => deleteOrder(o)}
+                        className="inline-flex items-center gap-1 text-[11px] text-stone transition-colors hover:text-accent"
+                      >
+                        <Trash2 size={12} /> Borrar
+                      </button>
                     </div>
                   </td>
                 </tr>
