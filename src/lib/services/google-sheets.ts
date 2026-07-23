@@ -320,10 +320,21 @@ export async function fetchGoogleSheetsProducts(): Promise<{
       };
     }
 
-    // Transformar y filtrar productos válidos y activos
+    // Transformar, filtrar y asegurar que cada producto tenga un slug único
+    const seenSlugs = new Set<string>();
     const products: Product[] = rawItems
       .map((item, idx) => mapSheetItemToProduct(item, idx))
-      .filter((p): p is Product => p !== null);
+      .filter((p): p is Product => p !== null)
+      .map((p) => {
+        let uniqueSlug = p.slug;
+        let counter = 1;
+        while (seenSlugs.has(uniqueSlug)) {
+          counter++;
+          uniqueSlug = `${p.slug}-${counter}`;
+        }
+        seenSlugs.add(uniqueSlug);
+        return { ...p, slug: uniqueSlug };
+      });
 
     return { products, error: null };
   } catch (err: unknown) {
