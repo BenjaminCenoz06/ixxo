@@ -24,12 +24,21 @@ export default function SearchOverlay({
   onClose: () => void;
 }) {
   const [query, setQuery] = useState("");
+  const [productList, setProductList] = useState(products);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (open) {
       setTimeout(() => inputRef.current?.focus(), 120);
       document.body.style.overflow = "hidden";
+      fetch("/api/products")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.products && Array.isArray(data.products) && data.products.length > 0) {
+            setProductList(data.products);
+          }
+        })
+        .catch(() => {});
     } else {
       document.body.style.overflow = "";
       setQuery("");
@@ -49,10 +58,10 @@ export default function SearchOverlay({
 
   const results = useMemo(() => {
     if (!q) return [];
-    return products
+    return productList
       .filter((p) => normalize(p.name).includes(q) || normalize(p.category).includes(q))
       .slice(0, 6);
-  }, [q]);
+  }, [q, productList]);
 
   const catMatches = useMemo(() => {
     if (!q) return [];
