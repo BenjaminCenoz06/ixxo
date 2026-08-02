@@ -18,11 +18,27 @@ export function OrganizationJsonLd() {
     <Script
       data={{
         "@context": "https://schema.org",
-        "@type": "Organization",
-        name: "Custom Wear",
+        "@type": "ClothingStore",
+        name: "GoodStyle",
+        description: "Tienda de ropa de hombre en Ituzaingó, Corrientes.",
         url: base,
         logo: `${base}/icon.png`,
-        sameAs: ["https://www.instagram.com/customwear.cba/"],
+        image: `${base}/icon.png`,
+        telephone: "+543786411223",
+        priceRange: "$$",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "Mariano Moreno",
+          addressLocality: "Ituzaingó",
+          addressRegion: "Corrientes",
+          postalCode: "W3407",
+          addressCountry: "AR",
+        },
+        geo: { "@type": "GeoCoordinates", latitude: -27.5900888, longitude: -56.6941168 },
+        hasMap:
+          "https://www.google.com/maps/place/GoodStyle/@-27.590084,-56.6966917,17z",
+        aggregateRating: { "@type": "AggregateRating", ratingValue: 5, reviewCount: 1 },
+        sameAs: ["https://www.instagram.com/good.style.ok/"],
       }}
     />
   );
@@ -34,7 +50,7 @@ export function WebSiteJsonLd() {
       data={{
         "@context": "https://schema.org",
         "@type": "WebSite",
-        name: "Custom Wear",
+        name: "GoodStyle",
         url: base,
         potentialAction: {
           "@type": "SearchAction",
@@ -56,7 +72,7 @@ export function ProductJsonLd({ product }: { product: Product }) {
         image: product.images,
         description: product.description,
         category: product.category,
-        brand: { "@type": "Brand", name: "Custom Wear" },
+        brand: { "@type": "Brand", name: "GoodStyle" },
         aggregateRating:
           product.reviewCount > 0
             ? {

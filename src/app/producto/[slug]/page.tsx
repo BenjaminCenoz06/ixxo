@@ -81,22 +81,31 @@ export default async function ProductPage({ params }: Params) {
         <Accordion
           items={[
             { title: "Descripción", content: <p>{product.description}</p> },
-            {
-              title: "Materiales",
-              content: (
-                <ul className="list-inside list-disc space-y-1">
-                  {product.materials?.map((m) => <li key={m}>{m}</li>)}
-                </ul>
-              ),
-            },
-            {
-              title: "Cuidados",
-              content: (
-                <ul className="list-inside list-disc space-y-1">
-                  {product.care?.map((c) => <li key={c}>{c}</li>)}
-                </ul>
-              ),
-            },
+            // Materiales y cuidados sólo si el producto los tiene cargados.
+            ...(product.materials?.length
+              ? [
+                  {
+                    title: "Materiales",
+                    content: (
+                      <ul className="list-inside list-disc space-y-1">
+                        {product.materials.map((m) => <li key={m}>{m}</li>)}
+                      </ul>
+                    ),
+                  },
+                ]
+              : []),
+            ...(product.care?.length
+              ? [
+                  {
+                    title: "Cuidados",
+                    content: (
+                      <ul className="list-inside list-disc space-y-1">
+                        {product.care.map((c) => <li key={c}>{c}</li>)}
+                      </ul>
+                    ),
+                  },
+                ]
+              : []),
             {
               title: "Preguntas frecuentes",
               content: (
@@ -115,7 +124,7 @@ export default async function ProductPage({ params }: Params) {
       </div>
 
       <RelatedProducts eyebrow="Completá el look" title="Combina con" products={related} />
-      <ProductReviews product={product} />
+      {product.reviewCount > 0 && <ProductReviews product={product} />}
       <RelatedProducts
         eyebrow="Seguí explorando"
         title="También te puede interesar"

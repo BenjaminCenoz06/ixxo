@@ -23,7 +23,7 @@ export default function Header() {
   const { count: favCount } = useFavorites();
   const { general, nav } = useSiteContent();
   const navItems = nav as NavItem[];
-  const storeName = general.storeName || "CUSTOM WEAR.";
+  const storeName = general.storeName || "GOODSTYLE.";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -44,7 +44,7 @@ export default function Header() {
         "fixed inset-x-0 top-0 z-40 transition-[background,box-shadow,color] duration-500",
         solid
           ? "bg-paper/80 text-ink shadow-[0_1px_0_0_rgba(0,0,0,0.04),0_8px_30px_-12px_rgba(0,0,0,0.12)] backdrop-blur-xl"
-          : "bg-transparent text-paper",
+          : "bg-transparent text-onmedia",
       )}
       onMouseLeave={() => setActive(null)}
     >
@@ -112,7 +112,7 @@ export default function Header() {
             <span className="relative">
               <ShoppingBag size={19} strokeWidth={1.5} />
               {count > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[9px] font-semibold text-paper">
+                <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[9px] font-semibold text-scrim">
                   {count}
                 </span>
               )}
@@ -145,7 +145,7 @@ const BRAND_WORDS = ["URBANO.", "STREETWEAR.", "ACTITUD.", "ESTILO."];
 
 /**
  * Marca del header con efecto máquina de escribir: escribe y borra palabras
- * relacionadas y vuelve a "CUSTOM WEAR." (que se muestra más tiempo).
+ * relacionadas y vuelve a "GOODSTYLE." (que se muestra más tiempo).
  * Solo anima mientras `animate` es true (arriba de todo); al hacer scroll se
  * detiene y queda fija la marca. No afecta el layout: el centro del grid es
  * `auto` y los laterales quedan anclados a los bordes.
@@ -312,9 +312,9 @@ function MegaPanel({ item }: { item?: NavItem }) {
                     sizes="320px"
                     className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink/50 to-transparent" />
-                  <div className="absolute bottom-4 left-4 text-paper">
-                    <p className="eyebrow text-paper/70">Destacado</p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-scrim/60 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-onmedia">
+                    <p className="eyebrow text-onmedia/70">Destacado</p>
                     <p className="font-display text-lg">{item.featured.title}</p>
                   </div>
                 </div>
@@ -335,7 +335,7 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
       {open && (
         <>
           <motion.div
-            className="fixed inset-0 z-40 bg-ink/40 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-40 bg-scrim/60 backdrop-blur-sm lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -349,7 +349,7 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="flex items-center justify-between border-b border-line px-6 py-5">
-              <span className="font-display text-lg tracking-[0.3em]">{general.storeName || "CUSTOM WEAR."}</span>
+              <span className="font-display text-lg tracking-[0.3em]">{general.storeName || "GOODSTYLE."}</span>
               <button aria-label="Cerrar" onClick={onClose}>
                 <X size={22} strokeWidth={1.5} />
               </button>

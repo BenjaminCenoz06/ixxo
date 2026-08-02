@@ -10,7 +10,7 @@ export default function AnnouncementBar() {
   const loop = [...messages, ...messages, ...messages, ...messages];
 
   return (
-    <div className="relative z-50 overflow-hidden bg-ink py-3 border-b border-paper/5">
+    <div className="relative z-50 overflow-hidden bg-smoke py-3 border-b border-line/40">
       <div className="flex whitespace-nowrap">
         <motion.div
           className="flex whitespace-nowrap"
@@ -24,7 +24,7 @@ export default function AnnouncementBar() {
           {loop.map((msg, i) => (
             <div
               key={i}
-              className="flex items-center px-6 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] text-paper/90"
+              className="flex items-center px-6 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.25em] text-ink/90"
             >
               <span>{msg}</span>
               <span className="ml-12 text-accent font-bold">·</span>

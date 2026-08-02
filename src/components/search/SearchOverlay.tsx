@@ -10,7 +10,7 @@ import { categories } from "@/data/categories";
 import { formatPrice } from "@/lib/format";
 import Portal from "@/components/ui/Portal";
 
-const POPULAR = ["Remeras", "Camperas", "Jean", "Sweater", "Zapatillas"];
+const POPULAR = ["Baggy", "Buzo Over", "Boxy", "Gorra", "Zapatillas"];
 
 function normalize(s: string) {
   return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");

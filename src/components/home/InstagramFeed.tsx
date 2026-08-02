@@ -41,17 +41,17 @@ export default function InstagramFeed() {
             {src && (
               <Image
                 src={src}
-                alt="Instagram Custom Wear"
+                alt="Instagram GoodStyle"
                 fill
                 sizes="(max-width:768px) 33vw, 16vw"
                 className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110"
                 unoptimized
               />
             )}
-            <div className="absolute inset-0 flex items-center justify-center bg-ink/0 transition-colors duration-500 group-hover:bg-ink/30">
+            <div className="absolute inset-0 flex items-center justify-center bg-scrim/0 transition-colors duration-500 group-hover:bg-scrim/30">
               <InstagramIcon
                 size={22}
-                className="text-paper opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                className="text-onmedia opacity-0 transition-opacity duration-500 group-hover:opacity-100"
               />
             </div>
           </Link>

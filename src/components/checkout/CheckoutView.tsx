@@ -104,7 +104,7 @@ export default function CheckoutView() {
   const placeOrder = async (method: Method) => {
     setProcessing(true);
     const totals = computeTotals(subtotal, coupon, shipCost);
-    const number = `CW-${Math.floor(100000 + Math.random() * 900000)}`;
+    const number = `GS-${Math.floor(100000 + Math.random() * 900000)}`;
     const securityCode = genSecurityCode();
 
     // Snapshot del pedido para la pantalla de éxito (antes de vaciar el carrito).

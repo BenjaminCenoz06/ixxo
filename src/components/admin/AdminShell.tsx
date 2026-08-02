@@ -41,11 +41,15 @@ const nav = [
 ];
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
-  const { user, loading, configured, signOut } = useAuth();
+  const { user, loading, configured, available, signOut } = useAuth();
   const [open, setOpen] = useState(false);
 
-  // Guard (solo con Supabase activo).
-  if (configured) {
+  // Sin backend que valide no tiene sentido pedir login: el panel entra en modo
+  // local (catálogo del código, cambios sólo en memoria).
+  const offline = configured && !available;
+
+  // Guard (solo con Supabase activo y respondiendo).
+  if (configured && available) {
     if (loading) return <Centered><Loader2 size={26} className="animate-spin text-ash" /></Centered>;
     if (!user) return <AdminLogin />;
     if (!isAdminEmail(user.email))
@@ -69,7 +73,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <div className="min-h-screen bg-smoke">
+    <div className="admin-theme min-h-screen bg-smoke">
       {/* Sidebar */}
       <aside
         className={cn(
@@ -79,7 +83,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       >
         <div className="flex items-center justify-between px-6 py-6">
           <Link href="/admin" className="font-display text-xl tracking-[0.3em]">
-            CUSTOM WEAR.
+            GOODSTYLE.
           </Link>
           <span className="text-[10px] uppercase tracking-[0.2em] text-paper/50">Admin</span>
         </div>
@@ -107,9 +111,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             <Menu size={22} />
           </button>
           <div className="ml-auto flex items-center gap-3 text-[13px] text-ash">
-            {adminDemoMode ? (
+            {adminDemoMode || offline ? (
               <span className="rounded-full bg-accent/10 px-3 py-1 text-[11px] font-medium text-accent">
-                Modo demo
+                {offline ? "Sin conexión" : "Modo demo"}
               </span>
             ) : (
               <>
@@ -125,12 +129,22 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </div>
         </header>
 
-        {adminDemoMode && (
+        {offline ? (
           <div className="border-b border-line bg-smoke px-5 py-3 text-[12px] text-ink-soft md:px-8">
-            <strong className="text-ink">Modo demo:</strong> estás viendo datos de ejemplo. Los
-            cambios no se guardan hasta conectar Supabase y definir{" "}
-            <code className="text-ink">NEXT_PUBLIC_ADMIN_EMAILS</code>.
+            <strong className="text-ink">Sin conexión a Supabase:</strong> el proyecto no responde,
+            así que el panel muestra el catálogo del código (los 159 productos de GoodStyle) y los
+            cambios que hagas <strong className="text-ink">no se guardan</strong>. Para volver a
+            guardar hay que recrear el proyecto de Supabase y actualizar las claves en{" "}
+            <code className="text-ink">.env.local</code>.
           </div>
+        ) : (
+          adminDemoMode && (
+            <div className="border-b border-line bg-smoke px-5 py-3 text-[12px] text-ink-soft md:px-8">
+              <strong className="text-ink">Modo demo:</strong> estás viendo datos de ejemplo. Los
+              cambios no se guardan hasta conectar Supabase y definir{" "}
+              <code className="text-ink">NEXT_PUBLIC_ADMIN_EMAILS</code>.
+            </div>
+          )
         )}
 
         <main className="px-5 py-8 md:px-8 md:py-10">{children}</main>
@@ -168,7 +182,7 @@ function NavLink({
 }
 
 function Centered({ children }: { children: React.ReactNode }) {
-  return <div className="flex min-h-screen items-center justify-center bg-smoke">{children}</div>;
+  return <div className="admin-theme flex min-h-screen items-center justify-center bg-smoke">{children}</div>;
 }
 
 /**
@@ -199,7 +213,7 @@ function AdminLogin() {
     <Centered>
       <form onSubmit={submit} className="w-full max-w-sm px-6">
         <div className="text-center">
-          <span className="font-display text-2xl font-medium tracking-[0.3em]">CUSTOM WEAR.</span>
+          <span className="font-display text-2xl font-medium tracking-[0.3em]">GOODSTYLE.</span>
           <p className="mt-2 text-[11px] uppercase tracking-[0.22em] text-ash">
             Panel de administración
           </p>

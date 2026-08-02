@@ -122,12 +122,19 @@ export default function ProductCard({
         </div>
 
         <p className="mt-1 text-[12px] text-ash">
-          <span className="text-ink-soft">{formatPrice(transferPrice(product.price, transferRate))}</span> por
-          transferencia · 6 cuotas de {installment(product.price)}
+          {transferRate > 0 && (
+            <>
+              <span className="text-ink-soft">
+                {formatPrice(transferPrice(product.price, transferRate))}
+              </span>{" "}
+              por transferencia ·{" "}
+            </>
+          )}
+          6 cuotas de {installment(product.price)}
         </p>
 
-        {/* Swatches */}
-        <div className="mt-3 flex items-center gap-1.5">
+        {/* Swatches — solo si hay más de una variante de color */}
+        <div className={cn("mt-3 flex items-center gap-1.5", product.colors.length < 2 && "hidden")}>
           {product.colors.slice(0, 4).map((c) => (
             <span
               key={c}

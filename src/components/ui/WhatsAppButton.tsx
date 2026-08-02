@@ -17,7 +17,8 @@ export default function WhatsAppButton() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Contactar por WhatsApp"
-      className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full border border-line bg-ink text-paper shadow-2xl transition-colors hover:bg-paper hover:text-ink"
+      // En móvil el acceso a WhatsApp vive en la barra inferior (BottomNav).
+      className="fixed bottom-6 right-6 z-40 hidden h-14 w-14 items-center justify-center rounded-full border border-line bg-ink text-paper shadow-2xl transition-colors hover:bg-paper hover:text-ink lg:flex"
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{

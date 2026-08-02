@@ -7,6 +7,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import BottomNav from "@/components/layout/BottomNav";
 
 /**
  * Decide el "chrome" de la app según la ruta:
@@ -22,12 +23,16 @@ export default function AppFrame({ children }: { children: React.ReactNode }) {
     <>
       <Loader />
       <SmoothScroll>
-        <Header />
-        <main id="contenido">{children}</main>
-        <Footer />
+        {/* pb-16 deja lugar a la barra inferior fija en móvil */}
+        <div className="pb-16 lg:pb-0">
+          <Header />
+          <main id="contenido">{children}</main>
+          <Footer />
+        </div>
       </SmoothScroll>
       <CartDrawer />
       <WhatsAppButton />
+      <BottomNav />
     </>
   );
 }

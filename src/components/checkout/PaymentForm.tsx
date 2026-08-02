@@ -149,7 +149,7 @@ function TransferDetails({ bank }: { bank: { banco: string; titular: string; ali
     { k: "Banco", v: bank.banco },
   ].filter((r) => r.v);
 
-  const qrText = rows.map((r) => `${r.k}: ${r.v}`).join("\n") || "Custom Wear";
+  const qrText = rows.map((r) => `${r.k}: ${r.v}`).join("\n") || "GoodStyle";
 
   const copy = (label: string, value: string) => {
     navigator.clipboard?.writeText(value).then(() => {
@@ -210,7 +210,7 @@ function MpDetails({ titular, alias }: { titular: string; alias: string }) {
     { k: "Titular", v: titular },
     { k: "Alias de Mercado Pago", v: alias },
   ].filter((r) => r.v);
-  const qrText = rows.map((r) => `${r.k}: ${r.v}`).join("\n") || "Custom Wear";
+  const qrText = rows.map((r) => `${r.k}: ${r.v}`).join("\n") || "GoodStyle";
 
   return (
     <div className="border border-t-0 border-line p-5">

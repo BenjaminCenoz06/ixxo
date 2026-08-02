@@ -16,9 +16,9 @@ import { cn } from "@/lib/utils";
 
 const TRUST = [
   { icon: ShieldCheck, label: "Compra segura" },
-  { icon: Truck, label: "Envío gratis" },
-  { icon: BadgeCheck, label: "Garantía" },
-  { icon: RefreshCw, label: "Cambios fáciles" },
+  { icon: Truck, label: "Envíos a todo el país" },
+  { icon: BadgeCheck, label: "Atención por WhatsApp" },
+  { icon: RefreshCw, label: "Retiro en el local" },
 ];
 
 export default function ProductInfo({ product }: { product: Product }) {
@@ -73,13 +73,15 @@ export default function ProductInfo({ product }: { product: Product }) {
 
   return (
     <div className="flex flex-col">
-      {/* Rating */}
-      <div className="flex items-center gap-2">
-        <Stars rating={product.rating} size={15} />
-        <a href="#opiniones" className="text-[13px] text-ash underline-offset-2 hover:underline">
-          {product.rating.toFixed(1)} · {product.reviewCount} opiniones
-        </a>
-      </div>
+      {/* Rating — solo cuando el producto tiene opiniones cargadas */}
+      {product.reviewCount > 0 && (
+        <div className="flex items-center gap-2">
+          <Stars rating={product.rating} size={15} />
+          <a href="#opiniones" className="text-[13px] text-ash underline-offset-2 hover:underline">
+            {product.rating.toFixed(1)} · {product.reviewCount} opiniones
+          </a>
+        </div>
+      )}
 
       <p className="mt-4 text-[12px] uppercase tracking-[0.16em] text-ash">{product.category}</p>
       <h1 className="mt-1 font-display text-3xl font-light tracking-tight md:text-4xl">
@@ -99,33 +101,42 @@ export default function ProductInfo({ product }: { product: Product }) {
         )}
       </div>
       <p className="mt-2 text-[13px] text-ash">
-        <span className="font-medium text-ink-soft">{formatPrice(transferPrice(product.price, transferRate))}</span>{" "}
-        por transferencia · 6 cuotas sin interés de {installment(product.price)}
+        {transferRate > 0 && (
+          <>
+            <span className="font-medium text-ink-soft">
+              {formatPrice(transferPrice(product.price, transferRate))}
+            </span>{" "}
+            por transferencia ·{" "}
+          </>
+        )}
+        6 cuotas sin interés de {installment(product.price)}
       </p>
 
-      {/* Color */}
-      <div className="mt-8">
-        <div className="mb-3 flex items-center gap-2 text-[13px]">
-          <span className="font-medium">Color:</span>
-          <span className="text-ash">{color}</span>
+      {/* Color — solo si la prenda tiene más de una variante */}
+      {product.colors.length > 1 && (
+        <div className="mt-8">
+          <div className="mb-3 flex items-center gap-2 text-[13px]">
+            <span className="font-medium">Color:</span>
+            <span className="text-ash">{color}</span>
+          </div>
+          <div className="flex flex-wrap gap-2.5">
+            {product.colors.map((c) => (
+              <button
+                key={c}
+                onClick={() => setColor(c)}
+                aria-label={c}
+                aria-pressed={color === c}
+                title={c}
+                className={cn(
+                  "h-8 w-8 rounded-full border transition-all",
+                  color === c ? "border-ink ring-1 ring-ink ring-offset-2" : "border-line hover:border-ash",
+                )}
+                style={{ backgroundColor: colorHex(c) }}
+              />
+            ))}
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2.5">
-          {product.colors.map((c) => (
-            <button
-              key={c}
-              onClick={() => setColor(c)}
-              aria-label={c}
-              aria-pressed={color === c}
-              title={c}
-              className={cn(
-                "h-8 w-8 rounded-full border transition-all",
-                color === c ? "border-ink ring-1 ring-ink ring-offset-2" : "border-line hover:border-ash",
-              )}
-              style={{ backgroundColor: colorHex(c) }}
-            />
-          ))}
-        </div>
-      </div>
+      )}
 
       {/* Talle */}
       <div className="mt-7">
@@ -187,7 +198,11 @@ export default function ProductInfo({ product }: { product: Product }) {
           </button>
         </div>
         {lowStock ? (
-          <span className="text-[13px] text-accent">Solo quedan {product.stock} unidades</span>
+          <span className="text-[13px] text-accent">
+            {product.stock === 1
+              ? "Queda 1 unidad"
+              : `Solo quedan ${product.stock} unidades`}
+          </span>
         ) : (
           <span className="flex items-center gap-1.5 text-[13px] text-ash">
             <span className="h-1.5 w-1.5 rounded-full bg-green-600" /> En stock

@@ -84,14 +84,25 @@ export function useAdminProducts() {
   useEffect(() => {
     const sb = getSupabaseBrowser();
     if (!sb) return;
+    let cancelled = false;
     setLoading(true);
-    sb.from("products")
-      .select("*")
-      .order("created_at")
-      .then(({ data }) => {
-        if (data?.length) setItems((data as Row[]).map(rowToProduct));
-        setLoading(false);
-      });
+
+    (async () => {
+      try {
+        const { data } = await sb.from("products").select("*").order("created_at");
+        if (!cancelled && data?.length) setItems((data as Row[]).map(rowToProduct));
+      } catch (err) {
+        // Proyecto caído: el panel se queda con el catálogo del código en vez
+        // de colgarse cargando para siempre.
+        console.warn("[admin] No se pudieron leer los productos de Supabase.", err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const upsert = async (product: Product) => {

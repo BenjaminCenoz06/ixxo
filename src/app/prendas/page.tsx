@@ -4,7 +4,7 @@ import { getAllProducts } from "@/lib/repository/products";
 
 export const metadata: Metadata = {
   title: "Todas las prendas",
-  description: "El catálogo completo de Custom Wear.",
+  description: "El catálogo completo de GoodStyle.",
 };
 
 export const dynamic = "force-dynamic";
@@ -16,7 +16,7 @@ export default async function PrendasPage() {
       products={products}
       title="Todas las prendas"
       eyebrow="Catálogo"
-      description="Explorá toda la colección de Custom Wear."
+      description="Explorá toda la colección de GoodStyle."
     />
   );
 }

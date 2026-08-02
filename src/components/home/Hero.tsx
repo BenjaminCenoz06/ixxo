@@ -28,7 +28,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section ref={ref} className="relative h-[100svh] w-full overflow-hidden bg-ink">
+    <section ref={ref} className="relative h-[100svh] w-full overflow-hidden bg-scrim">
       {/* Slides con crossfade + Ken Burns */}
       <motion.div style={{ y, scale }} className="absolute inset-0">
         <AnimatePresence>
@@ -78,13 +78,13 @@ export default function Hero() {
       </motion.div>
 
       {/* Overlay sutil */}
-      <div className="absolute inset-0 bg-gradient-to-b from-ink/40 via-ink/20 to-ink/60" />
-      <div className="absolute inset-0 bg-ink/10" />
+      <div className="absolute inset-0 bg-gradient-to-b from-scrim/45 via-scrim/20 to-scrim/70" />
+      <div className="absolute inset-0 bg-scrim/10" />
 
       {/* Contenido */}
       <motion.div
         style={{ opacity }}
-        className="container-ixxo relative flex h-full flex-col justify-end pb-[12vh] text-paper"
+        className="container-ixxo relative flex h-full flex-col justify-end pb-[12vh] text-onmedia"
       >
         <AnimatePresence mode="wait">
           <motion.p
@@ -93,7 +93,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.7, ease: EASE }}
-            className="mb-5 text-[11px] font-medium uppercase tracking-[0.32em] text-paper/80"
+            className="mb-5 text-[11px] font-medium uppercase tracking-[0.32em] text-onmedia/80"
           >
             {slides[index].eyebrow}
           </motion.p>
@@ -118,13 +118,13 @@ export default function Hero() {
         >
           <Link
             href={hero.ctaPrimaryHref}
-            className="group inline-flex items-center bg-paper px-9 py-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-ink transition-all duration-300 hover:bg-paper/90"
+            className="group inline-flex items-center bg-onmedia px-9 py-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-scrim transition-all duration-300 hover:bg-onmedia/90"
           >
             {hero.ctaPrimaryLabel}
           </Link>
           <Link
             href={hero.ctaSecondaryHref}
-            className="inline-flex items-center border border-paper/40 px-9 py-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-paper backdrop-blur-sm transition-all duration-300 hover:bg-paper hover:text-ink"
+            className="inline-flex items-center border border-onmedia/40 px-9 py-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-onmedia backdrop-blur-sm transition-all duration-300 hover:bg-onmedia hover:text-scrim"
           >
             {hero.ctaSecondaryLabel}
           </Link>
@@ -137,10 +137,10 @@ export default function Hero() {
               key={i}
               onClick={() => setIndex(i)}
               aria-label={`Slide ${i + 1}`}
-              className="h-0.5 w-8 overflow-hidden bg-paper/25"
+              className="h-0.5 w-8 overflow-hidden bg-onmedia/25"
             >
               <span
-                className={`block h-full bg-paper transition-transform duration-500 ${
+                className={`block h-full bg-onmedia transition-transform duration-500 ${
                   i === index ? "translate-x-0" : "-translate-x-full"
                 }`}
               />
@@ -151,8 +151,8 @@ export default function Hero() {
 
       {/* Scroll indicator */}
       <div className="absolute inset-x-0 bottom-6 flex justify-center">
-        <div className="flex h-9 w-5 items-start justify-center rounded-full border border-paper/40 p-1">
-          <span className="h-1.5 w-1.5 animate-scroll-hint rounded-full bg-paper" />
+        <div className="flex h-9 w-5 items-start justify-center rounded-full border border-onmedia/40 p-1">
+          <span className="h-1.5 w-1.5 animate-scroll-hint rounded-full bg-onmedia" />
         </div>
       </div>
     </section>

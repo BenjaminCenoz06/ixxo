@@ -2,6 +2,7 @@ import Hero from "@/components/home/Hero";
 import NewCollection from "@/components/home/NewCollection";
 import Categories from "@/components/home/Categories";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
+import Benefits from "@/components/home/Benefits";
 import Collections from "@/components/home/Collections";
 import Editorial from "@/components/home/Editorial";
 import Lookbook from "@/components/home/Lookbook";
@@ -21,6 +22,7 @@ export default async function Home() {
       <NewCollection />
       <Categories heading={sections.categories} />
       <FeaturedProducts heading={sections.featured} />
+      <Benefits />
       <Collections />
       <Editorial />
       <Lookbook />

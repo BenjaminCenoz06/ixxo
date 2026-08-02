@@ -1,5 +1,4 @@
 import { editorial, editorialWide } from "@/data/images";
-import { reviews as defaultReviews, reviewStats } from "@/data/reviews";
 import { navItems as defaultNav } from "@/data/nav";
 
 export interface NavItemContent {
@@ -111,57 +110,56 @@ export interface SiteContent {
 
 export const DEFAULT_CONTENT: SiteContent = {
   announcement: [
-    "Envío a todo el país",
-    "Precios mayoristas y minoristas",
-    "Hasta 6 cuotas sin interés",
-    "15% OFF pagando por transferencia",
+    "Envíos a todo el país",
+    "Envíos a domicilio",
+    "Envío gratis a partir de $30.000",
   ],
   hero: {
-    titleTop: "Estilo",
-    titleBottom: "urbano.",
+    titleTop: "Ropa",
+    titleBottom: "urbana.",
     ctaPrimaryLabel: "Ver catálogo",
     ctaPrimaryHref: "/novedades",
-    ctaSecondaryLabel: "Colecciones",
-    ctaSecondaryHref: "/colecciones",
+    ctaSecondaryLabel: "Categorías",
+    ctaSecondaryHref: "/prendas",
     slides: [
-      { image: editorialWide("hero-1", 2000, 1200), eyebrow: "Nueva temporada 2026" },
-      { image: editorialWide("hero-2", 2000, 1200), eyebrow: "Indumentaria urbana" },
-      { image: editorialWide("hero-3", 2000, 1200), eyebrow: "Mayorista y minorista" },
+      { image: editorialWide("hero-1", 2000, 1200), eyebrow: "Indumentaria masculina" },
+      { image: editorialWide("hero-2", 2000, 1200), eyebrow: "Calidad + estilo al mejor precio" },
+      { image: editorialWide("hero-3", 2000, 1200), eyebrow: "Envíos a todo el país" },
     ],
   },
   newCollection: {
-    eyebrow: "Nueva temporada",
-    title: "Colección 2026",
+    eyebrow: "Nuevos ingresos",
+    title: "Temporada 2026",
     description:
-      "Las últimas tendencias en indumentaria urbana. Prendas cómodas, versátiles y con impronta propia, pensadas para tu día a día en la ciudad.",
+      "Jeans, bermudas, buzos, remeras, zapatillas y accesorios. Ropa urbana masculina con la mejor relación precio-calidad, con envíos a todo el país.",
     image: editorialWide("newcol", 1200, 1400),
-    ctaLabel: "Ver la colección",
+    ctaLabel: "Ver los ingresos",
     ctaHref: "/novedades",
   },
   editorial: {
-    eyebrow: "Filosofía Custom Wear",
+    eyebrow: "Filosofía GoodStyle",
     quote:
-      "Vestí tu identidad. Streetwear con actitud, hecho para moverse con vos por las calles de Córdoba.",
+      "Ropa urbana con estilo. Calidad y precio, para moverte todos los días por Ituzaingó y donde vayas.",
     subtext:
-      "Diseño urbano, calidad en cada prenda y atención cercana. Mayorista y minorista, con envíos a todo el país.",
+      "Indumentaria masculina en Ituzaingó, Corrientes. Atención cercana en el local de Mariano Moreno y envíos a todo el país.",
     image: editorialWide("editorial-bg", 2000, 1200),
   },
   newsletter: {
     eyebrow: "Newsletter",
-    title: "Sumate a la comunidad Custom Wear",
-    subtitle: "Enterate primero de los nuevos ingresos, promos y un 10% en tu primera compra.",
+    title: "Sumate a la comunidad GoodStyle",
+    subtitle: "Enterate primero de los nuevos ingresos y las promos de la semana.",
   },
   footer: {
     description:
-      "Indumentaria urbana en Córdoba, Argentina. Mayorista y minorista, con envíos a todo el país. Escribinos por WhatsApp o a customwear.cba@gmail.com.",
-    instagram: "https://www.instagram.com/customwear.cba/",
-    tiktok: "https://www.instagram.com/customwear.cba/",
-    youtube: "https://www.instagram.com/customwear.cba/",
+      "Indumentaria masculina en Ituzaingó, Corrientes. Ropa urbana: calidad y estilo al mejor precio, con envíos a todo el país. Escribinos por WhatsApp o pasá por el local.",
+    instagram: "https://www.instagram.com/good.style.ok/",
+    tiktok: "https://www.instagram.com/good.style.ok/",
+    youtube: "https://www.instagram.com/good.style.ok/",
   },
   sections: {
     categories: { eyebrow: "Explorá", title: "Comprar por categoría", ctaLabel: "Ver todas", ctaHref: "/categorias" },
     featured: { eyebrow: "Selección", title: "Productos destacados", ctaLabel: "Ver todo", ctaHref: "/novedades" },
-    collections: { eyebrow: "Colecciones", title: "Cada colección, un universo propio" },
+    collections: { eyebrow: "Categorías", title: "Elegí por dónde empezar" },
     lookbook: { eyebrow: "Lookbook", title: "Comprá el look completo", ctaLabel: "Ver lookbook", ctaHref: "/lookbook" },
     reviews: { eyebrow: "Opiniones", title: "Lo que dicen nuestros clientes" },
   },
@@ -173,49 +171,53 @@ export const DEFAULT_CONTENT: SiteContent = {
     ],
   },
   homeCollections: [
-    { image: editorialWide("col-1"), title: "Urbano", subtitle: "Prendas de todos los días con impronta de calle.", href: "/novedades" },
-    { image: editorialWide("col-2"), title: "Oversize", subtitle: "Siluetas amplias y cómodas para tu estilo.", href: "/novedades" },
-    { image: editorialWide("col-3"), title: "Accesorios", subtitle: "El detalle que completa el look.", href: "/novedades" },
+    { image: editorialWide("col-1"), title: "Jeans y bermudas", subtitle: "Baggy, semi baggy, mom y joggers.", href: "/categoria/jeans" },
+    { image: editorialWide("col-2"), title: "Buzos y remeras", subtitle: "Oversize, boxy y clásicos.", href: "/categoria/buzos" },
+    { image: editorialWide("col-3"), title: "Accesorios", subtitle: "Gorras, relojes, perfumes y más.", href: "/categoria/accesorios" },
   ],
   instagram: {
     eyebrow: "Comunidad",
-    handle: "@customwear.cba",
-    url: "https://www.instagram.com/customwear.cba/",
+    handle: "@good.style.ok",
+    url: "https://www.instagram.com/good.style.ok/",
     images: Array.from({ length: 6 }).map((_, i) => editorial(`instagram-${i}`, 600, 600)),
   },
   reviews: {
-    average: reviewStats.average,
-    count: reviewStats.count,
-    items: defaultReviews.map((r) => ({
-      author: r.author,
-      rating: r.rating,
-      title: r.title,
-      body: r.body,
-      product: r.product,
-      avatar: r.avatar,
-    })),
+    average: 5,
+    count: 1,
+    items: [
+      {
+        author: "Dylan thomas Galeano",
+        rating: 5,
+        title: "",
+        body: "",
+        product: "",
+        avatar: "",
+      },
+    ],
   },
   theme: {
-    accent: "#b91c1c",
-    ink: "#0a0a0a",
-    paper: "#ffffff",
+    accent: "#f5b301",
+    ink: "#ffffff",
+    paper: "#14532d",
   },
   general: {
-    storeName: "CUSTOM WEAR.",
-    whatsapp: "5493518086096",
-    whatsappMessage: "¡Hola Custom Wear! Quiero hacer una consulta.",
-    email: "customwear.cba@gmail.com",
-    address: "Nueva Córdoba, Córdoba, Argentina",
-    hours: "Lun a Sáb de 10 a 20 h",
-    mapUrl: "https://www.google.com/maps/place/Custom+Wear+Cba/@-31.4267849,-64.1878107,16z",
-    freeShippingThreshold: 90000,
-    transferDiscount: 15,
+    storeName: "GOODSTYLE.",
+    whatsapp: "5493786411223",
+    whatsappMessage: "¡Hola GoodStyle! Quiero hacer una consulta.",
+    email: "",
+    address: "Mariano Moreno, W3407 Ituzaingó, Corrientes",
+    hours: "Abre a las 9:30 h",
+    mapUrl:
+      "https://www.google.com/maps/place/GoodStyle/@-27.590084,-56.6966917,17z/data=!3m1!4b1!4m6!3m5!1s0x94573901b5e70ba9:0x84e1114f88de1a05!8m2!3d-27.5900888!4d-56.6941168!16s%2Fg%2F11yhdvyvhq",
+    freeShippingThreshold: 30000,
+    transferDiscount: 0,
   },
   seo: {
-    title: "Custom Wear — Indumentaria urbana en Córdoba",
+    title: "GoodStyle — Indumentaria masculina en Ituzaingó, Corrientes",
     description:
-      "Custom Wear. Indumentaria urbana en Córdoba, Argentina: streetwear con actitud, precios mayoristas y minoristas, y envíos a todo el país.",
-    keywords: "indumentaria urbana, streetwear, ropa Córdoba, mayorista indumentaria, Custom Wear",
+      "GoodStyle. Ropa urbana masculina en Ituzaingó, Corrientes: jeans, bermudas, buzos, remeras, zapatillas y accesorios. Calidad y estilo al mejor precio, con envíos a todo el país.",
+    keywords:
+      "ropa urbana, indumentaria masculina, ropa hombre Ituzaingó, jeans baggy, buzos oversize, GoodStyle, Corrientes",
   },
   shipping: {
     metro: 4900,
@@ -225,14 +227,14 @@ export const DEFAULT_CONTENT: SiteContent = {
   },
   bank: {
     banco: "",
-    titular: "Custom Wear",
+    titular: "GoodStyle",
     alias: "",
     cbu: "",
-    mpTitular: "Benjamin Cenoz",
+    mpTitular: "",
     mpAlias: "",
   },
   coupons: [
-    { code: "CUSTOM10", label: "10% de descuento", type: "percent", value: 10 },
+    { code: "GOOD10", label: "10% de descuento", type: "percent", value: 10 },
     { code: "BIENVENIDO", label: "15% primera compra", type: "percent", value: 15 },
     { code: "ENVIOGRATIS", label: "Envío gratis", type: "fixed", value: 0 },
   ],
@@ -240,14 +242,17 @@ export const DEFAULT_CONTENT: SiteContent = {
     {
       title: "Ayuda",
       links: [
-        { label: "Contacto", href: "https://wa.me/5493518086096" },
-        { label: "Cómo llegar", href: "https://www.google.com/maps/place/Custom+Wear+Cba/@-31.4267849,-64.1878107,16z" },
-        { label: "Cambios y devoluciones", href: "#" },
+        { label: "Contacto", href: "https://wa.me/5493786411223" },
+        {
+          label: "Cómo llegar",
+          href: "https://www.google.com/maps/place/GoodStyle/@-27.590084,-56.6966917,17z",
+        },
+        { label: "Retiro en el local", href: "#" },
         { label: "Envíos", href: "#" },
         { label: "Guía de talles", href: "#" },
       ],
     },
-    { title: "Empresa", links: ["Sobre Custom Wear", "Venta mayorista", "Trabajá con nosotros", "Novedades"].map((l) => ({ label: l, href: "#" })) },
+    { title: "GoodStyle", links: ["Nuestra historia", "Nuevos ingresos", "Instagram", "Local en Ituzaingó"].map((l) => ({ label: l, href: "#" })) },
     { title: "Legales", links: ["Términos y condiciones", "Política de privacidad", "Botón de arrepentimiento", "Defensa al consumidor"].map((l) => ({ label: l, href: "#" })) },
   ],
   payments: ["Visa", "Mastercard", "Amex", "Mercado Pago", "Transferencia"],

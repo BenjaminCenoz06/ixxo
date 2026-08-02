@@ -26,7 +26,7 @@ const manrope = Manrope({
 
 export async function generateMetadata(): Promise<Metadata> {
   const { seo, general } = await getSiteContent();
-  const brand = general.storeName?.replace(/\.$/, "") || "Custom Wear";
+  const brand = general.storeName?.replace(/\.$/, "") || "GoodStyle";
   return {
     metadataBase: new URL(SITE_URL),
     title: {

@@ -76,14 +76,16 @@ export default function Reviews() {
                   <div>
                     <p className="text-sm font-medium">{r.author}</p>
                     <span className="inline-flex items-center gap-1 text-[11px] text-ash">
-                      <BadgeCheck size={12} className="text-ink" /> Compra verificada
+                      <BadgeCheck size={12} className="text-ink" /> Reseña verificada
                     </span>
                   </div>
                 </div>
                 <Stars rating={r.rating} className="mt-4" />
-                <h3 className="mt-3 text-sm font-medium">{r.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-ash">{r.body}</p>
-                <p className="mt-4 text-[11px] uppercase tracking-[0.14em] text-stone">{r.product}</p>
+                {r.title && <h3 className="mt-3 text-sm font-medium">{r.title}</h3>}
+                {r.body && <p className="mt-2 text-sm leading-relaxed text-ash">{r.body}</p>}
+                {r.product && (
+                  <p className="mt-4 text-[11px] uppercase tracking-[0.14em] text-stone">{r.product}</p>
+                )}
               </motion.article>
             ))}
           </RevealGroup>

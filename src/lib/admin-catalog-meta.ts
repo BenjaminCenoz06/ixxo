@@ -39,13 +39,23 @@ export function useAdminCategories() {
     const sb = getSupabaseBrowser();
     if (!sb) return;
     setLoading(true);
-    sb.from("categories")
-      .select("*")
-      .order("sort")
-      .then(({ data }) => {
-        if (data?.length) setItems(data as AdminCategory[]);
-        setLoading(false);
-      });
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const { data } = await sb.from("categories").select("*").order("sort");
+        if (!cancelled && data?.length) setItems(data as AdminCategory[]);
+      } catch (err) {
+        // Proyecto caído: se sigue con las categorías del código.
+        console.warn("[admin] No se pudieron leer las categorías de Supabase.", err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   async function upsert(cat: AdminCategory) {
@@ -96,12 +106,22 @@ export function useAdminCollections() {
     const sb = getSupabaseBrowser();
     if (!sb) return;
     setLoading(true);
-    sb.from("collections")
-      .select("*")
-      .then(({ data }) => {
-        if (data?.length) setItems(data as AdminCollection[]);
-        setLoading(false);
-      });
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const { data } = await sb.from("collections").select("*");
+        if (!cancelled && data?.length) setItems(data as AdminCollection[]);
+      } catch (err) {
+        console.warn("[admin] No se pudieron leer las colecciones de Supabase.", err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   async function upsert(col: AdminCollection) {

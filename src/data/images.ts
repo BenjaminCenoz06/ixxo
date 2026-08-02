@@ -72,7 +72,8 @@ const UNSPLASH_MAP: Record<string, string> = {
   // Categorías
   "cat-remeras": "https://images.unsplash.com/photo-1562157873-818bc0726f68",
   "cat-camisas": "https://images.unsplash.com/photo-1598033129183-c4f50c736f10",
-  "cat-buzos": "https://images.unsplash.com/photo-1621905252507-b354bc25edac",
+  // La foto anterior (photo-1621905252507…) fue dada de baja en Unsplash: daba 404.
+  "cat-buzos": "https://images.unsplash.com/photo-1556821840-3a63f95609a7",
   "cat-camperas": "https://images.unsplash.com/photo-1483985988355-763728e1935b",
   "cat-jeans": "https://images.unsplash.com/photo-1516257984-b1b4d707412e",
   "cat-pantalones": "https://images.unsplash.com/photo-1473968512647-3e447244af8f",
@@ -101,6 +102,72 @@ const UNSPLASH_MAP: Record<string, string> = {
 /**
  * Devuelve una foto de modelo elegante de hombre de Unsplash optimizada.
  */
+/**
+ * Fotos de referencia por categoría, para que un jean no se vea como una gorra
+ * mientras GoodStyle no cargue sus propias fotos. Todas verificadas.
+ */
+const CATEGORY_PHOTOS: Record<string, string[]> = {
+  bermudas: [
+    "photo-1565084888279-aca607ecce0c",
+    "photo-1617952236317-0bd127407984",
+    "photo-1571945153237-4929e783af4a",
+    "photo-1604176354204-9268737828e4",
+  ],
+  jeans: [
+    "photo-1542272604-787c3835535d",
+    "photo-1541099649105-f69ad21f3246",
+    "photo-1516257984-b1b4d707412e",
+    "photo-1582418702059-97ebafb35d09",
+    "photo-1475178626620-a4d074967452",
+  ],
+  buzos: [
+    "photo-1556821840-3a63f95609a7",
+    "photo-1620799140408-edc6dcb6d633",
+    "photo-1509942774463-acf339cf87d5",
+    "photo-1578681994506-b8f463449011",
+    "photo-1614975058789-41316d0e2e9c",
+  ],
+  remeras: [
+    "photo-1521572267360-ee0c2909d518",
+    "photo-1503342217505-b0a15ec3261c",
+    "photo-1562157873-818bc0726f68",
+    "photo-1576566588028-4147f3842f27",
+    "photo-1583743814966-8936f5b7be1a",
+  ],
+  accesorios: [
+    "photo-1588850561407-ed78c282e89b",
+    "photo-1521369909029-2afed882baee",
+    "photo-1524805444758-089113d48a6d",
+    "photo-1523293182086-7651a899d37f",
+    "photo-1594035910387-fea47794261f",
+    "photo-1553062407-98eeb64c6a62",
+  ],
+  zapatillas: [
+    "photo-1549298916-b41d501d3772",
+    "photo-1595950653106-6c9ebd614d3a",
+    "photo-1515955656352-a1fa3ffcd111",
+    "photo-1491553895911-0055eca6402d",
+    "photo-1600185365483-26d7a4cc7519",
+  ],
+};
+
+/**
+ * Foto de referencia para un producto sin imagen propia.
+ * `variant` desplaza la elección para que la segunda foto de la ficha no repita.
+ */
+export function categoryPhoto(
+  categorySlug: string,
+  index: number,
+  variant = 0,
+  w = 900,
+  h = 1200,
+): string {
+  const pool = CATEGORY_PHOTOS[categorySlug];
+  if (!pool) return editorial("", w, h);
+  const id = pool[(index + variant) % pool.length];
+  return `https://images.unsplash.com/${id}?auto=format&fit=crop&q=80&w=${w}&h=${h}`;
+}
+
 export function editorial(seed: string, w = 900, h = 1200): string {
   const base = UNSPLASH_MAP[seed];
   if (base) {

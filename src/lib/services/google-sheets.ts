@@ -2,11 +2,18 @@ import type { Product } from "@/types";
 import { editorial } from "@/data/images";
 
 /**
- * URL de la API creada en Google Apps Script para Cowear.
+ * URL de la API de Google Apps Script que publica la planilla del catálogo.
+ *
+ * Es OPCIONAL y se activa sólo con la variable de entorno. Sin ella la tienda
+ * usa el catálogo de `src/data/products.ts`. Antes acá había hardcodeada la
+ * planilla de demo del template (productos de Custom Wear), que le ganaba al
+ * catálogo real de GoodStyle.
+ *
+ * Para volver a usar una planilla: poné GOOGLE_SHEETS_API_URL en el entorno
+ * (local en .env.local, y en Netlify para producción). El formato de columnas
+ * lo genera `npm run catalogo:csv`.
  */
-const GOOGLE_SHEETS_API_URL =
-  process.env.GOOGLE_SHEETS_API_URL ||
-  "https://script.google.com/macros/s/AKfycbyP7AyCgKFaTtR5x_tbkN3vCpd3CUkP5J0z3WA8oDIhvo3kT6_MUsIv7tqN_NHrE27X/exec";
+const GOOGLE_SHEETS_API_URL = process.env.GOOGLE_SHEETS_API_URL ?? "";
 
 /**
  * Estructura cruda esperada desde la planilla de Google Sheets.
@@ -123,7 +130,7 @@ function defaultSizesForCategory(category: string): string[] {
     catLower.includes("bermuda") ||
     catLower.includes("jogger")
   ) {
-    return ["28", "30", "32", "34", "36"];
+    return ["38", "40", "42", "44", "46"];
   }
   if (catLower.includes("zapatilla") || catLower.includes("calzado")) {
     return ["39", "40", "41", "42", "43", "44"];
@@ -217,7 +224,7 @@ export function mapSheetItemToProduct(item: RawGoogleSheetItem, index: number): 
     item.Descripcion ||
     item.descripcion ||
     item.description ||
-    "Una prenda esencial de Custom Wear. Corte cómodo, estilo urbano y terminaciones pensadas para durar. Ideal para tu día a día en la ciudad.";
+    "Una prenda esencial de GoodStyle. Corte cómodo, estilo urbano y terminaciones pensadas para durar. Ideal para tu día a día en la ciudad.";
 
   return {
     id,
@@ -231,17 +238,21 @@ export function mapSheetItemToProduct(item: RawGoogleSheetItem, index: number): 
     colors: finalColors,
     sizes: finalSizes,
     stock,
-    isNew: estadoStr === "nuevo" || estadoStr === "new" || index < 4,
-    rating: 4.8,
-    reviewCount: 15 + ((index * 7) % 50),
+    // "Nuevo" sale de la planilla, no de la posición de la fila.
+    isNew: estadoStr === "nuevo" || estadoStr === "new",
+    // Sin opiniones cargadas: la ficha oculta las estrellas en vez de inventarlas.
+    rating: 0,
+    reviewCount: 0,
     description,
-    materials: ["Tejido premium seleccionado"],
-    care: [
-      "Lavar a máquina en frío",
-      "No usar lavandina",
-      "Planchar a temperatura media",
-      "No secar en secadora",
-    ],
+    // Los cuidados sólo aplican a prendas: no a calzado, perfumes o relojes.
+    care: /remera|buzo|jean|bermuda|campera|sweter|chomba/.test(categorySlug)
+      ? [
+          "Lavar a máquina en frío",
+          "No usar lavandina",
+          "Planchar a temperatura media",
+          "No secar en secadora",
+        ]
+      : undefined,
   };
 }
 
@@ -252,6 +263,11 @@ export async function fetchGoogleSheetsProducts(): Promise<{
   products: Product[];
   error: string | null;
 }> {
+  // Sin planilla configurada no hay nada que traer: la tienda usa el catálogo local.
+  if (!GOOGLE_SHEETS_API_URL) {
+    return { products: [], error: "Google Sheets no está configurado." };
+  }
+
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 segundos de timeout

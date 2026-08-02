@@ -6,7 +6,7 @@ import "server-only";
  * flujo sigue funcionando aunque todavía no se conecte el proveedor de email.
  */
 const RESEND_API_KEY = process.env.RESEND_API_KEY ?? "";
-const RESEND_FROM = process.env.RESEND_FROM ?? "Custom Wear <onboarding@resend.dev>";
+const RESEND_FROM = process.env.RESEND_FROM ?? "GoodStyle <onboarding@resend.dev>";
 
 export const isEmailConfigured = RESEND_API_KEY.length > 0;
 
@@ -96,7 +96,7 @@ export interface NewOrderData {
 export async function sendNewOrderEmail({
   to,
   order,
-  storeName = "Custom Wear",
+  storeName = "GoodStyle",
 }: {
   to: string;
   order: NewOrderData;
@@ -192,7 +192,7 @@ export async function sendOrderStatusEmail({
   to,
   orderNumber,
   status,
-  storeName = "Custom Wear",
+  storeName = "GoodStyle",
 }: {
   to: string;
   orderNumber: string;

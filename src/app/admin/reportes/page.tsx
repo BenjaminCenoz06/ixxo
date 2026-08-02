@@ -107,7 +107,7 @@ function printPDF(key: string, orders: Order[], confirmedCount: number, revenue:
       th{background:#fafafa;text-transform:uppercase;font-size:10px;color:#666}
       small{color:#888}
     </style></head><body>
-      <h1>Custom Wear — Reporte de ${monthName(key)}</h1>
+      <h1>GoodStyle — Reporte de ${monthName(key)}</h1>
       <p class="sub">Generado el ${new Date().toLocaleString("es-AR")}</p>
       <div class="kpis">
         <div class="kpi"><b>${confirmedCount}</b><span>Pedidos confirmados</span></div>

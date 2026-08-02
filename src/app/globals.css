@@ -1,21 +1,28 @@
 @import "tailwindcss";
 
 /* ============================================================
-   CUSTOM WEAR — DESIGN SYSTEM
-   Monochrome-dominant · editorial · generous whitespace
+   GOODSTYLE — DESIGN SYSTEM
+   Verde profundo · tipografía blanca · foto a todo bloque
+   `ink` = color del texto, `paper` = fondo. Ambos se pueden
+   sobrescribir desde /admin (ver components/ThemeStyle.tsx).
    ============================================================ */
 @theme {
   /* — Palette — */
-  --color-ink: #0a0a0a;
-  --color-ink-soft: #1a1a1a;
-  --color-paper: #ffffff;
-  --color-smoke: #f6f6f4;
-  --color-mist: #ededea;
-  --color-line: #e4e4e1;
-  --color-ash: #8a8a86;
-  --color-stone: #b8b8b3;
-  /* Single promotional accent — used sparingly */
-  --color-accent: #b91c1c;
+  --color-ink: #ffffff;
+  --color-ink-soft: #e3f0e8;
+  --color-paper: #14532d;
+  --color-smoke: #0f4425;
+  --color-mist: #1b6537;
+  --color-line: #2c7a4b;
+  --color-ash: #a8cfb8;
+  --color-stone: #7dae90;
+  /* Acento promocional — se usa con moderación */
+  --color-accent: #f5b301;
+
+  /* Sobre fotografía: siempre blanco real y velo oscuro, sin importar el tema.
+     No usar `paper`/`ink` encima de imágenes: cambian con el tema del admin. */
+  --color-onmedia: #ffffff;
+  --color-scrim: #08160e;
 
   /* — Typography — */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -30,7 +37,8 @@
 }
 
 :root {
-  color-scheme: light;
+  /* Fondo verde oscuro: los controles nativos (selects, scrollbars) van en dark. */
+  color-scheme: dark;
 }
 
 * {
@@ -102,6 +110,25 @@ html.lenis body {
   @media (min-width: 768px) {
     padding-inline: 2.5rem;
   }
+}
+
+/**
+ * El panel /admin es back-office: no sigue el tema de la tienda.
+ * Vuelve a la paleta neutra aunque ThemeStyle pinte `:root` de verde.
+ */
+.admin-theme {
+  --color-ink: #0a0a0a;
+  --color-ink-soft: #1a1a1a;
+  --color-paper: #ffffff;
+  --color-smoke: #f6f6f4;
+  --color-mist: #ededea;
+  --color-line: #e4e4e1;
+  --color-ash: #8a8a86;
+  --color-stone: #b8b8b3;
+  --color-accent: #b91c1c;
+  color-scheme: light;
+  background: var(--color-paper);
+  color: var(--color-ink);
 }
 
 /* Editorial eyebrow label */

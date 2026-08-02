@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Loader2, Package, Clock, CheckCircle2, Truck, Ban, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/admin/ui";
+import { useAuth } from "@/lib/auth-context";
 import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -84,6 +85,7 @@ const SHIP_LABEL: Record<string, string> = {
 const FILTERS = ["Todos", ...STATUSES];
 
 export default function AdminPedidos() {
+  const { available } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -153,7 +155,15 @@ export default function AdminPedidos() {
           <Loader2 size={18} className="animate-spin" /> Cargando pedidos…
         </div>
       ) : error ? (
-        <div className="border border-line bg-paper p-6 text-[13px] text-accent">{error}</div>
+        <div className="border border-line bg-paper p-6 text-[13px]">
+          <p className="text-accent">{error}</p>
+          {!available && (
+            <p className="mt-2 text-ash">
+              Los pedidos viven en Supabase y el proyecto no responde, así que no hay nada que
+              mostrar. Se recuperan cuando la base vuelva a estar disponible.
+            </p>
+          )}
+        </div>
       ) : orders.length === 0 ? (
         <div className="flex flex-col items-center gap-3 border border-line bg-paper py-16 text-center text-ash">
           <Package size={32} strokeWidth={1} />

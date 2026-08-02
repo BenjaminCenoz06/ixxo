@@ -25,7 +25,7 @@ export default function Collections() {
             <Reveal key={i} blur={false}>
               <Link
                 href={col.href || "#"}
-                className="group relative flex aspect-[16/10] items-end overflow-hidden bg-ink md:aspect-[21/9]"
+                className="group relative flex aspect-[16/10] items-end overflow-hidden bg-scrim md:aspect-[21/9]"
               >
                 {col.image && (
                   <Image
@@ -37,10 +37,10 @@ export default function Collections() {
                     unoptimized
                   />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/10 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-scrim/70 via-scrim/10 to-transparent" />
                 <div
                   className={cn(
-                    "relative w-full p-7 text-paper md:p-12",
+                    "relative w-full p-7 text-onmedia md:p-12",
                     i % 2 === 1 && "text-right",
                   )}
                 >
@@ -53,7 +53,7 @@ export default function Collections() {
                     <h3 className="font-display text-3xl font-light tracking-tight md:text-5xl">
                       {col.title}
                     </h3>
-                    <p className="max-w-sm text-sm text-paper/80">{col.subtitle}</p>
+                    <p className="max-w-sm text-sm text-onmedia/80">{col.subtitle}</p>
                     <span className="mt-2 inline-flex items-center gap-1.5 text-[12px] font-medium uppercase tracking-[0.18em]">
                       Explorar
                       <ArrowUpRight
