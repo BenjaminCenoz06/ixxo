@@ -5,15 +5,33 @@ import { AnimatePresence, motion } from "framer-motion";
 import { QRCodeSVG } from "qrcode.react";
 import { ArrowLeft, Lock, Check, CreditCard, Landmark, Wallet, Copy } from "lucide-react";
 import { useSiteContent } from "@/lib/site-content-context";
+import { isMercadoPagoPublicConfigured } from "@/lib/mercadopago/config";
 import { cn } from "@/lib/utils";
 
 export type Method = "mercadopago" | "transfer" | "card";
 
-const methods: { id: Method; label: string; desc: string; icon: typeof Wallet }[] = [
-  { id: "mercadopago", label: "Mercado Pago", desc: "Transferí a nuestro alias de Mercado Pago", icon: Wallet },
-  { id: "transfer", label: "Transferencia", desc: "15% OFF pagando por transferencia", icon: Landmark },
-  { id: "card", label: "Tarjeta de crédito / débito", desc: "Hasta 6 cuotas sin interés", icon: CreditCard },
-];
+type MethodOption = { id: Method; label: string; desc: string; icon: typeof Wallet };
+
+/**
+ * La opción de tarjeta solo se ofrece si hay credenciales de Mercado Pago: sin
+ * ellas el checkout degrada a una confirmación simulada, y cobrar "con tarjeta"
+ * un pedido que nadie procesó le miente al cliente y al dueño.
+ */
+function buildMethods(transferDiscount: number): MethodOption[] {
+  const list: MethodOption[] = [
+    { id: "mercadopago", label: "Mercado Pago", desc: "Transferí a nuestro alias de Mercado Pago", icon: Wallet },
+    {
+      id: "transfer",
+      label: "Transferencia",
+      desc: transferDiscount > 0 ? `${transferDiscount}% OFF pagando por transferencia` : "Te pasamos los datos bancarios",
+      icon: Landmark,
+    },
+  ];
+  if (isMercadoPagoPublicConfigured) {
+    list.push({ id: "card", label: "Tarjeta de crédito / débito", desc: "Pagás en el checkout de Mercado Pago", icon: CreditCard });
+  }
+  return list;
+}
 
 export default function PaymentForm({
   onBack,
@@ -25,7 +43,8 @@ export default function PaymentForm({
   processing: boolean;
 }) {
   const [method, setMethod] = useState<Method>("mercadopago");
-  const { bank } = useSiteContent();
+  const { bank, general } = useSiteContent();
+  const methods = buildMethods(general.transferDiscount ?? 0);
 
   return (
     <div className="space-y-4">

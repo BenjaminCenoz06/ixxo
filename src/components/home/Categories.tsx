@@ -34,13 +34,13 @@ export default async function Categories({
                 priority={i < 2}
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-scrim/55 via-transparent to-transparent transition-opacity duration-500 group-hover:from-scrim/70" />
+            <div className="absolute inset-0 bg-gradient-to-t from-scrim/85 via-scrim/25 to-transparent transition-opacity duration-500 group-hover:from-scrim/90" />
             <div className="absolute inset-x-5 bottom-5 flex items-end justify-between text-onmedia">
               <div>
                 <h3 className="font-display text-xl font-normal tracking-tight md:text-2xl">
                   {cat.name}
                 </h3>
-                <p className="text-[11px] uppercase tracking-[0.16em] text-onmedia/70">
+                <p className="text-[11px] uppercase tracking-[0.16em] text-onmedia/85">
                   {cat.count} productos
                 </p>
               </div>

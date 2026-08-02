@@ -78,7 +78,10 @@ export default function Hero() {
       </motion.div>
 
       {/* Overlay sutil */}
-      <div className="absolute inset-0 bg-gradient-to-b from-scrim/45 via-scrim/20 to-scrim/70" />
+      <div className="absolute inset-0 bg-gradient-to-b from-scrim/45 via-scrim/10 to-scrim/40" />
+      {/* Base oscura bajo el bloque de texto: la foto queda limpia arriba y el
+          copy siempre apoya sobre algo oscuro, incluso con cielos claros */}
+      <div className="absolute inset-x-0 bottom-0 h-[65%] bg-gradient-to-t from-scrim/85 via-scrim/45 to-transparent" />
       <div className="absolute inset-0 bg-scrim/10" />
 
       {/* Contenido */}
@@ -118,13 +121,13 @@ export default function Hero() {
         >
           <Link
             href={hero.ctaPrimaryHref}
-            className="group inline-flex items-center bg-onmedia px-9 py-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-scrim transition-all duration-300 hover:bg-onmedia/90"
+            className="group inline-flex w-full items-center justify-center bg-onmedia px-9 py-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-scrim transition-all duration-300 hover:bg-onmedia/90 sm:w-auto"
           >
             {hero.ctaPrimaryLabel}
           </Link>
           <Link
             href={hero.ctaSecondaryHref}
-            className="inline-flex items-center border border-onmedia/40 px-9 py-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-onmedia backdrop-blur-sm transition-all duration-300 hover:bg-onmedia hover:text-scrim"
+            className="inline-flex w-full items-center justify-center border border-onmedia/40 px-9 py-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-onmedia backdrop-blur-sm transition-all duration-300 hover:bg-onmedia hover:text-scrim sm:w-auto"
           >
             {hero.ctaSecondaryLabel}
           </Link>

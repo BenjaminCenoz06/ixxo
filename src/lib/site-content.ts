@@ -252,10 +252,23 @@ export const DEFAULT_CONTENT: SiteContent = {
         { label: "Guía de talles", href: "#" },
       ],
     },
-    { title: "GoodStyle", links: ["Nuestra historia", "Nuevos ingresos", "Instagram", "Local en Ituzaingó"].map((l) => ({ label: l, href: "#" })) },
+    {
+      title: "GoodStyle",
+      links: [
+        { label: "Nuevos ingresos", href: "/novedades" },
+        { label: "Ver todo el catálogo", href: "/prendas" },
+        { label: "Instagram", href: "https://www.instagram.com/good.style.ok/" },
+        {
+          label: "Local en Ituzaingó",
+          href: "https://www.google.com/maps/place/GoodStyle/@-27.590084,-56.6966917,17z",
+        },
+      ],
+    },
     { title: "Legales", links: ["Términos y condiciones", "Política de privacidad", "Botón de arrepentimiento", "Defensa al consumidor"].map((l) => ({ label: l, href: "#" })) },
   ],
-  payments: ["Visa", "Mastercard", "Amex", "Mercado Pago", "Transferencia"],
+  // Solo lo que el local realmente cobra hoy. Al activar Mercado Pago se
+  // agregan las tarjetas desde /admin/contenido.
+  payments: ["Mercado Pago", "Transferencia", "Efectivo en el local"],
   nav: defaultNav as NavItemContent[],
 };
 

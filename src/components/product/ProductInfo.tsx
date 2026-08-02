@@ -12,6 +12,7 @@ import { formatPrice, transferPrice, installment, discountPercent } from "@/lib/
 import { useCart } from "@/lib/cart-context";
 import { useFavorites } from "@/lib/favorites-context";
 import { useSiteContent } from "@/lib/site-content-context";
+import { isMercadoPagoPublicConfigured } from "@/lib/mercadopago/config";
 import { cn } from "@/lib/utils";
 
 const TRUST = [
@@ -100,17 +101,21 @@ export default function ProductInfo({ product }: { product: Product }) {
           <span className="bg-accent px-2 py-0.5 text-[11px] font-semibold text-paper">-{off}%</span>
         )}
       </div>
-      <p className="mt-2 text-[13px] text-ash">
-        {transferRate > 0 && (
-          <>
-            <span className="font-medium text-ink-soft">
-              {formatPrice(transferPrice(product.price, transferRate))}
-            </span>{" "}
-            por transferencia ·{" "}
-          </>
-        )}
-        6 cuotas sin interés de {installment(product.price)}
-      </p>
+      {(transferRate > 0 || isMercadoPagoPublicConfigured) && (
+        <p className="mt-2 text-[13px] text-ash">
+          {transferRate > 0 && (
+            <>
+              <span className="font-medium text-ink-soft">
+                {formatPrice(transferPrice(product.price, transferRate))}
+              </span>{" "}
+              por transferencia
+            </>
+          )}
+          {transferRate > 0 && isMercadoPagoPublicConfigured && " · "}
+          {/* Sin Mercado Pago no hay cuotas que ofrecer: no las anunciamos. */}
+          {isMercadoPagoPublicConfigured && <>6 cuotas sin interés de {installment(product.price)}</>}
+        </p>
+      )}
 
       {/* Color — solo si la prenda tiene más de una variante */}
       {product.colors.length > 1 && (

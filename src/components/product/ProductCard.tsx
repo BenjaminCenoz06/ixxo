@@ -15,6 +15,7 @@ import { colorHex } from "@/data/colors";
 import { useCart } from "@/lib/cart-context";
 import { useFavorites } from "@/lib/favorites-context";
 import { useSiteContent } from "@/lib/site-content-context";
+import { isMercadoPagoPublicConfigured } from "@/lib/mercadopago/config";
 import { cn } from "@/lib/utils";
 
 export default function ProductCard({
@@ -121,17 +122,21 @@ export default function ProductCard({
           )}
         </div>
 
-        <p className="mt-1 text-[12px] text-ash">
-          {transferRate > 0 && (
-            <>
-              <span className="text-ink-soft">
-                {formatPrice(transferPrice(product.price, transferRate))}
-              </span>{" "}
-              por transferencia ·{" "}
-            </>
-          )}
-          6 cuotas de {installment(product.price)}
-        </p>
+        {(transferRate > 0 || isMercadoPagoPublicConfigured) && (
+          <p className="mt-1 text-[12px] text-ash">
+            {transferRate > 0 && (
+              <>
+                <span className="text-ink-soft">
+                  {formatPrice(transferPrice(product.price, transferRate))}
+                </span>{" "}
+                por transferencia
+              </>
+            )}
+            {transferRate > 0 && isMercadoPagoPublicConfigured && " · "}
+            {/* Sin Mercado Pago no hay cuotas que ofrecer: no las anunciamos. */}
+            {isMercadoPagoPublicConfigured && <>6 cuotas de {installment(product.price)}</>}
+          </p>
+        )}
 
         {/* Swatches — solo si hay más de una variante de color */}
         <div className={cn("mt-3 flex items-center gap-1.5", product.colors.length < 2 && "hidden")}>
