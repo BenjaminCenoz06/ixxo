@@ -67,12 +67,14 @@ export default function CatalogView({ products, title, eyebrow, description }: P
         {/* Contenido */}
         <div className="min-w-0 flex-1">
           {/* Barra de acciones */}
-          <div className="mb-8 flex items-center justify-between gap-4">
+          {/* flex-wrap: en 375px el contador + Filtrar + el select de orden no
+              entran en una línea y desbordaban la página a lo ancho. */}
+          <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
             <p className="text-[13px] text-ash">
               {results.length} {results.length === 1 ? "producto" : "productos"}
             </p>
 
-            <div className="flex items-center gap-3">
+            <div className="ml-auto flex min-w-0 items-center gap-3">
               <button
                 onClick={() => setSheetOpen(true)}
                 className="inline-flex items-center gap-2 border border-line px-4 py-2.5 text-[13px] lg:hidden"

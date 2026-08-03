@@ -53,7 +53,8 @@ export interface SiteContent {
     reviews: { eyebrow: string; title: string };
   };
   lookbook: {
-    looks: { image: string; title: string; items: number }[];
+    /** `items` en 0 esconde el contador; `href` lleva a la categoría. */
+    looks: { image: string; title: string; items: number; href?: string }[];
   };
   homeCollections: { image: string; title: string; subtitle: string; href: string }[];
   instagram: {
@@ -132,7 +133,8 @@ export const DEFAULT_CONTENT: SiteContent = {
     title: "Temporada 2026",
     description:
       "Jeans, bermudas, buzos, remeras, zapatillas y accesorios. Ropa urbana masculina con la mejor relación precio-calidad, con envíos a todo el país.",
-    image: editorialWide("newcol", 1200, 1400),
+    // Fuera de las primeras 12, que ya salen como novedades más abajo.
+    image: "/productos/p040.jpeg",
     ctaLabel: "Ver los ingresos",
     ctaHref: "/novedades",
   },
@@ -160,14 +162,16 @@ export const DEFAULT_CONTENT: SiteContent = {
     categories: { eyebrow: "Explorá", title: "Comprar por categoría", ctaLabel: "Ver todas", ctaHref: "/categorias" },
     featured: { eyebrow: "Selección", title: "Productos destacados", ctaLabel: "Ver todo", ctaHref: "/novedades" },
     collections: { eyebrow: "Categorías", title: "Elegí por dónde empezar" },
-    lookbook: { eyebrow: "Lookbook", title: "Comprá el look completo", ctaLabel: "Ver lookbook", ctaHref: "/lookbook" },
+    lookbook: { eyebrow: "El local", title: "Mirá lo que hay", ctaLabel: "Ver todo el catálogo", ctaHref: "/prendas" },
     reviews: { eyebrow: "Opiniones", title: "Lo que dicen nuestros clientes" },
   },
+  // GoodStyle no produce "looks": son atajos a categorías con foto real del
+  // local. Sin contador inventado y cada uno linkea a donde dice que va.
   lookbook: {
     looks: [
-      { image: editorial("look-1", 1200, 1500), title: "Look 01 · Urban Tailoring", items: 4 },
-      { image: editorial("look-2", 1200, 1500), title: "Look 02 · Off Duty", items: 3 },
-      { image: editorial("look-3", 1200, 1500), title: "Look 03 · Layered", items: 5 },
+      { image: "/productos/p020.jpeg", title: "Jeans", items: 0, href: "/categoria/jeans" },
+      { image: "/productos/p070.jpeg", title: "Buzos", items: 0, href: "/categoria/buzos" },
+      { image: "/productos/p100.jpeg", title: "Remeras", items: 0, href: "/categoria/remeras" },
     ],
   },
   homeCollections: [
@@ -179,7 +183,9 @@ export const DEFAULT_CONTENT: SiteContent = {
     eyebrow: "Comunidad",
     handle: "@good.style.ok",
     url: "https://www.instagram.com/good.style.ok/",
-    images: Array.from({ length: 6 }).map((_, i) => editorial(`instagram-${i}`, 600, 600)),
+    // Fotos reales del local: presentar fotos de banco como posts de
+    // @good.style.ok sería hacer pasar ropa ajena por la del negocio.
+    images: ["p010", "p030", "p060", "p095", "p120", "p150"].map((id) => `/productos/${id}.jpeg`),
   },
   reviews: {
     average: 5,

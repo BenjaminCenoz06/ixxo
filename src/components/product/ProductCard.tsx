@@ -34,6 +34,7 @@ export default function ProductCard({
 
   const off = discountPercent(product.price, product.compareAtPrice);
   const lowStock = product.stock > 0 && product.stock <= 5;
+  const hasHoverImage = Boolean(product.images[1]) && product.images[1] !== product.images[0];
 
   const quickAdd = () =>
     addItem({
@@ -61,17 +62,23 @@ export default function ProductCard({
             priority={priority}
             sizes="(max-width:768px) 50vw, 25vw"
             onLoad={() => setLoaded(true)}
-            className="object-cover transition-all duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] group-hover:opacity-0"
+            className={cn(
+              "object-cover transition-all duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]",
+              hasHoverImage && "group-hover:opacity-0",
+            )}
           />
-          {/* Segunda imagen (hover) */}
-          <Image
-            src={product.images[1]}
-            alt=""
-            fill
-            aria-hidden
-            sizes="(max-width:768px) 50vw, 25vw"
-            className="object-cover opacity-0 transition-all duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] group-hover:opacity-100"
-          />
+          {/* Segunda imagen (hover) — la mayoría del catálogo tiene una sola
+              foto: cargarla dos veces es un pedido de más y un cruce a nada. */}
+          {hasHoverImage && (
+            <Image
+              src={product.images[1]}
+              alt=""
+              fill
+              aria-hidden
+              sizes="(max-width:768px) 50vw, 25vw"
+              className="object-cover opacity-0 transition-all duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] group-hover:opacity-100"
+            />
+          )}
         </Link>
 
         {/* Badges */}

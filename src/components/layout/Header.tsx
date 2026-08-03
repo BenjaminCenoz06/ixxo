@@ -365,10 +365,29 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
                   <Link
                     href={item.href}
                     onClick={onClose}
-                    className="block border-b border-line py-4 font-display text-2xl font-light"
+                    className="block py-4 font-display text-2xl font-light"
                   >
                     {item.label}
                   </Link>
+                  {/* Las columnas del mega-menú solo existen en desktop: sin
+                      esto, categorías como Jeans o Bermudas no se pueden
+                      alcanzar desde el celular. */}
+                  {item.mega && (
+                    <ul className="-mt-1 mb-3 grid grid-cols-2 gap-x-4 gap-y-1 pl-1">
+                      {item.mega.flatMap((col) => col.links).map((link) => (
+                        <li key={link.href}>
+                          <Link
+                            href={link.href}
+                            onClick={onClose}
+                            className="block py-1.5 text-[14px] text-ash transition-colors hover:text-ink"
+                          >
+                            {link.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <div className="border-b border-line" />
                 </motion.div>
               ))}
             </nav>

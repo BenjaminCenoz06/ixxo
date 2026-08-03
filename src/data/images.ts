@@ -90,6 +90,16 @@ const UNSPLASH_MAP: Record<string, string> = {
   "col-tailoring": "https://images.unsplash.com/photo-1507679799987-c73779587ccf",
   "col-winter": "https://images.unsplash.com/photo-1520975916090-3105956dac38",
 
+  // Banners apaisados del home (hero, editorial, showcase de colecciones).
+  // Van explícitos porque antes caían en el fallback y salían TODOS iguales.
+  "hero-1": "https://images.unsplash.com/photo-1488161628813-04466f872be2",
+  "hero-2": "https://images.unsplash.com/photo-1509967419530-da38b4704bc6",
+  "hero-3": "https://images.unsplash.com/photo-1483985988355-763728e1935b",
+  "editorial-bg": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7",
+  "col-1": "https://images.unsplash.com/photo-1507679799987-c73779587ccf",
+  "col-2": "https://images.unsplash.com/photo-1516257984-b1b4d707412e",
+  "col-3": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519",
+
   // Instagram Feed - @tiendasixxo_oficial
   "instagram-0": "https://images.unsplash.com/photo-1512436991641-6745cdb1723f",
   "instagram-1": "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea",
@@ -168,21 +178,37 @@ export function categoryPhoto(
   return `https://images.unsplash.com/${id}?auto=format&fit=crop&q=80&w=${w}&h=${h}`;
 }
 
+/**
+ * Fallback para seeds sin entrada propia. Rota sobre un pool en vez de
+ * devolver siempre la misma foto: antes cualquier seed nuevo (hero-1, look-2,
+ * col-3…) colapsaba en la misma imagen y el home se veía repetido.
+ */
+const FALLBACK_POOL = [
+  "photo-1488161628813-04466f872be2",
+  "photo-1509967419530-da38b4704bc6",
+  "photo-1483985988355-763728e1935b",
+  "photo-1519085360753-af0119f7cbe7",
+  "photo-1507679799987-c73779587ccf",
+  "photo-1516257984-b1b4d707412e",
+  "photo-1600185365483-26d7a4cc7519",
+];
+
+function seedIndex(seed: string): number {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) | 0;
+  return Math.abs(h) % FALLBACK_POOL.length;
+}
+
+function resolve(seed: string, w: number, h: number): string {
+  const base = UNSPLASH_MAP[seed] ?? `https://images.unsplash.com/${FALLBACK_POOL[seedIndex(seed)]}`;
+  return `${base}?auto=format&fit=crop&q=80&w=${w}&h=${h}`;
+}
+
 export function editorial(seed: string, w = 900, h = 1200): string {
-  const base = UNSPLASH_MAP[seed];
-  if (base) {
-    return `${base}?auto=format&fit=crop&q=80&w=${w}&h=${h}`;
-  }
-  // Fallback con keywords coherentes
-  return `https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&q=80&w=${w}&h=${h}`;
+  return resolve(seed, w, h);
 }
 
 export function editorialWide(seed: string, w = 1600, h = 900): string {
-  const base = UNSPLASH_MAP[seed];
-  if (base) {
-    return `${base}?auto=format&fit=crop&q=80&w=${w}&h=${h}`;
-  }
-  // Fallback con keywords coherentes
-  return `https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&q=80&w=${w}&h=${h}`;
+  return resolve(seed, w, h);
 }
 
