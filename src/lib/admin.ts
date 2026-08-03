@@ -3,9 +3,14 @@ import { isSupabaseConfigured } from "./supabase/config";
 /**
  * Cuenta admin dedicada, siempre habilitada sin depender de env vars: en
  * Netlify no siempre se puede editar NEXT_PUBLIC_ADMIN_EMAILS a mano.
- * El email es solo un identificador de login, no una casilla que reciba correo.
+ *
+ * Va con alias `+admin` de una casilla real y no con un dominio propio
+ * inventado: Supabase valida el destinatario antes de mandar correo, así que
+ * con un dominio inexistente la recuperación de contraseña falla con
+ * "Email address is invalid" (el login sí funciona, lo cual lo hace fácil de
+ * pasar por alto hasta que hace falta recuperar la clave).
  */
-const BUILTIN_ADMIN_EMAILS = ["admin@goodstyle.ar"];
+const BUILTIN_ADMIN_EMAILS = ["benjamincenozmartines+admin@gmail.com"];
 
 /** Emails autorizados para el panel /admin (dedicada + NEXT_PUBLIC_ADMIN_EMAILS). */
 const ADMIN_EMAILS = [
