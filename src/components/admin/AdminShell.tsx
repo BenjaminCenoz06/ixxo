@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   LayoutTemplate,
@@ -192,6 +192,8 @@ function Centered({ children }: { children: React.ReactNode }) {
  */
 function AdminLogin() {
   const { signIn } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -202,8 +204,17 @@ function AdminLogin() {
     setBusy(true);
     setError(null);
     const res = await signIn(email.trim(), password);
-    setBusy(false);
-    if (!res.ok) setError(res.error || "No se pudo iniciar sesión.");
+    if (!res.ok) {
+      setBusy(false);
+      setError(res.error || "No se pudo iniciar sesión.");
+      return;
+    }
+    // Entrar siempre por el dashboard. El login se muestra en lugar de la
+    // ruta que se estaba visitando, así que sin esto la sesión arranca en una
+    // subpágina cualquiera (la última que hubiera abierta) en vez del resumen.
+    if (pathname !== "/admin") router.replace("/admin");
+    // `busy` sigue en true a propósito: el botón queda en "Ingresando…" hasta
+    // que el dashboard reemplaza a este formulario.
   };
 
   const inputCls =

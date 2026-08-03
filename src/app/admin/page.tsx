@@ -1,18 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, TrendingUp, AlertTriangle } from "lucide-react";
+import { ArrowUpRight, TrendingUp, AlertTriangle, Loader2, Inbox, Clock } from "lucide-react";
 import { PageHeader, StatCard, Card, StatusBadge } from "@/components/admin/ui";
 import { useAdminProducts } from "@/lib/admin-data";
-import { demoOrders } from "@/data/admin-demo";
+import { useAdminOrders, metricas } from "@/lib/admin-orders";
 import { formatPrice } from "@/lib/format";
 
 export default function AdminDashboard() {
   const { items } = useAdminProducts();
+  // Pedidos REALES. Antes esto salía de demoOrders aunque hubiera base
+  // conectada, así que las ventas y los clientes eran inventados.
+  const { orders, loading, error } = useAdminOrders();
 
-  const revenue = demoOrders
-    .filter((o) => ["paid", "shipped", "delivered"].includes(o.status))
-    .reduce((s, o) => s + o.total, 0);
+  const m = metricas(orders);
   const lowStock = items.filter((p) => p.stock > 0 && p.stock <= 5);
   const outOfStock = items.filter((p) => p.stock === 0);
   const inventoryValue = items.reduce((s, p) => s + p.price * p.stock, 0);
@@ -22,39 +23,63 @@ export default function AdminDashboard() {
       <PageHeader title="Dashboard" subtitle="Resumen de tu tienda" />
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="Ventas (7 días)" value={formatPrice(revenue)} hint={`${demoOrders.length} pedidos`} />
+        <StatCard
+          label="Ventas (7 días)"
+          value={loading ? "—" : formatPrice(m.facturado)}
+          hint={loading ? "cargando…" : `${m.pedidosPeriodo} ${m.pedidosPeriodo === 1 ? "pedido" : "pedidos"}`}
+        />
         <StatCard label="Productos" value={String(items.length)} hint={`${outOfStock.length} sin stock`} />
         <StatCard label="Valor inventario" value={formatPrice(inventoryValue)} />
-        <StatCard label="Ticket promedio" value={formatPrice(Math.round(revenue / demoOrders.length))} />
+        <StatCard
+          label="Ticket promedio"
+          value={loading || !m.ticketPromedio ? "—" : formatPrice(m.ticketPromedio)}
+          hint={m.pendientes > 0 ? `${m.pendientes} por verificar` : undefined}
+        />
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
         {/* Pedidos recientes */}
         <Card title="Pedidos recientes">
-          <div className="overflow-x-auto">
-            <table className="w-full text-[13px]">
-              <thead>
-                <tr className="border-b border-line text-left text-[11px] uppercase tracking-wide text-ash">
-                  <th className="pb-3 font-medium">Pedido</th>
-                  <th className="pb-3 font-medium">Cliente</th>
-                  <th className="pb-3 font-medium">Estado</th>
-                  <th className="pb-3 text-right font-medium">Total</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-line">
-                {demoOrders.slice(0, 6).map((o) => (
-                  <tr key={o.number}>
-                    <td className="py-3 font-medium">{o.number}</td>
-                    <td className="py-3 text-ash">{o.customer}</td>
-                    <td className="py-3">
-                      <StatusBadge status={o.status} />
-                    </td>
-                    <td className="py-3 text-right">{formatPrice(o.total)}</td>
+          {loading ? (
+            <p className="flex items-center gap-2 py-6 text-[13px] text-ash">
+              <Loader2 size={15} className="animate-spin" /> Cargando pedidos…
+            </p>
+          ) : error ? (
+            <p className="py-6 text-[13px] text-accent">{error}</p>
+          ) : orders.length === 0 ? (
+            <div className="py-8 text-center">
+              <Inbox size={30} strokeWidth={1.2} className="mx-auto text-stone" />
+              <p className="mt-3 text-[13px] font-medium">Todavía no hay pedidos</p>
+              <p className="mt-1 text-[12px] text-ash">
+                Cuando alguien compre en la tienda, va a aparecer acá.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-[13px]">
+                <thead>
+                  <tr className="border-b border-line text-left text-[11px] uppercase tracking-wide text-ash">
+                    <th className="pb-3 font-medium">Pedido</th>
+                    <th className="pb-3 font-medium">Cliente</th>
+                    <th className="pb-3 font-medium">Estado</th>
+                    <th className="pb-3 text-right font-medium">Total</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-line">
+                  {orders.slice(0, 6).map((o) => (
+                    <tr key={o.number}>
+                      <td className="py-3 font-medium">{o.number}</td>
+                      <td className="py-3 text-ash">{o.name}</td>
+                      <td className="py-3">
+                        <StatusBadge status={o.status} />
+                      </td>
+                      <td className="py-3 text-right">{formatPrice(o.total)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
           <Link
             href="/admin/pedidos"
             className="mt-4 inline-flex items-center gap-1 text-[12px] font-medium uppercase tracking-wide"
@@ -90,6 +115,21 @@ export default function AdminDashboard() {
           </Link>
         </Card>
       </div>
+
+      {/* Pendientes de verificación: lo primero que el dueño tiene que mirar,
+          porque son pagos por transferencia que alguien declaró y nadie chequeó. */}
+      {!loading && m.pendientes > 0 && (
+        <div className="mt-6 flex items-center gap-3 border border-amber-300 bg-amber-50 px-5 py-4 text-[13px] text-amber-800">
+          <Clock size={17} strokeWidth={1.6} className="shrink-0" />
+          <span>
+            Tenés <strong>{m.pendientes}</strong>{" "}
+            {m.pendientes === 1 ? "pedido pendiente" : "pedidos pendientes"} de verificación.
+          </span>
+          <Link href="/admin/pedidos" className="ml-auto shrink-0 font-medium underline underline-offset-4">
+            Revisar
+          </Link>
+        </div>
+      )}
     </>
   );
 }
