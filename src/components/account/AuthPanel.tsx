@@ -7,6 +7,7 @@ import { z } from "zod";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2, AlertCircle } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { isGoogleAuthEnabled } from "@/lib/supabase/config";
 import { cn } from "@/lib/utils";
 
 const loginSchema = z.object({
@@ -45,20 +46,24 @@ export default function AuthPanel() {
           </div>
         )}
 
-        {/* Google */}
-        <button
-          onClick={async () => {
-            const r = await signInWithGoogle();
-            if (!r.ok) setNotice(r.error ?? null);
-          }}
-          className="flex w-full items-center justify-center gap-3 border border-line py-3.5 text-[13px] font-medium transition-colors hover:border-ink"
-        >
-          <GoogleIcon /> Continuar con Google
-        </button>
+        {/* Google — solo si el proveedor está habilitado en Supabase */}
+        {isGoogleAuthEnabled && (
+          <>
+            <button
+              onClick={async () => {
+                const r = await signInWithGoogle();
+                if (!r.ok) setNotice(r.error ?? null);
+              }}
+              className="flex w-full items-center justify-center gap-3 border border-line py-3.5 text-[13px] font-medium transition-colors hover:border-ink"
+            >
+              <GoogleIcon /> Continuar con Google
+            </button>
 
-        <div className="my-6 flex items-center gap-4 text-[12px] text-stone">
-          <span className="h-px flex-1 bg-line" /> o <span className="h-px flex-1 bg-line" />
-        </div>
+            <div className="my-6 flex items-center gap-4 text-[12px] text-stone">
+              <span className="h-px flex-1 bg-line" /> o <span className="h-px flex-1 bg-line" />
+            </div>
+          </>
+        )}
 
         <AnimatePresence mode="wait">
           {mode === "login" ? (
