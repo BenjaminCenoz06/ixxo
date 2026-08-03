@@ -1,7 +1,11 @@
 import { isSupabaseConfigured } from "./supabase/config";
 
-/** Cuenta admin dedicada (siempre habilitada, sin depender de env vars). */
-const BUILTIN_ADMIN_EMAILS = ["admin@customwearcba.com"];
+/**
+ * Cuenta admin dedicada, siempre habilitada sin depender de env vars: en
+ * Netlify no siempre se puede editar NEXT_PUBLIC_ADMIN_EMAILS a mano.
+ * El email es solo un identificador de login, no una casilla que reciba correo.
+ */
+const BUILTIN_ADMIN_EMAILS = ["admin@goodstyle.ar"];
 
 /** Emails autorizados para el panel /admin (dedicada + NEXT_PUBLIC_ADMIN_EMAILS). */
 const ADMIN_EMAILS = [
