@@ -7,11 +7,12 @@ import { collections as mockCollections } from "@/data/collections";
 
 type Params = { params: Promise<{ slug: string }> };
 
-// El slug de la colección → el nombre usado en el campo `collection` del producto.
+// El slug de la colección → el nombre usado en el campo `collection` del
+// producto, que se asigna por regla en data/products.ts (COLLECTION_RULES).
 const COLLECTION_NAME: Record<string, string> = {
-  essentials: "Essentials",
-  tailoring: "Tailoring",
-  "winter-26": "Winter 26",
+  baggy: "Baggy",
+  boxy: "Boxy",
+  gorras: "Gorras",
 };
 
 export const dynamic = "force-dynamic";

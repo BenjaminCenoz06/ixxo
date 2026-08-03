@@ -322,6 +322,23 @@ const seeds: Seed[] = [
   { name: "Vans Old School", category: "Zapatillas", price: 35000, sizes: ["39"] },
 ];
 
+/**
+ * Colecciones derivadas del nombre de la prenda. Son agrupaciones que cruzan
+ * categorías y existen de verdad en el catálogo (el corte baggy va en jeans y
+ * bermudas; el boxy en remeras y buzos), a diferencia de las colecciones de la
+ * plantilla, que no tenían un solo producto. Mantener en sintonía con
+ * `data/collections.ts` y con COLLECTION_NAME en /coleccion/[slug].
+ */
+const COLLECTION_RULES: [RegExp, string][] = [
+  [/baggy/i, "Baggy"],
+  [/boxy/i, "Boxy"],
+  [/gorra/i, "Gorras"],
+];
+
+function collectionOf(name: string): string | undefined {
+  return COLLECTION_RULES.find(([re]) => re.test(name))?.[1];
+}
+
 /** El local repite nombres (mismo modelo, distinto talle): el slug se desambigua. */
 const slugCount = new Map<string, number>();
 
@@ -350,6 +367,7 @@ export const products: Product[] = seeds.map((s, i) => {
     sizes,
     // El local publica los talles que le quedan: una unidad por talle disponible.
     stock: sizes.length,
+    collection: collectionOf(s.name),
     rating: 0,
     reviewCount: 0,
     description: s.description ?? DEFAULT_DESC,
