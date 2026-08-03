@@ -150,7 +150,7 @@ export default function CatalogView({ products, title, eyebrow, description }: P
         {sheetOpen && (
           <>
             <motion.div
-              className="fixed inset-0 z-50 bg-ink/40 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-50 bg-scrim/60 backdrop-blur-sm lg:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}

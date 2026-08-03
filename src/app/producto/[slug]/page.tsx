@@ -13,7 +13,6 @@ import {
   getAllProducts,
   allProductSlugs,
 } from "@/lib/repository/products";
-import { editorial } from "@/data/images";
 import { formatPrice } from "@/lib/format";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -40,11 +39,9 @@ export default async function ProductPage({ params }: Params) {
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const gallery = [
-    ...product.images,
-    editorial(`${product.id}-c`),
-    editorial(`${product.id}-d`),
-  ];
+  // Solo las fotos reales de la prenda. Antes se rellenaba con imágenes de
+  // banco para llenar el riel, pero mostraban ropa que no es la que se vende.
+  const gallery = product.images;
 
   const [related, allProducts] = await Promise.all([getRelated(product, 4), getAllProducts()]);
   const alsoLike = allProducts.filter((p) => p.id !== product.id).slice(-4);

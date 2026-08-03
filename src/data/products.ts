@@ -341,7 +341,11 @@ export const products: Product[] = seeds.map((s, i) => {
     category: s.category,
     categorySlug: CATEGORY_SLUG[s.category],
     price: s.price,
-    images: [editorial(`${id}-a`), editorial(`${id}-b`)] as [string, string],
+    // Foto real del local en public/productos, una por prenda (ver README).
+    // Se repite en las dos posiciones: el tipo pide un par y el hover de la
+    // tarjeta cruza entre ambas; Gallery deduplica para no mostrar la misma
+    // miniatura dos veces.
+    images: [`/productos/${id}.jpeg`, `/productos/${id}.jpeg`] as [string, string],
     colors: colorsFor(s.name),
     sizes,
     // El local publica los talles que le quedan: una unidad por talle disponible.

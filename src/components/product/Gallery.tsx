@@ -5,7 +5,10 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { Expand, X, ChevronLeft, ChevronRight } from "lucide-react";
 
-export default function Gallery({ images, name }: { images: string[]; name: string }) {
+export default function Gallery({ images: raw, name }: { images: string[]; name: string }) {
+  // La mayoría del catálogo tiene una sola foto, repetida para el hover de la
+  // tarjeta: sin deduplicar se verían miniaturas idénticas.
+  const images = [...new Set(raw)];
   const [active, setActive] = useState(0);
   const [zoom, setZoom] = useState<{ x: number; y: number } | null>(null);
   const [full, setFull] = useState(false);
@@ -23,8 +26,8 @@ export default function Gallery({ images, name }: { images: string[]; name: stri
 
   return (
     <div className="flex flex-col-reverse gap-4 md:flex-row md:gap-5">
-      {/* Miniaturas */}
-      <div className="flex gap-3 md:flex-col">
+      {/* Miniaturas — sin sentido con una sola foto */}
+      <div className={`flex gap-3 md:flex-col ${images.length < 2 ? "hidden" : ""}`}>
         {images.map((src, i) => (
           <button
             key={i}
@@ -89,7 +92,7 @@ export default function Gallery({ images, name }: { images: string[]; name: stri
       <AnimatePresence>
         {full && (
           <motion.div
-            className="fixed inset-0 z-[90] flex items-center justify-center bg-ink/95"
+            className="fixed inset-0 z-[90] flex items-center justify-center bg-scrim/95"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -98,30 +101,34 @@ export default function Gallery({ images, name }: { images: string[]; name: stri
             <button
               aria-label="Cerrar"
               onClick={() => setFull(false)}
-              className="absolute right-6 top-6 text-paper/80 hover:text-paper"
+              className="absolute right-6 top-6 text-onmedia/80 hover:text-onmedia"
             >
               <X size={28} strokeWidth={1.5} />
             </button>
-            <button
-              aria-label="Anterior"
-              onClick={(e) => { e.stopPropagation(); go(-1); }}
-              className="absolute left-4 text-paper/70 hover:text-paper md:left-10"
-            >
-              <ChevronLeft size={34} strokeWidth={1.25} />
-            </button>
+            {images.length > 1 && (
+              <button
+                aria-label="Anterior"
+                onClick={(e) => { e.stopPropagation(); go(-1); }}
+                className="absolute left-4 text-onmedia/70 hover:text-onmedia md:left-10"
+              >
+                <ChevronLeft size={34} strokeWidth={1.25} />
+              </button>
+            )}
             <div
               className="relative h-[82vh] w-[90vw] max-w-3xl"
               onClick={(e) => e.stopPropagation()}
             >
               <Image src={images[active]} alt={name} fill sizes="90vw" className="object-contain" />
             </div>
-            <button
-              aria-label="Siguiente"
-              onClick={(e) => { e.stopPropagation(); go(1); }}
-              className="absolute right-4 text-paper/70 hover:text-paper md:right-10"
-            >
-              <ChevronRight size={34} strokeWidth={1.25} />
-            </button>
+            {images.length > 1 && (
+              <button
+                aria-label="Siguiente"
+                onClick={(e) => { e.stopPropagation(); go(1); }}
+                className="absolute right-4 text-onmedia/70 hover:text-onmedia md:right-10"
+              >
+                <ChevronRight size={34} strokeWidth={1.25} />
+              </button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

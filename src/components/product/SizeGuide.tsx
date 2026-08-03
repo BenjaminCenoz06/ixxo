@@ -30,7 +30,7 @@ export default function SizeGuide() {
         {open && (
           <>
             <motion.div
-              className="fixed inset-0 z-[90] bg-ink/40 backdrop-blur-sm"
+              className="fixed inset-0 z-[90] bg-scrim/60 backdrop-blur-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
