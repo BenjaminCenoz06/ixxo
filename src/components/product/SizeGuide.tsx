@@ -2,16 +2,9 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 import { X, Ruler } from "lucide-react";
-
-const rows = [
-  { size: "XS", chest: "86–90", waist: "72–76", length: "68" },
-  { size: "S", chest: "90–96", waist: "76–82", length: "70" },
-  { size: "M", chest: "96–102", waist: "82–88", length: "72" },
-  { size: "L", chest: "102–108", waist: "88–94", length: "74" },
-  { size: "XL", chest: "108–114", waist: "94–100", length: "76" },
-  { size: "XXL", chest: "114–120", waist: "100–106", length: "78" },
-];
+import { TOP_SIZES as rows } from "@/data/sizes";
 
 export default function SizeGuide() {
   const [open, setOpen] = useState(false);
@@ -78,7 +71,10 @@ export default function SizeGuide() {
 
               <p className="mt-6 text-[12px] leading-relaxed text-ash">
                 Las medidas son aproximadas y pueden variar ±2 cm según la prenda. Ante la duda entre
-                dos talles, recomendamos elegir el mayor para un calce relajado.
+                dos talles, recomendamos elegir el mayor para un calce relajado.{" "}
+                <Link href="/ayuda/talles" className="text-ink underline underline-offset-2">
+                  Ver la guía completa
+                </Link>
               </p>
             </motion.div>
           </>

@@ -220,7 +220,7 @@ export default function ProductInfo({ product }: { product: Product }) {
         <div className="flex gap-3">
           <button
             onClick={addToCart}
-            className="relative flex-1 overflow-hidden bg-ink py-4 text-[12px] font-semibold uppercase tracking-[0.18em] text-paper transition-colors hover:bg-ink-soft"
+            className="btn-sheen relative flex-1 overflow-hidden bg-ink py-4 text-[12px] font-semibold uppercase tracking-[0.18em] text-paper transition-colors hover:bg-ink-soft"
           >
             <AnimatePresence mode="wait">
               {added ? (

@@ -44,6 +44,27 @@ const ZONE_BY_PROVINCE: Record<string, Zone> = {
   "Tierra del Fuego": PATAGONIA,
 };
 
+/**
+ * Zonas para mostrar en /ayuda/envios. Se derivan del mismo mapa que cotiza el
+ * checkout, así la página informativa no puede desincronizarse de lo que cobra.
+ */
+export const SHIPPING_ZONES = (
+  [
+    ["metro", "AMBA", METRO],
+    ["centro", "Centro", CENTRO],
+    ["interior", "Interior", INTERIOR],
+    ["patagonia", "Patagonia", PATAGONIA],
+  ] as const
+).map(([key, label, zone]) => ({
+  key,
+  label,
+  minDays: zone.minDays,
+  maxDays: zone.maxDays,
+  provinces: Object.entries(ZONE_BY_PROVINCE)
+    .filter(([, z]) => z === zone)
+    .map(([province]) => province),
+}));
+
 export interface ShippingQuote {
   cost: number;
   minDays: number;

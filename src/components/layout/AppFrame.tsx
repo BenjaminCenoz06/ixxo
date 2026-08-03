@@ -8,6 +8,8 @@ import Footer from "@/components/layout/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import BottomNav from "@/components/layout/BottomNav";
+import PageTransition from "@/components/layout/PageTransition";
+import ScrollProgress from "@/components/ui/ScrollProgress";
 
 /**
  * Decide el "chrome" de la app según la ruta:
@@ -22,11 +24,12 @@ export default function AppFrame({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Loader />
+      <ScrollProgress />
       <SmoothScroll>
         {/* pb-16 deja lugar a la barra inferior fija en móvil */}
         <div className="pb-16 lg:pb-0">
           <Header />
-          <main id="contenido">{children}</main>
+          <PageTransition>{children}</PageTransition>
           <Footer />
         </div>
       </SmoothScroll>

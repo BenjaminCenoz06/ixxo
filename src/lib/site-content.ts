@@ -255,9 +255,9 @@ export const DEFAULT_CONTENT: SiteContent = {
           label: "Cómo llegar",
           href: "https://www.google.com/maps/place/GoodStyle/@-27.590084,-56.6966917,17z",
         },
-        { label: "Retiro en el local", href: "#" },
-        { label: "Envíos", href: "#" },
-        { label: "Guía de talles", href: "#" },
+        { label: "Retiro en el local", href: "/ayuda/retiro" },
+        { label: "Envíos", href: "/ayuda/envios" },
+        { label: "Guía de talles", href: "/ayuda/talles" },
       ],
     },
     {
@@ -272,7 +272,15 @@ export const DEFAULT_CONTENT: SiteContent = {
         },
       ],
     },
-    { title: "Legales", links: ["Términos y condiciones", "Política de privacidad", "Botón de arrepentimiento", "Defensa al consumidor"].map((l) => ({ label: l, href: "#" })) },
+    {
+      title: "Legales",
+      links: [
+        { label: "Términos y condiciones", href: "/legales/terminos" },
+        { label: "Política de privacidad", href: "/legales/privacidad" },
+        { label: "Botón de arrepentimiento", href: "/legales/arrepentimiento" },
+        { label: "Defensa al consumidor", href: "/legales/defensa-consumidor" },
+      ],
+    },
   ],
   // Solo lo que el local realmente cobra hoy. Al activar Mercado Pago se
   // agregan las tarjetas desde /admin/contenido.

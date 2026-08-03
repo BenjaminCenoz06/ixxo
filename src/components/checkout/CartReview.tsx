@@ -119,7 +119,7 @@ export default function CartReview({ onContinue }: { onContinue: () => void }) {
         </Link>
         <button
           onClick={onContinue}
-          className="group inline-flex items-center gap-2 bg-ink px-8 py-4 text-[12px] font-semibold uppercase tracking-[0.18em] text-paper transition-colors hover:bg-ink-soft"
+          className="group btn-sheen inline-flex items-center gap-2 bg-ink px-8 py-4 text-[12px] font-semibold uppercase tracking-[0.18em] text-paper transition-colors hover:bg-ink-soft"
         >
           Continuar a entrega
           <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />

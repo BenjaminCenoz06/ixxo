@@ -79,7 +79,7 @@ export default function CartDrawer() {
                   <p className="text-sm text-ash">Descubrí los últimos ingresos de GoodStyle.</p>
                   <button
                     onClick={closeCart}
-                    className="mt-2 bg-ink px-8 py-3.5 text-[12px] font-semibold uppercase tracking-[0.18em] text-paper transition-colors hover:bg-ink-soft"
+                    className="mt-2 btn-sheen bg-ink px-8 py-3.5 text-[12px] font-semibold uppercase tracking-[0.18em] text-paper transition-colors hover:bg-ink-soft"
                   >
                     Seguir comprando
                   </button>
@@ -234,7 +234,7 @@ export default function CartDrawer() {
                     <Link
                       href="/checkout"
                       onClick={closeCart}
-                      className="group mt-4 flex w-full items-center justify-center gap-2 bg-ink py-4 text-[12px] font-semibold uppercase tracking-[0.18em] text-paper transition-colors hover:bg-ink-soft"
+                      className="group mt-4 flex w-full items-center justify-center gap-2 btn-sheen bg-ink py-4 text-[12px] font-semibold uppercase tracking-[0.18em] text-paper transition-colors hover:bg-ink-soft"
                     >
                       Finalizar compra
                       <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
