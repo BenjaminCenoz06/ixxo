@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "seed:gen": "node scripts/generate-seed.mjs",
+    "setup:gen": "node scripts/generate-seed.mjs && node scripts/generate-setup-sql.mjs",
     "catalogo:csv": "node scripts/generate-catalogo-csv.mjs"
   },
   "dependencies": {
