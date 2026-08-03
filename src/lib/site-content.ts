@@ -174,10 +174,12 @@ export const DEFAULT_CONTENT: SiteContent = {
       { image: "/productos/p100.jpeg", title: "Remeras", items: 0, href: "/categoria/remeras" },
     ],
   },
+  // Fotos reales y de la categoría que anuncian: con las de banco quedaba un
+  // traje con corbata sobre "Jeans y bermudas" y una zapatilla en "Accesorios".
   homeCollections: [
-    { image: editorialWide("col-1"), title: "Jeans y bermudas", subtitle: "Baggy, semi baggy, mom y joggers.", href: "/categoria/jeans" },
-    { image: editorialWide("col-2"), title: "Buzos y remeras", subtitle: "Oversize, boxy y clásicos.", href: "/categoria/buzos" },
-    { image: editorialWide("col-3"), title: "Accesorios", subtitle: "Gorras, relojes, perfumes y más.", href: "/categoria/accesorios" },
+    { image: "/productos/p035.jpeg", title: "Jeans y bermudas", subtitle: "Baggy, semi baggy, mom y joggers.", href: "/categoria/jeans" },
+    { image: "/productos/p065.jpeg", title: "Buzos y remeras", subtitle: "Oversize, boxy y clásicos.", href: "/categoria/buzos" },
+    { image: "/productos/p130.jpeg", title: "Accesorios", subtitle: "Gorras, relojes, perfumes y más.", href: "/categoria/accesorios" },
   ],
   instagram: {
     eyebrow: "Comunidad",
