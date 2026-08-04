@@ -13,6 +13,7 @@ import {
   getAllProducts,
   allProductSlugs,
 } from "@/lib/repository/products";
+import { getSiteContent } from "@/lib/repository/content";
 import { formatPrice } from "@/lib/format";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -43,12 +44,25 @@ export default async function ProductPage({ params }: Params) {
   // banco para llenar el riel, pero mostraban ropa que no es la que se vende.
   const gallery = product.images;
 
-  const [related, allProducts] = await Promise.all([getRelated(product, 4), getAllProducts()]);
+  const [related, allProducts, content] = await Promise.all([
+    getRelated(product, 4),
+    getAllProducts(),
+    getSiteContent(),
+  ]);
   const alsoLike = allProducts.filter((p) => p.id !== product.id).slice(-4);
 
+  // El umbral sale del CMS, no hardcodeado: estaba escrito a mano en $90.000
+  // mientras la barra de anuncios y el carrito usaban otro número, así que la
+  // misma página se contradecía a sí misma.
+  const umbral = content.general.freeShippingThreshold;
   const faq = [
-    { q: "¿Cuánto tarda el envío?", a: "Entre 2 y 5 días hábiles a todo el país. Envío gratis en compras superiores a $90.000." },
-    { q: "¿Puedo cambiar el talle?", a: "Sí, tenés 30 días para cambios sin cargo. Gestionás todo online desde tu cuenta." },
+    {
+      q: "¿Cuánto tarda el envío?",
+      a:
+        `Hacemos envíos a domicilio todos los días. Entre 2 y 5 días hábiles a todo el país.` +
+        (umbral > 0 ? ` Envío gratis en compras superiores a ${formatPrice(umbral)}.` : ""),
+    },
+    { q: "¿Puedo cambiar el talle?", a: "Sí, tenés 30 días para cambios sin cargo. Escribinos por WhatsApp y lo coordinamos." },
     { q: "¿Cómo sé mi talle?", a: "Consultá la guía de talles junto al selector. Ante la duda, elegí el talle mayor." },
   ];
 

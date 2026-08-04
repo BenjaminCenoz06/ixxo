@@ -1,4 +1,5 @@
-export const FREE_SHIPPING_THRESHOLD = 90000;
+/** Respaldo si el CMS no responde. El valor real vive en general.freeShippingThreshold. */
+export const FREE_SHIPPING_THRESHOLD = 100000;
 export const SHIPPING_COST = 6900;
 
 export interface Coupon {
