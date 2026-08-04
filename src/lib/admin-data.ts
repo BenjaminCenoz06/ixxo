@@ -77,9 +77,16 @@ function productToRow(p: Product): Row {
  * Estado de productos para el admin.
  * Demo: opera sobre datos mock en memoria. Con Supabase: lee/escribe la DB.
  */
+/** Resultado de una escritura, para que la pantalla pueda avisar si falló. */
+export interface SaveResult {
+  ok: boolean;
+  error?: string;
+}
+
 export function useAdminProducts() {
   const [items, setItems] = useState<Product[]>(mockProducts);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const sb = getSupabaseBrowser();
@@ -88,16 +95,13 @@ export function useAdminProducts() {
     setLoading(true);
 
     (async () => {
-      try {
-        const { data } = await sb.from("products").select("*").order("created_at");
-        if (!cancelled && data?.length) setItems((data as Row[]).map(rowToProduct));
-      } catch (err) {
-        // Proyecto caído: el panel se queda con el catálogo del código en vez
-        // de colgarse cargando para siempre.
-        console.warn("[admin] No se pudieron leer los productos de Supabase.", err);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+      const { data, error: err } = await sb.from("products").select("*").order("created_at");
+      if (cancelled) return;
+      // Proyecto caído: el panel se queda con el catálogo del código en vez
+      // de colgarse cargando para siempre, pero avisando.
+      if (err) setError(`No se pudieron leer los productos: ${err.message}`);
+      else if (data?.length) setItems((data as Row[]).map(rowToProduct));
+      setLoading(false);
     })();
 
     return () => {
@@ -105,7 +109,29 @@ export function useAdminProducts() {
     };
   }, []);
 
-  const upsert = async (product: Product) => {
+  /**
+   * Guarda y recién entonces actualiza la lista.
+   *
+   * Antes se actualizaba la pantalla primero y el error de la escritura se
+   * descartaba: si la base rechazaba el guardado, el dueño veía el producto
+   * en la lista, se iba, y no se había guardado nada.
+   */
+  const upsert = async (product: Product): Promise<SaveResult> => {
+    const sb = getSupabaseBrowser();
+    if (sb) {
+      const { error: err } = await sb.from("products").upsert(productToRow(product));
+      if (err) {
+        const msg =
+          err.code === "23503"
+            ? "Esa categoría no existe en la base."
+            : /row-level security/i.test(err.message)
+              ? "Tu cuenta no tiene permisos de escritura."
+              : err.message;
+        setError(msg);
+        return { ok: false, error: msg };
+      }
+    }
+    setError(null);
     setItems((prev) => {
       const idx = prev.findIndex((p) => p.id === product.id);
       if (idx === -1) return [product, ...prev];
@@ -113,17 +139,24 @@ export function useAdminProducts() {
       next[idx] = product;
       return next;
     });
-    const sb = getSupabaseBrowser();
-    if (sb) await sb.from("products").upsert(productToRow(product));
+    return { ok: true };
   };
 
-  const remove = async (id: string) => {
+  const remove = async (id: string): Promise<SaveResult> => {
+    const sb = getSupabaseBrowser();
+    if (sb) {
+      const { error: err } = await sb.from("products").delete().eq("id", id);
+      if (err) {
+        setError(err.message);
+        return { ok: false, error: err.message };
+      }
+    }
+    setError(null);
     setItems((prev) => prev.filter((p) => p.id !== id));
-    const sb = getSupabaseBrowser();
-    if (sb) await sb.from("products").delete().eq("id", id);
+    return { ok: true };
   };
 
-  return { items, loading, upsert, remove };
+  return { items, loading, error, upsert, remove };
 }
 
 export function newProductId(): string {

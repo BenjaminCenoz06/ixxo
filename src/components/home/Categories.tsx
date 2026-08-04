@@ -1,14 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { getFeaturedCategories } from "@/lib/repository/catalog-meta";
+import { getCategories } from "@/lib/repository/catalog-meta";
 
 export default async function Categories({
   heading,
 }: {
   heading: { eyebrow: string; title: string; ctaLabel: string; ctaHref: string };
 }) {
-  const featuredCategories = await getFeaturedCategories();
+  // TODAS las categorías, no las primeras seis. Con el tope fijo, el dueño
+  // creaba una categoría desde el panel y no aparecía en ningún lado: la
+  // séptima quedaba afuera del home y /categorias todavía no existía.
+  const featuredCategories = await getCategories();
   return (
     <section className="container-ixxo py-20 md:py-28">
       <SectionHeading

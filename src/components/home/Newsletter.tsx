@@ -10,10 +10,28 @@ export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const [error, setError] = useState<string | null>(null);
+
+  // Antes esto solo ponía sent=true: el mail no se guardaba en ningún lado y
+  // igual se le decía al cliente que revisara su casilla.
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    setSent(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}));
+        throw new Error(d.error || "No se pudo guardar");
+      }
+      setSent(true);
+    } catch {
+      setError("No pudimos registrarte. Probá de nuevo en un rato.");
+    }
   };
 
   return (
@@ -76,7 +94,16 @@ export default function Newsletter() {
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-4 text-sm text-ash"
               >
-                ¡Gracias! Revisá tu casilla para confirmar la suscripción.
+                ¡Listo! Te vamos a avisar cuando entren prendas nuevas.
+              </motion.p>
+            )}
+            {error && (
+              <motion.p
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 text-sm text-accent"
+              >
+                {error}
               </motion.p>
             )}
           </AnimatePresence>

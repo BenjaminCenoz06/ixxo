@@ -8,11 +8,14 @@ export function FormSheet({
   title,
   onClose,
   onSave,
+  saving = false,
   children,
 }: {
   title: string;
   onClose: () => void;
   onSave: () => void;
+  /** Bloquea el botón mientras el servidor responde, para no guardar dos veces. */
+  saving?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -33,11 +36,11 @@ export function FormSheet({
         </div>
         <div className="flex-1 space-y-4 overflow-y-auto px-6 py-6">{children}</div>
         <div className="flex gap-3 border-t border-line px-6 py-4">
-          <Btn variant="ghost" onClick={onClose} className="flex-1">
+          <Btn variant="ghost" onClick={onClose} className="flex-1" disabled={saving}>
             Cancelar
           </Btn>
-          <Btn onClick={onSave} className="flex-[2]">
-            Guardar
+          <Btn onClick={onSave} className="flex-[2]" disabled={saving}>
+            {saving ? "Guardando…" : "Guardar"}
           </Btn>
         </div>
       </motion.aside>

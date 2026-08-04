@@ -66,6 +66,7 @@ export function Btn({
   onClick,
   variant = "primary",
   type = "button",
+  disabled = false,
   className,
 }: {
   children: React.ReactNode;
@@ -73,6 +74,7 @@ export function Btn({
   onClick?: () => void;
   variant?: "primary" | "outline" | "ghost" | "danger";
   type?: "button" | "submit";
+  disabled?: boolean;
   className?: string;
 }) {
   const styles = {
@@ -84,6 +86,7 @@ export function Btn({
   const cls = cn(
     "inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[12px] font-semibold uppercase tracking-[0.14em] transition-colors",
     styles,
+    disabled && "cursor-not-allowed opacity-50",
     className,
   );
   if (href) {
@@ -94,7 +97,7 @@ export function Btn({
     );
   }
   return (
-    <button type={type} onClick={onClick} className={cls}>
+    <button type={type} onClick={onClick} disabled={disabled} className={cls}>
       {children}
     </button>
   );

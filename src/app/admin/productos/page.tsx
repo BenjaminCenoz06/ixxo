@@ -12,11 +12,24 @@ import { formatPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 export default function AdminProductos() {
-  const { items, upsert, remove } = useAdminProducts();
+  const { items, error, upsert, remove } = useAdminProducts();
   const [query, setQuery] = useState("");
   const [editing, setEditing] = useState<Product | null>(null);
   const [creating, setCreating] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<Product | null>(null);
+  const [falla, setFalla] = useState<string | null>(null);
+
+  // El formulario se cierra solo si la base confirmó el guardado.
+  const guardar = async (p: Product) => {
+    setFalla(null);
+    const r = await upsert(p);
+    if (!r.ok) {
+      setFalla(r.error ?? "No se pudo guardar el producto.");
+      return;
+    }
+    setEditing(null);
+    setCreating(false);
+  };
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -39,6 +52,12 @@ export default function AdminProductos() {
           </Btn>
         }
       />
+
+      {(error || falla) && (
+        <div className="mb-5 border-l-2 border-accent bg-accent/5 px-4 py-3 text-[13px] text-accent">
+          {error ?? falla}
+        </div>
+      )}
 
       {/* Buscador */}
       <div className="mb-6 flex items-center gap-2 border border-line bg-paper px-4 py-2.5">
@@ -136,11 +155,7 @@ export default function AdminProductos() {
               setEditing(null);
               setCreating(false);
             }}
-            onSave={(p) => {
-              upsert(p);
-              setEditing(null);
-              setCreating(false);
-            }}
+            onSave={guardar}
           />
         )}
       </AnimatePresence>
@@ -163,8 +178,9 @@ export default function AdminProductos() {
                 </Btn>
                 <Btn
                   variant="danger"
-                  onClick={() => {
-                    remove(confirmDelete.id);
+                  onClick={async () => {
+                    const r = await remove(confirmDelete.id);
+                    if (!r.ok) setFalla(r.error ?? "No se pudo eliminar.");
                     setConfirmDelete(null);
                   }}
                   className="flex-1"

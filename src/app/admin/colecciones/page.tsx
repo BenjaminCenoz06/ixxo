@@ -14,10 +14,23 @@ import {
 import { FormSheet, LabeledInput, LabeledTextarea, ConfirmDelete } from "@/components/admin/FormSheet";
 
 export default function AdminColecciones() {
-  const { items, upsert, remove } = useAdminCollections();
+  const { items, error, upsert, remove } = useAdminCollections();
   const [editing, setEditing] = useState<AdminCollection | null>(null);
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState<AdminCollection | null>(null);
+  const [guardando, setGuardando] = useState(false);
+  const [falla, setFalla] = useState<string | null>(null);
+
+  // Solo cerramos el formulario si el servidor confirmó la escritura.
+  const guardar = async () => {
+    if (!editing) return;
+    setGuardando(true);
+    setFalla(null);
+    const r = await upsert({ ...editing, slug: editing.slug || slugify(editing.title) });
+    setGuardando(false);
+    if (r.ok) setOpen(false);
+    else setFalla(r.error ?? "No se pudo guardar.");
+  };
 
   const startNew = () => {
     setEditing({ slug: "", title: "", subtitle: "", image: "" });
@@ -35,6 +48,12 @@ export default function AdminColecciones() {
           </Btn>
         }
       />
+
+      {(error || falla) && (
+        <div className="mb-5 border-l-2 border-accent bg-accent/5 px-4 py-3 text-[13px] text-accent">
+          {error ?? falla}
+        </div>
+      )}
 
       <div className="space-y-4">
         {items.map((c) => (
@@ -64,11 +83,14 @@ export default function AdminColecciones() {
           <FormSheet
             title={editing.id ? "Editar colección" : "Nueva colección"}
             onClose={() => setOpen(false)}
-            onSave={() => {
-              upsert({ ...editing, slug: editing.slug || slugify(editing.title) });
-              setOpen(false);
-            }}
+            onSave={guardar}
+            saving={guardando}
           >
+            {falla && (
+              <p className="border-l-2 border-accent bg-accent/5 px-4 py-3 text-[13px] text-accent">
+                {falla}
+              </p>
+            )}
             <LabeledInput label="Título" value={editing.title} onChange={(v) => setEditing({ ...editing, title: v, slug: editing.slug || slugify(v) })} />
             <LabeledInput label="Slug (URL)" value={editing.slug} onChange={(v) => setEditing({ ...editing, slug: slugify(v) })} />
             <LabeledTextarea label="Subtítulo" value={editing.subtitle ?? ""} onChange={(v) => setEditing({ ...editing, subtitle: v })} />
@@ -84,8 +106,11 @@ export default function AdminColecciones() {
         item={confirm}
         label={confirm?.title}
         onClose={() => setConfirm(null)}
-        onConfirm={() => {
-          if (confirm) remove(confirm);
+        onConfirm={async () => {
+          if (confirm) {
+            const r = await remove(confirm);
+            if (!r.ok) setFalla(r.error ?? "No se pudo eliminar.");
+          }
           setConfirm(null);
         }}
       />

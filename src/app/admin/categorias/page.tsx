@@ -14,10 +14,24 @@ import {
 } from "@/lib/admin-catalog-meta";
 
 export default function AdminCategorias() {
-  const { items, upsert, remove } = useAdminCategories();
+  const { items, error, upsert, remove } = useAdminCategories();
   const [editing, setEditing] = useState<AdminCategory | null>(null);
   const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState<AdminCategory | null>(null);
+  const [guardando, setGuardando] = useState(false);
+  const [falla, setFalla] = useState<string | null>(null);
+
+  // El formulario se cierra solo si el servidor confirmó. Antes se cerraba
+  // siempre y una escritura rechazada pasaba por guardada.
+  const guardar = async () => {
+    if (!editing) return;
+    setGuardando(true);
+    setFalla(null);
+    const r = await upsert({ ...editing, slug: editing.slug || slugify(editing.name) });
+    setGuardando(false);
+    if (r.ok) setOpen(false);
+    else setFalla(r.error ?? "No se pudo guardar.");
+  };
 
   const startNew = () => {
     setEditing({ slug: "", name: "", image: "", sort: items.length });
@@ -39,6 +53,12 @@ export default function AdminCategorias() {
           </Btn>
         }
       />
+
+      {(error || falla) && (
+        <div className="mb-5 border-l-2 border-accent bg-accent/5 px-4 py-3 text-[13px] text-accent">
+          {error ?? falla}
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {items.map((c) => (
@@ -67,11 +87,14 @@ export default function AdminCategorias() {
           <FormSheet
             title={editing.id ? "Editar categoría" : "Nueva categoría"}
             onClose={() => setOpen(false)}
-            onSave={() => {
-              upsert({ ...editing, slug: editing.slug || slugify(editing.name) });
-              setOpen(false);
-            }}
+            onSave={guardar}
+            saving={guardando}
           >
+            {falla && (
+              <p className="border-l-2 border-accent bg-accent/5 px-4 py-3 text-[13px] text-accent">
+                {falla}
+              </p>
+            )}
             <LabeledInput label="Nombre" value={editing.name} onChange={(v) => setEditing({ ...editing, name: v, slug: editing.slug || slugify(v) })} />
             <LabeledInput label="Slug (URL)" value={editing.slug} onChange={(v) => setEditing({ ...editing, slug: slugify(v) })} />
             <div>
@@ -86,8 +109,11 @@ export default function AdminCategorias() {
         item={confirm}
         label={confirm?.name}
         onClose={() => setConfirm(null)}
-        onConfirm={() => {
-          if (confirm) remove(confirm);
+        onConfirm={async () => {
+          if (confirm) {
+            const r = await remove(confirm);
+            if (!r.ok) setFalla(r.error ?? "No se pudo eliminar.");
+          }
           setConfirm(null);
         }}
       />

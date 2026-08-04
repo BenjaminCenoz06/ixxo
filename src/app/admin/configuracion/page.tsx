@@ -1,19 +1,36 @@
 "use client";
 
-import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { PageHeader, Card, Btn } from "@/components/admin/ui";
+import { useAdminContent } from "@/lib/admin-content";
 
 const inputCls =
   "w-full border border-line px-3 py-2.5 text-[14px] outline-none transition-colors focus:border-ink";
 
+/**
+ * Ajustes generales.
+ *
+ * Antes esta pantalla era decorativa: los campos tenían valores fijos escritos
+ * en el código (mostraba $90.000 de envío gratis y 15% de transferencia, los
+ * dos incorrectos) y el botón Guardar solo encendía un cartel dos segundos sin
+ * escribir nada. El dueño editaba, leía "Guardado" y no pasaba nada.
+ *
+ * Ahora lee y escribe el mismo contenido que /admin/contenido, así que los dos
+ * lados muestran siempre lo mismo.
+ */
 export default function AdminConfiguracion() {
-  const [saved, setSaved] = useState(false);
+  const { content, loading, saving, saved, error, patch, save } = useAdminContent();
+  const { general, shipping, payments } = content;
 
-  const save = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
+  const setGeneral = (v: Partial<typeof general>) => patch("general", { ...general, ...v });
+
+  if (loading) {
+    return (
+      <div className="flex items-center gap-2 py-20 text-[14px] text-ash">
+        <Loader2 size={16} className="animate-spin" /> Cargando ajustes…
+      </div>
+    );
+  }
 
   return (
     <>
@@ -21,8 +38,12 @@ export default function AdminConfiguracion() {
         title="Configuración"
         subtitle="Ajustes generales de la tienda"
         action={
-          <Btn onClick={save}>
-            {saved ? (
+          <Btn onClick={save} disabled={saving}>
+            {saving ? (
+              <>
+                <Loader2 size={15} className="animate-spin" /> Guardando…
+              </>
+            ) : saved ? (
               <>
                 <Check size={15} /> Guardado
               </>
@@ -33,54 +54,114 @@ export default function AdminConfiguracion() {
         }
       />
 
+      {error && (
+        <div className="mb-5 border-l-2 border-accent bg-accent/5 px-4 py-3 text-[13px] text-accent">
+          {error}
+        </div>
+      )}
+
       <div className="grid gap-6 lg:grid-cols-2">
         <Card title="Datos de la tienda">
           <div className="space-y-4">
             <Field label="Nombre">
-              <input defaultValue="GoodStyle" className={inputCls} />
+              <input
+                value={general.storeName}
+                onChange={(e) => setGeneral({ storeName: e.target.value })}
+                className={inputCls}
+              />
             </Field>
             <Field label="Email de contacto">
-              <input defaultValue="" placeholder="Sin email cargado" className={inputCls} />
+              <input
+                value={general.email}
+                onChange={(e) => setGeneral({ email: e.target.value })}
+                placeholder="Sin email cargado"
+                className={inputCls}
+              />
             </Field>
-            <Field label="Teléfono / WhatsApp">
-              <input defaultValue="+54 9 3786 41-1223" className={inputCls} />
+            <Field label="WhatsApp (con código de país, sin +)">
+              <input
+                value={general.whatsapp}
+                onChange={(e) => setGeneral({ whatsapp: e.target.value })}
+                placeholder="5493786411223"
+                className={inputCls}
+              />
+            </Field>
+            <Field label="Dirección del local">
+              <input
+                value={general.address}
+                onChange={(e) => setGeneral({ address: e.target.value })}
+                className={inputCls}
+              />
             </Field>
           </div>
         </Card>
 
         <Card title="Envíos">
           <div className="space-y-4">
-            <Field label="Umbral de envío gratis (ARS)">
-              <input type="number" defaultValue={90000} className={inputCls} />
+            <Field label="Envío gratis a partir de (ARS)">
+              <input
+                type="number"
+                value={general.freeShippingThreshold}
+                onChange={(e) => setGeneral({ freeShippingThreshold: +e.target.value })}
+                className={inputCls}
+              />
             </Field>
-            <Field label="Costo de envío base (ARS)">
-              <input type="number" defaultValue={6900} className={inputCls} />
-            </Field>
+            <p className="text-[12px] leading-relaxed text-ash">
+              Este número lo usa el carrito para no cobrar el envío, y también aparece en la ficha
+              de producto, en Envíos y en los Términos.
+            </p>
             <Field label="Descuento por transferencia (%)">
-              <input type="number" defaultValue={15} className={inputCls} />
+              <input
+                type="number"
+                value={general.transferDiscount}
+                onChange={(e) => setGeneral({ transferDiscount: +e.target.value })}
+                className={inputCls}
+              />
             </Field>
+            <p className="text-[12px] leading-relaxed text-ash">
+              En 0 no se muestra ninguna promesa de descuento en la tienda.
+            </p>
           </div>
         </Card>
 
-        <Card title="Redes sociales">
+        <Card title="Costo de envío por zona (ARS)">
           <div className="space-y-4">
-            <Field label="Instagram">
-              <input defaultValue="@good.style.ok" className={inputCls} />
-            </Field>
-            <Field label="TikTok">
-              <input defaultValue="@good.style.ok" className={inputCls} />
-            </Field>
+            {(
+              [
+                ["metro", "AMBA"],
+                ["centro", "Centro"],
+                ["interior", "Interior"],
+                ["patagonia", "Patagonia"],
+              ] as const
+            ).map(([k, label]) => (
+              <Field key={k} label={label}>
+                <input
+                  type="number"
+                  value={shipping[k]}
+                  onChange={(e) => patch("shipping", { ...shipping, [k]: +e.target.value })}
+                  className={inputCls}
+                />
+              </Field>
+            ))}
           </div>
         </Card>
 
         <Card title="Medios de pago">
           <div className="space-y-3">
-            {["Mercado Pago", "Transferencia", "Tarjeta de crédito/débito"].map((m) => (
-              <label key={m} className="flex items-center justify-between text-[14px]">
-                {m}
-                <input type="checkbox" defaultChecked className="h-4 w-4 accent-ink" />
-              </label>
-            ))}
+            <p className="text-[12px] leading-relaxed text-ash">
+              Se muestran en el pie de la tienda. Uno por línea.
+            </p>
+            <textarea
+              rows={5}
+              value={payments.join("\n")}
+              onChange={(e) =>
+                patch(
+                  "payments",
+                  e.target.value.split("\n").map((s) => s.trim()).filter(Boolean),
+                )
+              }
+              className={inputCls}
+            />
           </div>
         </Card>
       </div>
