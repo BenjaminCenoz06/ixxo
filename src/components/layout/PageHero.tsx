@@ -23,15 +23,7 @@ export default function PageHero({
 }) {
   return (
     <header className="relative overflow-hidden border-b border-line">
-      {/* Halo sutil detrás del título, para que la cabecera no sea un bloque plano */}
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute -top-40 left-1/2 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-accent/10 blur-3xl"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.4, ease: EASE }}
-      />
-
+      {/* Sin halos ni degradados de fondo: la jerarquía la da el tipo y el aire. */}
       <div className="container-ixxo relative pb-12 pt-28 md:pb-16 md:pt-36">
         <motion.nav
           className="mb-6 flex items-center gap-1.5 text-[12px] text-ash"

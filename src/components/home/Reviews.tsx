@@ -2,10 +2,9 @@
 
 import { BadgeCheck } from "lucide-react";
 import { Stars } from "@/components/ui/Stars";
-import { Reveal, RevealGroup, revealItem } from "@/components/ui/Reveal";
+import { Reveal, RevealGroup } from "@/components/ui/Reveal";
 import { useSiteContent } from "@/lib/site-content-context";
 import Image from "next/image";
-import { motion } from "framer-motion";
 
 export default function Reviews() {
   const { sections, reviews } = useSiteContent();
@@ -53,9 +52,10 @@ export default function Reviews() {
           {/* Grilla de reseñas */}
           <RevealGroup className="grid gap-4 sm:grid-cols-2">
             {items.map((r, i) => (
-              <motion.article
+              <article
                 key={i}
-                variants={revealItem}
+                // El escalonado lo aplica .reveal-group vía --i (globals.css).
+                style={{ ["--i" as string]: i }}
                 className="flex flex-col border border-line bg-paper p-6"
               >
                 <div className="flex items-center gap-3">
@@ -86,7 +86,7 @@ export default function Reviews() {
                 {r.product && (
                   <p className="mt-4 text-[11px] uppercase tracking-[0.14em] text-stone">{r.product}</p>
                 )}
-              </motion.article>
+              </article>
             ))}
           </RevealGroup>
         </div>

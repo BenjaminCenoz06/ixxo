@@ -34,6 +34,9 @@ const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-fraunces",
   display: "swap",
+  // La itálica es un dibujo aparte, no una inclinación: el hero la usa y una
+  // oblicua sintética arruina justo las formas que dan carácter a esta serif.
+  style: ["normal", "italic"],
   axes: ["SOFT", "WONK", "opsz"],
 });
 

@@ -106,7 +106,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}
-          className="max-w-4xl font-display text-[clamp(2.75rem,8vw,6.5rem)] font-light leading-[0.95] tracking-[-0.02em]"
+          className="font-brand max-w-4xl text-[clamp(2.75rem,8vw,6.5rem)] font-light leading-[0.92] tracking-[-0.03em]"
         >
           {hero.titleTop}
           <br />

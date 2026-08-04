@@ -1,39 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, type Variants } from "framer-motion";
+import { useInView } from "@/lib/use-in-view";
 import { cn } from "@/lib/utils";
 
 type Direction = "up" | "down" | "left" | "right" | "none";
-
-const offset: Record<Direction, { x?: number; y?: number }> = {
-  up: { y: 32 },
-  down: { y: -32 },
-  left: { x: 32 },
-  right: { x: -32 },
-  none: {},
-};
-
-/**
- * En pantallas chicas el layout apila en una sola columna, así que un slide
- * horizontal en un elemento pegado al borde asoma unos px fuera del viewport.
- * Debajo de 1024px convertimos left/right en un desplazamiento vertical:
- * se conserva la animación (fade + movimiento) sin generar scroll horizontal.
- */
-function useResponsiveDirection(direction: Direction): Direction {
-  // Mobile-first: arranca en false para que el render inicial (y el móvil)
-  // nunca use desplazamiento horizontal; en escritorio se activa al montar.
-  const [isWide, setIsWide] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
-    const update = () => setIsWide(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-  if (isWide || (direction !== "left" && direction !== "right")) return direction;
-  return "up";
-}
 
 interface RevealProps {
   children: React.ReactNode;
@@ -44,7 +14,19 @@ interface RevealProps {
   as?: "div" | "section" | "li" | "span" | "article";
 }
 
-/** Reveal editorial: fade + desplazamiento + blur suave al entrar en viewport. */
+/**
+ * Reveal editorial: fundido + desplazamiento corto al entrar en viewport.
+ *
+ * Se anima con clases CSS (ver `.reveal` en globals.css) y no con
+ * framer-motion. Framer escribe los estilos iniciales durante el render del
+ * servidor y los corrige en el cliente al leer la preferencia de "reducir
+ * movimiento", lo que provocaba doce errores de hidratación por página. Acá
+ * el marcado del servidor y el del cliente son idénticos y el JS solo agrega
+ * `is-in` cuando el elemento aparece.
+ *
+ * El salto vertical según ancho de pantalla también se resolvió en CSS, así
+ * que ya no hace falta un matchMedia en JS.
+ */
 export function Reveal({
   children,
   className,
@@ -53,38 +35,30 @@ export function Reveal({
   blur = true,
   as = "div",
 }: RevealProps) {
-  const effectiveDirection = useResponsiveDirection(direction);
-  const variants: Variants = {
-    hidden: {
-      opacity: 0,
-      filter: blur ? "blur(8px)" : "blur(0px)",
-      ...offset[effectiveDirection],
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] },
-    },
-  };
-
-  const MotionTag = motion[as];
+  const { ref, inView } = useInView<HTMLElement>();
+  // El tag es variable (div, section, li, span, article) y cada uno tiene su
+  // propio tipo de ref: TypeScript los intersecta y ninguno encaja. Con
+  // ElementType el ref queda genérico.
+  const Tag = as as React.ElementType;
 
   return (
-    <MotionTag
-      className={cn(className)}
-      variants={variants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-80px" }}
+    <Tag
+      ref={ref}
+      data-dir={direction}
+      data-blur={blur ? "1" : "0"}
+      // El delay en línea es determinista: da igual en servidor y cliente.
+      style={delay ? { transitionDelay: `${delay}s` } : undefined}
+      className={cn("reveal", inView && "is-in", className)}
     >
       {children}
-    </MotionTag>
+    </Tag>
   );
 }
 
-/** Contenedor con stagger para revelar hijos en secuencia. */
+/**
+ * Contenedor con stagger. Los hijos escalonan por CSS con `--i`; se mantiene
+ * el nombre y la firma para no tocar los llamados existentes.
+ */
 export function RevealGroup({
   children,
   className,
@@ -94,27 +68,14 @@ export function RevealGroup({
   className?: string;
   stagger?: number;
 }) {
+  const { ref, inView } = useInView<HTMLDivElement>();
   return (
-    <motion.div
-      className={className}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-80px" }}
-      variants={{
-        visible: { transition: { staggerChildren: stagger } },
-      }}
+    <div
+      ref={ref}
+      style={{ ["--stagger" as string]: `${stagger}s` }}
+      className={cn("reveal-group", inView && "is-in", className)}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
-
-export const revealItem: Variants = {
-  hidden: { opacity: 0, y: 28, filter: "blur(6px)" },
-  visible: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
-  },
-};

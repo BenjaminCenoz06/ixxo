@@ -134,33 +134,14 @@ html.lenis body {
 }
 
 /**
- * Botón principal: además del cambio de color, un brillo diagonal que barre
- * al pasar el mouse y un hundido leve al hacer click. El `::after` no
- * intercepta el click (pointer-events: none).
+ * Botón principal. Tenía un brillo diagonal que barría al pasar el mouse:
+ * se sacó porque es adorno de plantilla y no comunica nada. Queda el hundido
+ * al presionar, que sí es respuesta a una acción del usuario.
  */
 .btn-sheen {
-  position: relative;
-  overflow: hidden;
   transition:
-    transform 0.25s var(--ease-silk),
+    transform 0.2s var(--ease-silk),
     background-color 0.3s var(--ease-silk);
-}
-.btn-sheen::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    100deg,
-    transparent 30%,
-    color-mix(in srgb, var(--color-paper) 22%, transparent) 50%,
-    transparent 70%
-  );
-  transform: translateX(-120%);
-  transition: transform 0.75s var(--ease-silk);
-}
-.btn-sheen:hover::after {
-  transform: translateX(120%);
 }
 .btn-sheen:active {
   transform: scale(0.985);
@@ -184,6 +165,84 @@ html.lenis body {
 }
 .link-underline:hover::after {
   transform: scaleX(1);
+}
+
+/**
+ * Revelado por máscara de los títulos de sección: la línea sube desde detrás
+ * del borde del contenedor.
+ *
+ * Va en CSS y no en framer-motion a propósito. Framer aplica la preferencia
+ * de "reducir movimiento" recién en el cliente, así que el servidor escribía
+ * translateY(115%) y el cliente none: doce errores de hidratación por página.
+ * Con el estado inicial en CSS, el HTML del servidor y el del cliente son
+ * idénticos y el JS solo agrega `is-in` al entrar en pantalla.
+ */
+.mask-line {
+  display: block;
+  transform: translateY(115%);
+  transition: transform 0.9s var(--ease-silk);
+  will-change: transform;
+}
+.mask-line.is-in {
+  transform: translateY(0);
+}
+
+/**
+ * Reveal al entrar en pantalla. Mismo motivo que `.mask-line`: hacerlo con
+ * estilos en línea de framer generaba doce errores de hidratación por página
+ * (el servidor mandaba blur(3px) y el cliente blur(0px) al aplicar "reducir
+ * movimiento"). El desplazamiento es corto para que acompañe sin competir
+ * con el revelado de los títulos.
+ */
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 0.6s var(--ease-silk),
+    transform 0.6s var(--ease-silk),
+    filter 0.6s var(--ease-silk);
+}
+.reveal[data-dir="up"] {
+  transform: translateY(14px);
+}
+.reveal[data-dir="down"] {
+  transform: translateY(-14px);
+}
+/* En una sola columna un slide horizontal asoma fuera del viewport, así que
+   abajo de 1024px left/right caen a vertical. Antes esto se decidía con un
+   matchMedia en JS, otra fuente de desajuste servidor/cliente. */
+.reveal[data-dir="left"],
+.reveal[data-dir="right"] {
+  transform: translateY(14px);
+}
+@media (min-width: 1024px) {
+  .reveal[data-dir="left"] {
+    transform: translateX(14px);
+  }
+  .reveal[data-dir="right"] {
+    transform: translateX(-14px);
+  }
+}
+.reveal[data-blur="1"] {
+  filter: blur(3px);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/** Grupo con entrada escalonada: cada hijo espera --i × --stagger. */
+.reveal-group > * {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.55s var(--ease-silk),
+    transform 0.55s var(--ease-silk);
+  transition-delay: calc(var(--i, 0) * var(--stagger, 0.08s));
+}
+.reveal-group.is-in > * {
+  opacity: 1;
+  transform: none;
 }
 
 /**
@@ -282,16 +341,25 @@ html.lenis body {
   .animate-scroll-hint {
     animation: none !important;
   }
-  /* El brillo del botón y el subrayado son decorativos: se desactivan. */
-  .btn-sheen::after,
   .link-underline::after {
     transition: none !important;
     transform: none !important;
   }
-  .btn-sheen::after {
-    display: none;
-  }
   .btn-sheen:active {
     transform: none;
+  }
+  /**
+   * Framer-motion respeta esta preferencia y no anima transforms, pero deja
+   * puesto el estado inicial: el título de sección quedaría escondido debajo
+   * de su máscara y los bloques con Reveal, corridos para siempre. `!important`
+   * es necesario porque framer escribe transform en el atributo style.
+   */
+  .mask-line,
+  .reveal,
+  .reveal-group > * {
+    transform: none;
+    filter: none;
+    opacity: 1;
+    transition: none;
   }
 }
