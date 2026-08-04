@@ -27,6 +27,8 @@
   /* — Typography — */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-manrope), var(--font-inter), sans-serif;
+  /* Solo el logotipo del header. Serif display de los 70. */
+  --font-brand: var(--font-fraunces), Georgia, serif;
 
   /* — Motion — */
   --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
@@ -182,6 +184,20 @@ html.lenis body {
 }
 .link-underline:hover::after {
   transform: scaleX(1);
+}
+
+/**
+ * Logotipo del header. WONK activa las formas orgánicas (la 'g' con cola
+ * curva, la 'y' con gancho) y SOFT redondea las terminales: sin estos ejes
+ * Fraunces se ve como una serif común y pierde el aire setentoso del logo.
+ * `opsz` al máximo usa el dibujo display, con más contraste entre trazos.
+ */
+.font-brand {
+  font-family: var(--font-brand);
+  font-variation-settings:
+    "SOFT" 100,
+    "WONK" 1,
+    "opsz" 144;
 }
 
 /* Editorial eyebrow label */

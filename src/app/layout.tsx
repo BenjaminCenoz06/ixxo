@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Manrope } from "next/font/google";
+import { Inter, Manrope, Fraunces } from "next/font/google";
 import "./globals.css";
 import AppFrame from "@/components/layout/AppFrame";
 import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/JsonLd";
@@ -22,6 +22,19 @@ const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-manrope",
   display: "swap",
+});
+
+/**
+ * Tipografía SOLO del logotipo animado del header. Fraunces está dibujada a
+ * partir de las serif display de los 70 (Windsor, Cooper, Souvenir): el eje
+ * WONK activa las formas orgánicas y SOFT redondea las terminales, que es lo
+ * que le da el aire del logo de GoodStyle. No se usa en ningún otro lado.
+ */
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  display: "swap",
+  axes: ["SOFT", "WONK", "opsz"],
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -49,7 +62,7 @@ export default async function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const content = await getSiteContent();
   return (
-    <html lang="es" className={`${inter.variable} ${manrope.variable}`}>
+    <html lang="es" className={`${inter.variable} ${manrope.variable} ${fraunces.variable}`}>
       <body>
         <ThemeStyle theme={content.theme} />
         <OrganizationJsonLd />

@@ -209,7 +209,9 @@ export const DEFAULT_CONTENT: SiteContent = {
     paper: "#14532d",
   },
   general: {
-    storeName: "GOODSTYLE.",
+    // Mayúscula/minúscula tal como está dibujado el logo real ("GoodStyle").
+    // El punto final es el que dispara el cursor parpadeante del Loader.
+    storeName: "GoodStyle.",
     whatsapp: "5493786411223",
     whatsappMessage: "¡Hola GoodStyle! Quiero hacer una consulta.",
     email: "",

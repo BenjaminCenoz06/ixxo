@@ -23,7 +23,7 @@ export default function Header() {
   const { count: favCount } = useFavorites();
   const { general, nav } = useSiteContent();
   const navItems = nav as NavItem[];
-  const storeName = general.storeName || "GOODSTYLE.";
+  const storeName = general.storeName || "GoodStyle.";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -81,7 +81,7 @@ export default function Header() {
         <Link
           href="/"
           aria-label={storeName}
-          className="flex select-none justify-center px-2 font-display text-xl font-medium tracking-[0.32em] md:text-2xl"
+          className="font-brand flex select-none justify-center px-2 text-2xl font-black tracking-[-0.01em] md:text-3xl"
           onMouseEnter={() => setActive(null)}
         >
           <BrandTypewriter text={storeName} animate={!scrolled} />
@@ -141,7 +141,7 @@ export default function Header() {
 }
 
 /** Palabras temáticas que se escriben/borran en el logo (además de la marca). */
-const BRAND_WORDS = ["URBANO.", "STREETWEAR.", "ACTITUD.", "ESTILO."];
+const BRAND_WORDS = ["Urbano.", "Streetwear.", "Actitud.", "Estilo."];
 
 /**
  * Marca del header con efecto máquina de escribir: escribe y borra palabras
@@ -349,7 +349,7 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="flex items-center justify-between border-b border-line px-6 py-5">
-              <span className="font-display text-lg tracking-[0.3em]">{general.storeName || "GOODSTYLE."}</span>
+              <span className="font-display text-lg tracking-[0.3em]">{general.storeName || "GoodStyle."}</span>
               <button aria-label="Cerrar" onClick={onClose}>
                 <X size={22} strokeWidth={1.5} />
               </button>
