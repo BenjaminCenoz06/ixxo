@@ -42,11 +42,22 @@ const HEALTH_TIMEOUT_MS = 6000;
 async function probeSupabase(): Promise<boolean> {
   if (!SUPABASE_URL) return false;
   try {
-    await fetch(`${SUPABASE_URL}/auth/v1/health`, {
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/health`, {
       method: "GET",
       signal: AbortSignal.timeout(HEALTH_TIMEOUT_MS),
     });
-    // Cualquier respuesta HTTP alcanza: el host existe y responde.
+
+    // No alcanza con que el host conteste. Un proyecto restringido por cuota
+    // responde 402 a TODO, incluido Auth: el panel lo daba por vivo y mostraba
+    // un login que era imposible de completar, sin decir por qué. Un 5xx es
+    // lo mismo. En esos casos conviene el modo local, que al menos deja ver
+    // el catálogo y avisa que no se está guardando nada.
+    if (res.status === 402 || res.status >= 500) {
+      console.warn(`[auth] Supabase respondió ${res.status}: el proyecto no está operativo.`);
+      return false;
+    }
+
+    // Cualquier otra respuesta alcanza: 401 sin api key es lo esperado acá.
     return true;
   } catch {
     return false;
