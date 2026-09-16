@@ -133,9 +133,11 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           <div className="border-b border-line bg-smoke px-5 py-3 text-[12px] text-ink-soft md:px-8">
             <strong className="text-ink">Sin conexión a Supabase:</strong> el proyecto no responde,
             así que el panel muestra el catálogo del código (los 159 productos de GoodStyle) y los
-            cambios que hagas <strong className="text-ink">no se guardan</strong>. Para volver a
-            guardar hay que recrear el proyecto de Supabase y actualizar las claves en{" "}
-            <code className="text-ink">.env.local</code>.
+            cambios que hagas <strong className="text-ink">no se guardan</strong>. Abajo figura el
+            motivo exacto que devolvió Supabase. Revisá el estado del proyecto en su panel de
+            control: mientras la base siga ahí,{" "}
+            <strong className="text-ink">no hay que recrearla ni borrar nada</strong>, se recupera
+            sola en cuanto el servicio vuelva.
           </div>
         ) : (
           adminDemoMode && (

@@ -268,6 +268,13 @@ export async function fetchGoogleSheetsProducts(): Promise<{
     return { products: [], error: "Google Sheets no está configurado." };
   }
 
+  // Sin planilla configurada no hay nada que pedir. Sin este corte, el
+  // `fetch("")` tiraba una excepción en cada render antes de caer al catálogo
+  // del código, que es el camino normal de GoodStyle.
+  if (!GOOGLE_SHEETS_API_URL) {
+    return { products: [], error: "GOOGLE_SHEETS_API_URL no configurada" };
+  }
+
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 segundos de timeout

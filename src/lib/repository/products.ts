@@ -1,7 +1,9 @@
 import "server-only";
+import { unstable_cache } from "next/cache";
 import type { Product } from "@/types";
 import type { Database } from "@/lib/supabase/types";
 import { getSupabasePublic } from "@/lib/supabase/server";
+import { TAG_CATALOG, CACHE_TTL_SECONDS } from "@/lib/cache";
 import { fetchGoogleSheetsProducts } from "@/lib/services/google-sheets";
 import {
   products as mockProducts,
@@ -43,9 +45,33 @@ function toProduct(row: Row): Product {
 }
 
 /**
+ * Lee el catálogo de Supabase, cacheado bajo la etiqueta `catalog`.
+ *
+ * Sin esto, cada visita a cada página traía las 159 filas completas. Ver
+ * `src/lib/cache.ts` para por qué importa tanto.
+ *
+ * Un error de la base NO se cachea: se propaga para que lo atrape quien llama,
+ * así un corte puntual no deja la tienda pegada al catálogo de respaldo
+ * durante todo el TTL.
+ */
+const readCatalogFromSupabase = unstable_cache(
+  async (): Promise<Product[]> => {
+    const supabase = getSupabasePublic();
+    if (!supabase) return [];
+
+    const { data, error } = await supabase.from("products").select("*").order("created_at");
+    if (error) throw new Error(error.message);
+
+    return (data ?? []).map(toProduct);
+  },
+  ["catalogo-productos"],
+  { tags: [TAG_CATALOG], revalidate: CACHE_TTL_SECONDS },
+);
+
+/**
  * Obtiene todos los productos de la tienda.
  * Prioridad de fuentes de datos:
- * 1. API de Google Sheets
+ * 1. API de Google Sheets (sólo si GOOGLE_SHEETS_API_URL está definida)
  * 2. Supabase (si está configurado)
  * 3. Productos de respaldo (mock)
  */
@@ -57,12 +83,11 @@ export async function getAllProducts(): Promise<Product[]> {
   }
 
   // 2. Si Google Sheets no retorna datos, intentar Supabase
-  const supabase = await getSupabasePublic();
-  if (supabase) {
-    const { data, error } = await supabase.from("products").select("*").order("created_at");
-    if (!error && data?.length) {
-      return data.map(toProduct);
-    }
+  try {
+    const fromDb = await readCatalogFromSupabase();
+    if (fromDb.length > 0) return fromDb;
+  } catch (err) {
+    console.warn("[catalogo] Supabase no respondió; se usa el catálogo del código.", err);
   }
 
   // 3. Fallback a datos mock locales

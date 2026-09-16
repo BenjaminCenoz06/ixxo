@@ -83,6 +83,23 @@ export interface SaveResult {
   error?: string;
 }
 
+/**
+ * Avisa a la tienda que el catálogo cambió, para que el cambio se vea al
+ * instante y no dentro de unos minutos.
+ *
+ * Los datos de la tienda están cacheados (ver src/lib/cache.ts) porque leerlos
+ * en cada visita agotó la cuota de Supabase. El aviso es lo que mantiene la
+ * inmediatez. No se espera ni se corta el guardado si falla: la escritura ya
+ * ocurrió y el caché se vence solo igual.
+ */
+function avisarCambioDeCatalogo() {
+  void fetch("/api/admin/revalidate-shop", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ tags: ["catalog"] }),
+  }).catch(() => {});
+}
+
 export function useAdminProducts() {
   const [items, setItems] = useState<Product[]>(mockProducts);
   const [loading, setLoading] = useState(false);
@@ -132,6 +149,7 @@ export function useAdminProducts() {
       }
     }
     setError(null);
+    avisarCambioDeCatalogo();
     setItems((prev) => {
       const idx = prev.findIndex((p) => p.id === product.id);
       if (idx === -1) return [product, ...prev];
@@ -152,6 +170,7 @@ export function useAdminProducts() {
       }
     }
     setError(null);
+    avisarCambioDeCatalogo();
     setItems((prev) => prev.filter((p) => p.id !== id));
     return { ok: true };
   };
