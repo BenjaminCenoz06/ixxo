@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { isAdminEmail } from "@/lib/admin";
+import { notificarTienda } from "@/lib/revalidate";
+import { TAG_CONTENT, PURGAR_YA } from "@/lib/cache";
 
 const CONTENT_PATH = "config/home.json";
 
@@ -33,5 +36,10 @@ export async function POST(request: Request) {
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  return NextResponse.json({ saved: true });
+  // El contenido está cacheado para no volver a bajarlo en cada visita, así que
+  // hay que invalidarlo acá y avisarle al deploy de la tienda.
+  revalidateTag(TAG_CONTENT, PURGAR_YA);
+  const tiendaAvisada = await notificarTienda([TAG_CONTENT]);
+
+  return NextResponse.json({ saved: true, tiendaAvisada });
 }
