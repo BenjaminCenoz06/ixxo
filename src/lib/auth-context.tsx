@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import type { User } from "@supabase/supabase-js";
 import { getSupabaseBrowser } from "./supabase/client";
-import { isSupabaseConfigured, SITE_URL, SUPABASE_URL } from "./supabase/config";
+import { isSupabaseConfigured, SITE_URL, SUPABASE_URL, SUPABASE_ANON_KEY } from "./supabase/config";
 
 interface AuthResult {
   ok: boolean;
@@ -44,6 +44,11 @@ async function probeSupabase(): Promise<boolean> {
   try {
     const res = await fetch(`${SUPABASE_URL}/auth/v1/health`, {
       method: "GET",
+      // La api key es imprescindible para que el estado real salga a la luz:
+      // sin ella el endpoint corta antes con 401 y un proyecto restringido se
+      // ve igual que uno sano. Con la key, responde 200 si está operativo y
+      // 402 si está restringido por cuota.
+      headers: { apikey: SUPABASE_ANON_KEY },
       signal: AbortSignal.timeout(HEALTH_TIMEOUT_MS),
     });
 
@@ -57,7 +62,10 @@ async function probeSupabase(): Promise<boolean> {
       return false;
     }
 
-    // Cualquier otra respuesta alcanza: 401 sin api key es lo esperado acá.
+    // Cualquier otra respuesta se toma como operativo. Se deja así a propósito
+    // en vez de exigir un 200: si este endpoint cambiara de forma, es preferible
+    // pedir login (y que el error lo diga) antes que encerrar al dueño en el
+    // modo local sin manera de entrar.
     return true;
   } catch {
     return false;
